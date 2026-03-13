@@ -85,7 +85,7 @@ export class AppModule {}
 
 ## Showcase
 
-A full production-style showcase lives in `example/showcase` and demonstrates:
+A full production-style showcase lives in `showcase` and demonstrates:
 
 - Modular router composition with constructor DI
 - Mixed validation (`zod` + `class-validator`)

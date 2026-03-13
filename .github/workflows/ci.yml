@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  showcase:
-    name: Showcase (Typecheck + Express + Fastify)
+  tests-and-showcase:
+    name: Tests + Showcase
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +19,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Run package tests
+        run: npm test
 
       - name: Run showcase checks
         run: npm run ci:showcase
