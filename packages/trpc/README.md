@@ -2,7 +2,7 @@
   <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-<p align="center">Official tRPC integration for NestJS with decorator-first router classes and full Nest enhancer lifecycle support.</p>
+<p align="center">Decorator-first tRPC integration for NestJS with full Nest enhancer lifecycle support.</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/v/@nestjs/trpc.svg" alt="NPM Version" /></a>

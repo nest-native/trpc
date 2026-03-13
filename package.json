@@ -2,7 +2,7 @@
   "name": "nestjs-trpc",
   "version": "0.1.0",
   "private": true,
-  "description": "Standalone monorepo for @nestjs/trpc with official showcase",
+  "description": "Community standalone monorepo for @nestjs/trpc and showcase",
   "license": "MIT",
   "workspaces": [
     "packages/*",

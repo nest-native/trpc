@@ -1,7 +1,6 @@
 /*
- * Nest @trpc
- * Copyright(c) 2017 - 2026 Kamil Mysliwiec
- * https://nestjs.com
+ * nest-trpc-native
+ * Copyright(c) 2026 nest-trpc-native contributors
  * MIT Licensed
  */
 import 'reflect-metadata';

@@ -1,8 +1,8 @@
 {
   "name": "@nestjs/trpc",
   "version": "11.1.16",
-  "description": "Nest - modern, fast, powerful node.js web framework (@trpc)",
-  "author": "Kamil Mysliwiec",
+  "description": "Decorator-first tRPC integration bridge for NestJS",
+  "author": "nest-trpc-native contributors",
   "license": "MIT",
   "homepage": "https://nestjs.com",
   "funding": {

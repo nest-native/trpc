@@ -2,7 +2,7 @@
   "name": "@nestjs/trpc-showcase",
   "version": "1.0.0",
   "private": true,
-  "description": "Official showcase application for @nestjs/trpc",
+  "description": "Showcase application for @nestjs/trpc",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist src/@generated",
