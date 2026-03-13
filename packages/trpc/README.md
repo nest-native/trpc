@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/v/@nestjs/trpc.svg" alt="NPM Version" /></a>
-  <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/l/@nestjs/trpc.svg" alt="Package License" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <a href="https://docs.nestjs.com"><img src="https://img.shields.io/badge/docs-nestjs-e0234e.svg" alt="Documentation" /></a>
 </p>
 
