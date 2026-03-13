@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "constants.ts",
+    "enums.ts",
+    "index.ts",
+    "interfaces.ts",
+    "trpc-http-adapter.ts",
+    "trpc-request-storage.ts",
+    "trpc-router.ts",
+    "trpc.module.ts",
+    "context/**/*.ts",
+    "decorators/**/*.ts",
+    "generators/**/*.ts"
+  ],
+  "exclude": ["dist", "node_modules", "test/**/*", "*.spec.ts"]
+}

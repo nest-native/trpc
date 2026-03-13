@@ -1,21 +1,38 @@
-# nest-trpc-native
-Native, decorator-first tRPC integration for NestJS. Build typesafe APIs with full support for Nest dependency injection, guards, and interceptors.
+<p align="center">
+  <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
 
-This package was built to feel like an official `@nestjs/*` module (same DX as `@nestjs/graphql` and `@nestjs/websockets`).
+<p align="center">Standalone monorepo for <code>@nestjs/trpc</code> and its official showcase sample.</p>
 
-## Features
+<p align="center">
+  <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/v/@nestjs/trpc.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/l/@nestjs/trpc.svg" alt="Package License" /></a>
+  <a href="https://docs.nestjs.com"><img src="https://img.shields.io/badge/docs-nestjs-e0234e.svg" alt="Documentation" /></a>
+</p>
 
-- Full NestJS enhancer pipeline (`@UseGuards`, `@UseInterceptors`, `ValidationPipe`, `@UseFilters`, request-scoped providers)
-- Decorator-first API (`@Router`, `@Query`, `@Mutation`, `@Subscription`, `@TrpcContext`)
-- Code-first schema generation (`autoSchemaFile`) → instant end-to-end type safety
-- Supports **both** validation styles in the same router (Zod + class-validator DTOs)
-- Adapter-agnostic (Express & Fastify — zero code changes)
-- Full dependency injection + lifecycle hooks
-- Perfectly mirrors the philosophy of the original Sample 37
+## Description
 
-## Installation
+This repository contains:
+
+- `packages/trpc`: the framework package (`@nestjs/trpc`)
+- `example/showcase`: a full-featured sample app (formerly Sample 37)
+
+## Getting Started
+
+[Overview & Tutorial](https://docs.nestjs.com/recipes/trpc)
+
+## Workspace Commands
 
 ```bash
-npm install nestjs-trpc @trpc/server zod
-# or
-pnpm add nestjs-trpc @trpc/server zod
+npm install
+npm run build
+npm run ci:showcase
+```
+
+## Showcase Commands
+
+```bash
+npm run start --workspace @nestjs/trpc-showcase
+npm run start:fastify --workspace @nestjs/trpc-showcase
+npm run client --workspace @nestjs/trpc-showcase
+```
