@@ -15,7 +15,7 @@
 This repository contains:
 
 - `packages/trpc`: the `@nestjs/trpc` integration package
-- `showcase`: a full sample app (evolved from Sample 37)
+- `showcase`: a full sample app
 
 `@nestjs/trpc` makes tRPC feel native in Nest applications:
 
