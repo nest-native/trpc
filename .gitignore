@@ -1,6 +1,7 @@
 node_modules
 dist
 .local
+.local/published-smoke
 .npm-cache
 src/@generated
 *.tsbuildinfo
