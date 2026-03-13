@@ -236,4 +236,204 @@ describe('TrpcHttpAdapter (unit – response fallbacks)', () => {
     // Should not throw
     createAdapter().onModuleInit();
   });
+
+  it('should preserve string, Buffer, and typed-array request bodies', async () => {
+    const adapter = createAdapter() as any;
+
+    const stringBody = await adapter.resolveBody({ body: 'raw-string' });
+    expect(stringBody).to.equal('raw-string');
+
+    const bufferBody = Buffer.from('raw-buffer', 'utf-8');
+    const resolvedBuffer = await adapter.resolveBody({ body: bufferBody });
+    expect(Buffer.isBuffer(resolvedBuffer)).to.equal(true);
+    expect((resolvedBuffer as Buffer).toString('utf-8')).to.equal('raw-buffer');
+
+    const typedArrayBody = new Uint8Array([116, 101, 115, 116]); // "test"
+    const resolvedTypedArray = await adapter.resolveBody({ body: typedArrayBody });
+    expect(resolvedTypedArray).to.equal(typedArrayBody);
+  });
+
+  it('should serialize raw request bodies when parsed body is absent', async () => {
+    const adapter = createAdapter() as any;
+    const value = await adapter.resolveBody({
+      body: undefined,
+      raw: { body: '{"from":"raw"}' },
+    });
+    expect(value).to.equal('{"from":"raw"}');
+  });
+
+  it('should return undefined when no request stream is available', async () => {
+    const adapter = createAdapter() as any;
+    const value = await adapter.resolveBody({ body: undefined, raw: {} });
+    expect(value).to.be.undefined;
+  });
+
+  it('should return undefined when request stream has no chunks', async () => {
+    const adapter = createAdapter() as any;
+    const emptyStreamSource = {
+      on: sinon.stub(),
+      async *[Symbol.asyncIterator]() {},
+    };
+
+    const value = await adapter.resolveBody({
+      body: undefined,
+      raw: emptyStreamSource,
+    });
+    expect(value).to.be.undefined;
+  });
+
+  it('should read raw stream bodies and normalize string chunks', async () => {
+    const adapter = createAdapter() as any;
+    const streamSource = {
+      on: sinon.stub(),
+      async *[Symbol.asyncIterator]() {
+        yield 'part-one';
+        yield Buffer.from('-part-two', 'utf-8');
+      },
+    };
+
+    const value = await adapter.resolveBody({
+      body: undefined,
+      raw: streamSource,
+    });
+    expect(value).to.equal('part-one-part-two');
+  });
+
+  it('should treat non-SSE responses as non-streaming when content-type is missing', () => {
+    const adapter = createAdapter() as any;
+    expect(adapter.isStreamingResponse(new Response('ok'))).to.equal(false);
+  });
+
+  it('should detect SSE responses from content-type headers', () => {
+    const adapter = createAdapter() as any;
+    const sse = new Response('event: ping\n\n', {
+      headers: { 'content-type': 'text/event-stream' },
+    });
+    const json = new Response('{"ok":true}', {
+      headers: { 'content-type': 'application/json' },
+    });
+
+    expect(adapter.isStreamingResponse(sse)).to.equal(true);
+    expect(adapter.isStreamingResponse(json)).to.equal(false);
+  });
+
+  it('should treat undefined content-type values as non-streaming', () => {
+    const adapter = createAdapter() as any;
+    const fauxResponse = {
+      headers: {
+        get: () => undefined,
+      },
+    };
+    expect(adapter.isStreamingResponse(fauxResponse)).to.equal(false);
+  });
+
+  it('should convert unexpected handler errors into a 500 tRPC response', done => {
+    const adapter = createAdapter() as any;
+    adapter.createFetchRequest = () => Promise.reject(new Error('boom'));
+
+    httpAdapter.httpAdapter.getInstance = () => ({
+      use: (_path: string, handler: any) => {
+        const res: Record<string, any> = {
+          setHeader: sinon.spy(),
+          send: (payload: string) => {
+            const parsed = JSON.parse(payload);
+            expect(res.statusCode).to.equal(500);
+            expect(parsed.error.code).to.equal(-32603);
+            done();
+          },
+        };
+        handler(makeGetRequest(), res);
+      },
+    });
+
+    adapter.onModuleInit();
+  });
+
+  it('should stream chunks via res.raw.write and finish with res.raw.end fallback', async () => {
+    const adapter = createAdapter() as any;
+    const rawWrite = sinon.spy();
+    const rawEnd = sinon.spy();
+
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new Uint8Array([111, 107])); // "ok"
+        controller.close();
+      },
+    });
+
+    await new Promise<void>(resolve => {
+      adapter.pipeWebStreamToResponse(
+        { on: sinon.stub() },
+        {
+          raw: {
+            write: rawWrite,
+            end: () => {
+              rawEnd();
+              resolve();
+            },
+          },
+        },
+        body,
+      );
+    });
+
+    expect(rawWrite.called).to.equal(true);
+    expect(rawEnd.calledOnce).to.equal(true);
+  });
+
+  it('should fall back to sendBody when stream chunks cannot be written directly', async () => {
+    const adapter = createAdapter() as any;
+    const sendSpy = sinon.spy();
+
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new Uint8Array([102, 97, 108, 108, 98, 97, 99, 107]));
+        controller.close();
+      },
+    });
+
+    await new Promise<void>(resolve => {
+      adapter.pipeWebStreamToResponse(
+        { on: sinon.stub() },
+        {
+          send: (value: string) => {
+            sendSpy(value);
+          },
+          end: () => {
+            resolve();
+          },
+        },
+        body,
+      );
+    });
+
+    expect(sendSpy.calledOnce).to.equal(true);
+    expect(sendSpy.firstCall.args[0]).to.equal('fallback');
+  });
+
+  it('should end the response when the stream emits an error', async () => {
+    const adapter = createAdapter() as any;
+    const endSpy = sinon.spy();
+
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.error(new Error('stream failed'));
+      },
+    });
+
+    await new Promise<void>(resolve => {
+      adapter.pipeWebStreamToResponse(
+        { on: sinon.stub() },
+        {
+          end: () => {
+            endSpy();
+            resolve();
+          },
+        },
+        body,
+      );
+    });
+
+    expect(endSpy.calledOnce).to.equal(true);
+  });
 });

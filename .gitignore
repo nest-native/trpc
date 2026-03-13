@@ -4,3 +4,5 @@ dist
 .npm-cache
 src/@generated
 *.tsbuildinfo
+.nyc_output
+coverage

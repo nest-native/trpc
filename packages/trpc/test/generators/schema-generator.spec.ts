@@ -161,6 +161,29 @@ describe('generateSchemaContent', () => {
     expect(content).to.include('const appRouter = t.router({');
     expect(content).to.include('export type AppRouter = typeof appRouter');
   });
+
+  it('should sanitize empty and numeric-leading schema identifiers', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: '',
+        procedures: [
+          {
+            name: '123start',
+            type: ProcedureType.QUERY,
+            inputSchema: z.object({ value: z.string() }),
+          },
+        ],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+    expect(content).to.include(
+      'const schema_unknown__123start_input_0 = z.object({ value: z.string() });',
+    );
+    expect(content).to.include(
+      '123start: t.procedure.input(schema_unknown__123start_input_0).query(() => undefined as unknown)',
+    );
+  });
 });
 
 describe('generateSchema (file output)', () => {

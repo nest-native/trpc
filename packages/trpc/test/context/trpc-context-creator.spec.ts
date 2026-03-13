@@ -249,4 +249,174 @@ describe('TrpcContextCreator (unit)', () => {
     expect(error).to.be.instanceOf(TRPCError);
     expect((error as TRPCError).code).to.equal('SERVICE_UNAVAILABLE');
   });
+
+  it('should throw INTERNAL_SERVER_ERROR when resolved callback is not a function', async () => {
+    const wrapped = creator.create({
+      callback: { not: 'a-function' } as any,
+      methodName: 'missingMethod',
+      moduleKey: 'module-key',
+      resolveInstance: async () => ({} as any),
+    } as any);
+
+    let error: unknown;
+    try {
+      await wrapped({}, {});
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).to.be.instanceOf(TRPCError);
+    const trpcError = error as TRPCError;
+    expect(trpcError.code).to.equal('INTERNAL_SERVER_ERROR');
+    expect(trpcError.message).to.include('Unable to resolve tRPC handler');
+  });
+
+  it('should skip pipe application when metadata contains only @TrpcContext params', async () => {
+    const applySpy = sinon.stub().callsFake((value: unknown) => value);
+    const pipesConsumer = { apply: applySpy };
+    const pipesCreator = { create: sinon.stub().returns([{}]) };
+
+    const localCreator = new TrpcContextCreator(
+      { create: sinon.stub().returns([]) } as any,
+      { tryActivate: sinon.stub().resolves(true) } as any,
+      { create: sinon.stub().returns([]) } as any,
+      { intercept: sinon.stub() } as any,
+      pipesCreator as any,
+      pipesConsumer as any,
+      createExceptionFiltersContextStub() as any,
+    );
+
+    const handler = sinon.stub().callsFake((ctxValue: unknown) => ctxValue);
+    Reflect.defineMetadata(
+      TRPC_PARAM_ARGS_METADATA,
+      [{ index: 0, type: TrpcParamtype.CONTEXT, data: 'requestId' }],
+      handler,
+    );
+
+    const wrapped = localCreator.create({ handler } as any, handler, '');
+    const result = await wrapped({}, { requestId: 'ctx-1' });
+
+    expect(result).to.equal('ctx-1');
+    expect(applySpy.called).to.equal(false);
+  });
+
+  it('should apply pipes to @Input metadata targets', async () => {
+    const pipesConsumer = {
+      apply: sinon.stub().callsFake(async (value: unknown) => {
+        return String(value).toUpperCase();
+      }),
+    };
+    const localCreator = new TrpcContextCreator(
+      { create: sinon.stub().returns([]) } as any,
+      { tryActivate: sinon.stub().resolves(true) } as any,
+      { create: sinon.stub().returns([]) } as any,
+      { intercept: sinon.stub() } as any,
+      { create: sinon.stub().returns([{}]) } as any,
+      pipesConsumer as any,
+      createExceptionFiltersContextStub() as any,
+    );
+
+    const handler = sinon.stub().callsFake((name: string) => name);
+    Reflect.defineMetadata(
+      TRPC_PARAM_ARGS_METADATA,
+      [{ index: 0, type: TrpcParamtype.INPUT, data: 'name' }],
+      handler,
+    );
+
+    const wrapped = localCreator.create({ handler } as any, handler, '');
+    const result = await wrapped({ name: 'neo' }, {});
+
+    expect(result).to.equal('NEO');
+    expect(pipesConsumer.apply.calledOnce).to.equal(true);
+  });
+
+  it('should preserve TRPCError instances thrown by handlers', async () => {
+    const thrown = new TRPCError({ code: 'UNAUTHORIZED', message: 'no auth' });
+    const handler = sinon.stub().throws(thrown);
+    const wrapped = creator.create({ handler } as any, handler, '');
+
+    let error: unknown;
+    try {
+      await wrapped({}, {});
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).to.equal(thrown);
+    expect((error as TRPCError).code).to.equal('UNAUTHORIZED');
+  });
+
+  it('should map plain Error and non-Error throw values to INTERNAL_SERVER_ERROR', async () => {
+    const errorHandler = sinon.stub().throws(new Error('boom'));
+    const wrappedError = creator.create(
+      { handler: errorHandler } as any,
+      errorHandler,
+      '',
+    );
+    let firstError: unknown;
+    try {
+      await wrappedError({}, {});
+    } catch (err) {
+      firstError = err;
+    }
+
+    expect(firstError).to.be.instanceOf(TRPCError);
+    expect((firstError as TRPCError).code).to.equal('INTERNAL_SERVER_ERROR');
+    expect((firstError as TRPCError).message).to.equal('boom');
+
+    const literalHandler = sinon.stub().throws(123 as any);
+    const wrappedLiteral = creator.create(
+      { handler: literalHandler } as any,
+      literalHandler,
+      '',
+    );
+    let secondError: unknown;
+    try {
+      await wrappedLiteral({}, {});
+    } catch (err) {
+      secondError = err;
+    }
+
+    expect(secondError).to.be.instanceOf(TRPCError);
+    expect((secondError as TRPCError).code).to.equal('INTERNAL_SERVER_ERROR');
+    expect((secondError as TRPCError).message).to.equal('Internal server error');
+  });
+
+  it('should fall back to HttpException.message when response has no message field', async () => {
+    const exception = new HttpException(
+      { reason: 'missing-message-field' },
+      HttpStatus.BAD_REQUEST,
+    );
+    const handler = sinon.stub().throws(exception);
+    const wrapped = creator.create({ handler } as any, handler, '');
+
+    let error: unknown;
+    try {
+      await wrapped({}, {});
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).to.be.instanceOf(TRPCError);
+    expect((error as TRPCError).code).to.equal('BAD_REQUEST');
+    expect((error as TRPCError).message).to.equal(exception.message);
+  });
+
+  it('should map unmapped HttpException statuses to INTERNAL_SERVER_ERROR', async () => {
+    const handler = sinon
+      .stub()
+      .throws(new HttpException('teapot', HttpStatus.I_AM_A_TEAPOT));
+    const wrapped = creator.create({ handler } as any, handler, '');
+
+    let error: unknown;
+    try {
+      await wrapped({}, {});
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).to.be.instanceOf(TRPCError);
+    expect((error as TRPCError).code).to.equal('INTERNAL_SERVER_ERROR');
+    expect((error as TRPCError).message).to.include('teapot');
+  });
 });
