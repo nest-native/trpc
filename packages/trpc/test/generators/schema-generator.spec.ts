@@ -153,7 +153,7 @@ describe('generateSchemaContent', () => {
   it('should include the auto-generated header', () => {
     const content = generateSchemaContent([]);
     expect(content).to.include('THIS FILE WAS AUTOMATICALLY GENERATED');
-    expect(content).to.include('@nestjs/trpc');
+    expect(content).to.include('nest-trpc-native');
   });
 
   it('should handle empty routers array', () => {

@@ -5,14 +5,14 @@
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest enhancer lifecycle support.</p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/v/@nestjs/trpc.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/v/nest-trpc-native.svg" alt="NPM Version" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <a href="https://docs.nestjs.com"><img src="https://img.shields.io/badge/docs-nestjs-e0234e.svg" alt="Documentation" /></a>
 </p>
 
 ## Description
 
-`@nestjs/trpc` makes tRPC feel native in Nest applications:
+`nest-trpc-native` makes tRPC feel native in Nest applications:
 
 - Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
 - Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
@@ -27,7 +27,7 @@ See the `showcase` folder in this repository for the full end-to-end sample.
 ## Installation
 
 ```bash
-npm i @nestjs/trpc @trpc/server
+npm i nest-trpc-native @trpc/server
 ```
 
 Peer dependencies:
@@ -44,7 +44,7 @@ npm i zod
 
 ## Zero Runtime Dependency Design
 
-`@nestjs/trpc` intentionally keeps its runtime dependency block empty (`"dependencies": {}`).
+`nest-trpc-native` intentionally keeps its runtime dependency block empty (`"dependencies": {}`).
 
 Why this is intentional:
 
@@ -78,7 +78,7 @@ Should we remove Zod support entirely?
 ```ts
 import { Module, UsePipes, ValidationPipe } from '@nestjs/common';
 import { IsString, MinLength } from 'class-validator';
-import { Input, Mutation, Query, Router, TrpcModule } from '@nestjs/trpc';
+import { Input, Mutation, Query, Router, TrpcModule } from 'nest-trpc-native';
 
 class CreateUserDto {
   @IsString()
@@ -123,7 +123,7 @@ import {
   Router,
   TrpcContext,
   TrpcModule,
-} from '@nestjs/trpc';
+} from 'nest-trpc-native';
 import { z } from 'zod';
 
 const CreateUserSchema = z.object({ name: z.string().min(1) });

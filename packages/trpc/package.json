@@ -1,8 +1,8 @@
 {
-  "name": "@nestjs/trpc",
+  "name": "nest-trpc-native",
   "version": "11.1.16",
   "description": "Decorator-first tRPC integration bridge for NestJS",
-  "author": "nest-trpc-native contributors",
+  "author": "Rodrigo Nogueira",
   "license": "MIT",
   "homepage": "https://nestjs.com",
   "funding": {

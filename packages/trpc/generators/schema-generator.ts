@@ -46,7 +46,7 @@ export function generateSchemaContent(routers: RouterInfo[]): string {
   const lines: string[] = [
     '// ------------------------------------------------------',
     '// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)',
-    '// @nestjs/trpc',
+    '// nest-trpc-native',
     '// ------------------------------------------------------',
     '',
     "import { initTRPC } from '@trpc/server';",

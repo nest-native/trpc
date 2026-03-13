@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TrpcModule } from '@nestjs/trpc';
+import { TrpcModule } from 'nest-trpc-native';
 import { join } from 'path';
 import { CatsModule } from './cats/cats.module';
 import { UsersModule } from './users/users.module';

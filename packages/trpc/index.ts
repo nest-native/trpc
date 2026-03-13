@@ -1,6 +1,6 @@
 /*
  * nest-trpc-native
- * Copyright(c) 2026 nest-trpc-native contributors
+ * Copyright(c) 2026 Rodrigo Nogueira
  * MIT Licensed
  */
 import 'reflect-metadata';

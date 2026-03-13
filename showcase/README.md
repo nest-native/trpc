@@ -1,6 +1,6 @@
 # NestJS tRPC Showcase
 
-`@nestjs/trpc` showcase demonstrating rich, production-style NestJS integration.
+`nest-trpc-native` showcase demonstrating rich, production-style NestJS integration.
 
 ## What It Demonstrates
 

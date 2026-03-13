@@ -1,8 +1,8 @@
 {
-  "name": "@nestjs/trpc-showcase",
+  "name": "nest-trpc-native-showcase",
   "version": "1.0.0",
   "private": true,
-  "description": "Showcase application for @nestjs/trpc",
+  "description": "Showcase application for nest-trpc-native",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist src/@generated",
@@ -25,7 +25,7 @@
     "@nestjs/core": "11.1.16",
     "@nestjs/platform-express": "11.1.16",
     "@nestjs/platform-fastify": "11.1.16",
-    "@nestjs/trpc": "file:../packages/trpc",
+    "nest-trpc-native": "file:../packages/trpc",
     "@trpc/client": "^11.12.0",
     "@trpc/server": "^11.12.0",
     "class-transformer": "0.5.1",

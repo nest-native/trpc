@@ -5,7 +5,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Input, Mutation, Query, Router, TrpcContext } from '@nestjs/trpc';
+import { Input, Mutation, Query, Router, TrpcContext } from 'nest-trpc-native';
 import { UsersService } from './users.service';
 import {
   CreateUserSchema,

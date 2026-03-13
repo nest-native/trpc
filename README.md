@@ -5,7 +5,7 @@
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest lifecycle support.</p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/v/@nestjs/trpc.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/v/nest-trpc-native.svg" alt="NPM Version" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen.svg" alt="Test Coverage" />
   <a href="https://docs.nestjs.com"><img src="https://img.shields.io/badge/docs-nestjs-e0234e.svg" alt="Documentation" /></a>
@@ -15,10 +15,10 @@
 
 This repository contains:
 
-- `packages/trpc`: the `@nestjs/trpc` integration package
+- `packages/trpc`: the `nest-trpc-native` integration package
 - `showcase`: a full sample app
 
-`@nestjs/trpc` makes tRPC feel native in Nest applications:
+`nest-trpc-native` makes tRPC feel native in Nest applications:
 
 - Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
 - Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
@@ -29,7 +29,7 @@ This repository contains:
 ## Installation
 
 ```bash
-npm i @nestjs/trpc @trpc/server
+npm i nest-trpc-native @trpc/server
 ```
 
 Required peers:
@@ -46,7 +46,7 @@ npm i zod
 
 ## Zero Runtime Dependencies
 
-`@nestjs/trpc` is intentionally a bridge package with an empty runtime dependency block (`"dependencies": {}`).
+`nest-trpc-native` is intentionally a bridge package with an empty runtime dependency block (`"dependencies": {}`).
 
 Why:
 
@@ -62,7 +62,7 @@ Why:
 
 No. Zod is optional.
 
-- If you use Nest-style validation (`class-validator` + `ValidationPipe`), you can use `@nestjs/trpc` without Zod schemas.
+- If you use Nest-style validation (`class-validator` + `ValidationPipe`), you can use `nest-trpc-native` without Zod schemas.
 - If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and schema generation based on those schemas, then your app should install Zod.
 
 We keep Zod support because it is core to tRPC-native DX, but we keep it optional so non-Zod users are not forced to install it.
@@ -74,7 +74,7 @@ We keep Zod support because it is core to tRPC-native DX, but we keep it optiona
 ```ts
 import { Module, UsePipes, ValidationPipe } from '@nestjs/common';
 import { IsString, MinLength } from 'class-validator';
-import { Input, Mutation, Query, Router, TrpcModule } from '@nestjs/trpc';
+import { Input, Mutation, Query, Router, TrpcModule } from 'nest-trpc-native';
 
 class CreateUserDto {
   @IsString()
@@ -119,7 +119,7 @@ import {
   Router,
   TrpcContext,
   TrpcModule,
-} from '@nestjs/trpc';
+} from 'nest-trpc-native';
 import { z } from 'zod';
 
 const CreateUserSchema = z.object({ name: z.string().min(1) });
@@ -161,9 +161,9 @@ npm run ci:showcase
 ## Showcase Commands
 
 ```bash
-npm run start --workspace @nestjs/trpc-showcase
-npm run start:fastify --workspace @nestjs/trpc-showcase
-npm run client --workspace @nestjs/trpc-showcase
+npm run start --workspace nest-trpc-native-showcase
+npm run start:fastify --workspace nest-trpc-native-showcase
+npm run client --workspace nest-trpc-native-showcase
 ```
 
 For showcase-specific details, open `showcase/README.md`.

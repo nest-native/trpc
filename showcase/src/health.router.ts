@@ -1,4 +1,4 @@
-import { Input, Query, Router, Subscription, TrpcContext } from '@nestjs/trpc';
+import { Input, Query, Router, Subscription, TrpcContext } from 'nest-trpc-native';
 import {
   PingOutputSchema,
   TickEventSchema,
