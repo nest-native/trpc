@@ -1,5 +1,5 @@
 # AI_CODING_GUIDELINES.md
-## Core Philosophy – This library MUST feel like an official @nestjs/* package
+## Core Philosophy – This library MUST feel native in NestJS projects
 
 Every single decision must follow NestJS philosophy exactly as @nestjs/graphql and @nestjs/websockets do.
 
@@ -51,7 +51,7 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
 - Prefer constructor injection over module-level providers when possible.
 - Always support global, module, and method-level enhancers.
 - Tests must cover enhancer pipeline, request scoping, and both adapters.
-- Documentation and README must read like official NestJS docs.
+- Documentation and README should follow Nest-style clarity without claiming official status.
 
 ### 6. When in doubt
 - Ask yourself: “Would this feel natural in a @nestjs/graphql project?”
