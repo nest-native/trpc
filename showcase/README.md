@@ -9,6 +9,7 @@
 | Aliased sub-routers | `cats.router.ts`, `users.router.ts` |
 | Flat root procedures | `health.router.ts` |
 | Query/mutation/subscription procedures | `cats.router.ts`, `users.router.ts`, `health.router.ts` |
+| Async module configuration (`forRootAsync`) | `app.module.ts` |
 | Zod input/output schemas | `cats.schema.ts`, `users.schema.ts`, `health.schema.ts` |
 | Auto-generated typed `AppRouter` | `app.module.ts` + `generate-types.ts` |
 | Type-safe query/mutation client | `client.ts` |
@@ -17,6 +18,7 @@
 | Nest guards/interceptors/pipes | `auth.guard.ts`, `logging.interceptor.ts`, `trim.pipe.ts` |
 | Class-validator DTO validation | `users.router.ts`, `users/create-user.dto.ts` |
 | Exception filter remapping | `remap-bad-request.filter.ts`, `users.router.ts` |
+| Request-scoped DI with `REQUEST` injection | `users/request-meta.service.ts`, `users.router.ts` |
 | Decorator param extraction | `@Input()` and `@TrpcContext()` |
 | Express and Fastify entrypoints | `main.ts`, `main-fastify.ts` |
 

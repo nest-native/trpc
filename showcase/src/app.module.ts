@@ -13,18 +13,20 @@ import {
 
 @Module({
   imports: [
-    TrpcModule.forRoot({
-      path: TRPC_PATH,
-      autoSchemaFile: join(process.cwd(), 'src/@generated/server.ts'),
-      createContext: ({ req }): AppTrpcContext => {
-        const requestId =
-          req.headers[TRPC_REQUEST_ID_HEADER] ?? crypto.randomUUID();
-        const rawApiKey = req.headers[TRPC_API_KEY_HEADER];
-        return {
-          requestId: String(requestId),
-          apiKey: typeof rawApiKey === 'string' ? rawApiKey : undefined,
-        };
-      },
+    TrpcModule.forRootAsync({
+      useFactory: () => ({
+        path: TRPC_PATH,
+        autoSchemaFile: join(process.cwd(), 'src/@generated/server.ts'),
+        createContext: ({ req }): AppTrpcContext => {
+          const requestId =
+            req.headers[TRPC_REQUEST_ID_HEADER] ?? crypto.randomUUID();
+          const rawApiKey = req.headers[TRPC_API_KEY_HEADER];
+          return {
+            requestId: String(requestId),
+            apiKey: typeof rawApiKey === 'string' ? rawApiKey : undefined,
+          };
+        },
+      }),
     }),
     CatsModule,
     UsersModule,

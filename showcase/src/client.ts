@@ -76,6 +76,9 @@ async function main() {
   const found = await client.users.search.query({ query: 'alice' });
   console.log('search "alice":', found);
 
+  const requestMeta = await client.users.requestMeta.query();
+  console.log('request meta (request-scoped service):', requestMeta);
+
   const newUser = await client.users.create.mutate({
     name: 'Diana',
     email: 'diana@example.com',

@@ -54,6 +54,12 @@ async function assertClientTypes() {
     const _email: string = maybeUser.email;
   }
 
+  const requestMeta = await client.users.requestMeta.query();
+  const _requestMetaRequestId: string = requestMeta.requestId;
+  const _requestMetaMethod: string = requestMeta.method;
+  const _requestMetaPath: string = requestMeta.path;
+  const _requestMetaUserAgent: string | undefined = requestMeta.userAgent;
+
   const dtoUser = await client.users.createWithDto.mutate({
     name: 'Neo',
     email: 'neo@example.com',

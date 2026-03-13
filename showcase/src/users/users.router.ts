@@ -9,6 +9,7 @@ import { Input, Mutation, Query, Router, TrpcContext } from '@nestjs/trpc';
 import { UsersService } from './users.service';
 import {
   CreateUserSchema,
+  RequestMetaSchema,
   UserIdSchema,
   UserSchema,
   UserSearchSchema,
@@ -18,6 +19,7 @@ import { TrimPipe } from '../common/pipes/trim.pipe';
 import { z } from 'zod';
 import { CreateUserDto } from './create-user.dto';
 import { RemapBadRequestFilter } from '../common/filters/remap-bad-request.filter';
+import { RequestMetaService } from './request-meta.service';
 
 /**
  * Users tRPC router — demonstrates:
@@ -28,7 +30,10 @@ import { RemapBadRequestFilter } from '../common/filters/remap-bad-request.filte
  */
 @Router('users')
 export class UsersRouter {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly requestMetaService: RequestMetaService,
+  ) {}
 
   @Query({ output: z.array(UserSchema) })
   list() {
@@ -53,6 +58,14 @@ export class UsersRouter {
     @TrpcContext('requestId') _requestId: string,
   ) {
     return this.usersService.search(query);
+  }
+
+  @Query({ output: RequestMetaSchema })
+  requestMeta(@TrpcContext('requestId') requestId: string) {
+    return {
+      requestId,
+      ...this.requestMetaService.snapshot(),
+    };
   }
 
   @Mutation({

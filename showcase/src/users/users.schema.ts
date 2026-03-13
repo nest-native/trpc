@@ -24,3 +24,10 @@ export const UserIdSchema = z.object({
 export const UserSearchSchema = z.object({
   query: z.string().min(1),
 });
+
+export const RequestMetaSchema = z.object({
+  requestId: z.string(),
+  method: z.string(),
+  path: z.string(),
+  userAgent: z.string().optional(),
+});
