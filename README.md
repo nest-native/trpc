@@ -2,7 +2,7 @@
   <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-<p align="center">Standalone monorepo for <code>@nestjs/trpc</code> and its official showcase.</p>
+<p align="center">Official, decorator-first tRPC integration for NestJS with full Nest lifecycle support.</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@nestjs/trpc"><img src="https://img.shields.io/npm/v/@nestjs/trpc.svg" alt="NPM Version" /></a>
@@ -14,22 +14,98 @@
 
 This repository contains:
 
-- `packages/trpc`: the framework package (`@nestjs/trpc`)
-- `showcase`: a full-featured sample app
+- `packages/trpc`: the `@nestjs/trpc` integration package
+- `showcase`: a full sample app (evolved from Sample 37)
 
-## Getting Started
+`@nestjs/trpc` makes tRPC feel native in Nest applications:
 
-[Showcase Guide](./showcase/README.md)
+- Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
+- Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
+- Explicit parameter extraction via `@Input()` and `@TrpcContext()`
+- Full support for guards, interceptors, pipes, filters, and request scope
+- Adapter-agnostic behavior across Express and Fastify
 
-## Dependency Philosophy
+## Installation
 
-`@nestjs/trpc` is designed as a bridge package with **zero runtime dependencies** in its own `dependencies` block.
+```bash
+npm i @nestjs/trpc @trpc/server
+```
 
-- No duplicate NestJS runtime copy is pulled in by this package.
-- NestJS and tRPC come from `peerDependencies` so the host app controls versions.
-- `zod` support is optional: use it for tRPC-native schema inference, or skip it and use `class-validator` + `ValidationPipe`.
+Required peers:
 
-See detailed rationale in [`packages/trpc/README.md`](./packages/trpc/README.md).
+```bash
+npm i @nestjs/common @nestjs/core reflect-metadata rxjs
+```
+
+Optional (recommended for schema inference and tRPC-style validation):
+
+```bash
+npm i zod
+```
+
+## Zero Runtime Dependencies
+
+`@nestjs/trpc` is intentionally a bridge package with an empty runtime dependency block (`"dependencies": {}`).
+
+Why:
+
+- It should not pull a second NestJS runtime into the app.
+- The host app controls Nest/tRPC versions through peer dependencies.
+- The integration relies on capabilities already present in Nest apps and Node:
+  - reflection (`reflect-metadata`)
+  - DI/discovery (`@nestjs/common`, `@nestjs/core`)
+  - tRPC runtime/adapters (`@trpc/server`)
+  - file/path generation via Node built-ins (`fs`, `path`)
+
+## Is Zod Required?
+
+No. Zod is optional.
+
+- If you use Nest-style validation (`class-validator` + `ValidationPipe`), you can use `@nestjs/trpc` without Zod schemas.
+- If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and schema generation based on those schemas, then your app should install Zod.
+
+We keep Zod support because it is core to tRPC-native DX, but we keep it optional so non-Zod users are not forced to install it.
+
+## Quick Start
+
+```ts
+import { Module } from '@nestjs/common';
+import {
+  Input,
+  Mutation,
+  Query,
+  Router,
+  TrpcContext,
+  TrpcModule,
+} from '@nestjs/trpc';
+import { z } from 'zod';
+
+const CreateUserSchema = z.object({ name: z.string().min(1) });
+
+@Router('users')
+class UsersRouter {
+  @Query({ output: z.array(z.object({ id: z.string(), name: z.string() })) })
+  list(@TrpcContext('requestId') requestId: string) {
+    return [{ id: requestId, name: 'Ada' }];
+  }
+
+  @Mutation({ input: CreateUserSchema })
+  create(@Input() input: { name: string }) {
+    return { id: '1', ...input };
+  }
+}
+
+@Module({
+  imports: [
+    TrpcModule.forRoot({
+      path: '/trpc',
+      autoSchemaFile: 'src/@generated/server.ts',
+    }),
+  ],
+  providers: [UsersRouter],
+})
+export class AppModule {}
+```
 
 ## Workspace Commands
 
@@ -47,3 +123,5 @@ npm run start --workspace @nestjs/trpc-showcase
 npm run start:fastify --workspace @nestjs/trpc-showcase
 npm run client --workspace @nestjs/trpc-showcase
 ```
+
+For showcase-specific details, open `showcase/README.md`.

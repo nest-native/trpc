@@ -22,7 +22,7 @@
 
 ## Getting Started
 
-[Showcase Guide](../../showcase/README.md)
+See the `showcase` folder in this repository for the full end-to-end sample.
 
 ## Installation
 
