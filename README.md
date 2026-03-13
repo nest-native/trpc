@@ -19,7 +19,17 @@ This repository contains:
 
 ## Getting Started
 
-[Overview & Tutorial](https://docs.nestjs.com/recipes/trpc)
+[Showcase Guide](./showcase/README.md)
+
+## Dependency Philosophy
+
+`@nestjs/trpc` is designed as a bridge package with **zero runtime dependencies** in its own `dependencies` block.
+
+- No duplicate NestJS runtime copy is pulled in by this package.
+- NestJS and tRPC come from `peerDependencies` so the host app controls versions.
+- `zod` support is optional: use it for tRPC-native schema inference, or skip it and use `class-validator` + `ValidationPipe`.
+
+See detailed rationale in [`packages/trpc/README.md`](./packages/trpc/README.md).
 
 ## Workspace Commands
 

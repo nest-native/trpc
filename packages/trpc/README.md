@@ -22,7 +22,7 @@
 
 ## Getting Started
 
-[Overview & Tutorial](https://docs.nestjs.com/recipes/trpc)
+[Showcase Guide](../../showcase/README.md)
 
 ## Installation
 
@@ -41,6 +41,35 @@ Optional (recommended for schema inference and validation):
 ```bash
 npm i zod
 ```
+
+## Zero Runtime Dependency Design
+
+`@nestjs/trpc` intentionally keeps its runtime dependency block empty (`"dependencies": {}`).
+
+Why this is intentional:
+
+- This package is an integration layer (NestJS <-> tRPC), not a standalone runtime.
+- NestJS and tRPC should come from the host application to avoid version duplication and container mismatches.
+- Core features here rely on peer/runtime primitives already present in Nest apps:
+  - metadata reflection (`reflect-metadata`)
+  - Nest DI/discovery (`@nestjs/common`, `@nestjs/core`)
+  - tRPC adapters (`@trpc/server`)
+  - Node built-ins for file generation (`fs`, `path`)
+
+## Why Zod Is Optional (and When You Need It)
+
+Short answer: **Zod is not mandatory** for the package to work.
+
+- If you prefer classic Nest validation (`class-validator` + `ValidationPipe`), you can use this package without Zod-specific decorators/schemas.
+- If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and `autoSchemaFile` generation for those schemas, then Zod is required by your app code.
+
+Should we remove Zod support entirely?
+
+- We should **not** remove it: Zod support is a core part of the tRPC-first DX and one of the main interoperability goals.
+- Keeping `zod` as an **optional peer dependency** is the best balance:
+  - no forced runtime dependency
+  - clear compatibility contract when users choose Zod
+  - full support for mixed validation strategies in the same project
 
 ## Quick Start
 
