@@ -73,6 +73,47 @@ Should we remove Zod support entirely?
 
 ## Quick Start
 
+### Non-Zod (class-validator + ValidationPipe)
+
+```ts
+import { Module, UsePipes, ValidationPipe } from '@nestjs/common';
+import { IsString, MinLength } from 'class-validator';
+import { Input, Mutation, Query, Router, TrpcModule } from '@nestjs/trpc';
+
+class CreateUserDto {
+  @IsString()
+  @MinLength(1)
+  name!: string;
+}
+
+@Router('users')
+class UsersRouter {
+  @Query()
+  list() {
+    return [{ id: '1', name: 'Ada' }];
+  }
+
+  @Mutation()
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  create(@Input() input: CreateUserDto) {
+    return { id: '2', ...input };
+  }
+}
+
+@Module({
+  imports: [
+    TrpcModule.forRoot({
+      path: '/trpc',
+      autoSchemaFile: 'src/@generated/server.ts',
+    }),
+  ],
+  providers: [UsersRouter],
+})
+export class AppModule {}
+```
+
+### Zod
+
 ```ts
 import { Module } from '@nestjs/common';
 import {
