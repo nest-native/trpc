@@ -15,7 +15,7 @@
 This repository contains:
 
 - `packages/trpc`: the framework package (`@nestjs/trpc`)
-- `showcase`: a full-featured sample app (evolved from Sample 37)
+- `showcase`: a full-featured sample app
 
 ## Getting Started
 
