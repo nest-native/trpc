@@ -4,9 +4,13 @@
  * After the server starts (which generates `src/@generated/server.ts`),
  * this client gets full autocompletion and type checking for all procedures.
  *
- * Usage:
+ * Usage (from the repository root):
+ *   1. Start the server:  npm run start --workspace nest-trpc-native-showcase
+ *   2. Run the client:    npm run client --workspace nest-trpc-native-showcase
+ *
+ * Or from the showcase/ directory:
  *   1. Start the server:  npm run start
- *   2. Run the client:    npx ts-node src/client.ts
+ *   2. Run the client:    npm run client
  */
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import type { AppRouter } from './@generated/server';
