@@ -1,11 +1,8 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/rodrigobnogueira/nest-trpc-native/main/assets/nest-trpc-native-logo.jpg" width="420" alt="nest-trpc-native logo" />
-</p>
-
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest enhancer lifecycle support.</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/v/nest-trpc-native.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/dm/nest-trpc-native.svg" alt="NPM Downloads" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <a href="https://docs.nestjs.com"><img src="https://img.shields.io/badge/docs-nestjs-e0234e.svg" alt="Documentation" /></a>
 </p>

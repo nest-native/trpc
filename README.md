@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/rodrigobnogueira/nest-trpc-native/main/assets/nest-trpc-native-logo.jpg" width="420" alt="nest-trpc-native logo" />
-</p>
-
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest lifecycle support.</p>
 
 <p align="center">
