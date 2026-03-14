@@ -1,6 +1,6 @@
 import { ModuleMetadata } from '@nestjs/common';
 
-export interface TrpcModuleOptions {
+export interface TrpcModuleOptions<TContext = any> {
   /**
    * Path to mount the tRPC handler on.
    * @default '/trpc'
@@ -10,8 +10,17 @@ export interface TrpcModuleOptions {
   /**
    * A factory function that creates the tRPC context for each request.
    * Receives the raw request/response objects from the underlying HTTP adapter.
+   *
+   * @example
+   * ```ts
+   * TrpcModule.forRoot<MyContext>({
+   *   createContext: ({ req }) => ({
+   *     userId: req.headers['x-user-id'],
+   *   }),
+   * })
+   * ```
    */
-  createContext?: (opts: { req: any; res: any }) => any;
+  createContext?: (opts: { req: any; res: any }) => TContext | Promise<TContext>;
 
   /**
    * Whether to register the module globally.
@@ -36,13 +45,13 @@ export interface TrpcModuleOptions {
   autoSchemaFile?: string;
 }
 
-export interface TrpcModuleAsyncOptions extends Pick<
+export interface TrpcModuleAsyncOptions<TContext = any> extends Pick<
   ModuleMetadata,
   'imports'
 > {
   useFactory: (
     ...args: any[]
-  ) => TrpcModuleOptions | Promise<TrpcModuleOptions>;
+  ) => TrpcModuleOptions<TContext> | Promise<TrpcModuleOptions<TContext>>;
   inject?: any[];
   extraProviders?: any[];
   isGlobal?: boolean;

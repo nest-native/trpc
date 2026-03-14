@@ -25,7 +25,7 @@ import { TrpcRouter } from './trpc-router';
  */
 @Module({})
 export class TrpcModule {
-  static forRoot(options: TrpcModuleOptions = {}): DynamicModule {
+  static forRoot<TContext = any>(options: TrpcModuleOptions<TContext> = {} as TrpcModuleOptions<TContext>): DynamicModule {
     const optionsProvider: Provider = {
       provide: TRPC_MODULE_OPTIONS,
       useValue: options,
@@ -40,7 +40,7 @@ export class TrpcModule {
     };
   }
 
-  static forRootAsync(options: TrpcModuleAsyncOptions): DynamicModule {
+  static forRootAsync<TContext = any>(options: TrpcModuleAsyncOptions<TContext>): DynamicModule {
     const asyncOptionsProvider: Provider = {
       provide: TRPC_MODULE_OPTIONS,
       useFactory: options.useFactory,

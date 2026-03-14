@@ -330,6 +330,7 @@ describe('TrpcHttpAdapter (unit – response fallbacks)', () => {
   it('should convert unexpected handler errors into a 500 tRPC response', done => {
     const adapter = createAdapter() as any;
     adapter.createFetchRequest = () => Promise.reject(new Error('boom'));
+    adapter.logger = { error: sinon.stub(), log: sinon.stub() };
 
     httpAdapter.httpAdapter.getInstance = () => ({
       use: (_path: string, handler: any) => {

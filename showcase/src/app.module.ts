@@ -13,11 +13,11 @@ import {
 
 @Module({
   imports: [
-    TrpcModule.forRootAsync({
+    TrpcModule.forRootAsync<AppTrpcContext>({
       useFactory: () => ({
         path: TRPC_PATH,
         autoSchemaFile: join(process.cwd(), 'src/@generated/server.ts'),
-        createContext: ({ req }): AppTrpcContext => {
+        createContext: ({ req }) => {
           const requestId =
             req.headers[TRPC_REQUEST_ID_HEADER] ?? crypto.randomUUID();
           const rawApiKey = req.headers[TRPC_API_KEY_HEADER];
