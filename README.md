@@ -149,6 +149,38 @@ class UsersRouter {
 export class AppModule {}
 ```
 
+## Typed Context
+
+Both `TrpcModule.forRoot()` and `TrpcModule.forRootAsync()` accept an optional generic that types the `createContext` return value. This gives you compile-time safety and autocompletion on your context factory without changing any runtime behavior.
+
+```ts
+interface MyContext {
+  requestId: string;
+  userId?: number;
+}
+
+// Static configuration
+TrpcModule.forRoot<MyContext>({
+  createContext: ({ req }) => ({
+    requestId: req.headers['x-request-id'] ?? crypto.randomUUID(),
+    userId: extractUserId(req),
+  }),
+});
+
+// Async configuration
+TrpcModule.forRootAsync<MyContext>({
+  useFactory: (config: ConfigService) => ({
+    createContext: ({ req }) => ({
+      requestId: req.headers['x-request-id'] ?? crypto.randomUUID(),
+      // TypeScript error if you forget `userId` or add unknown fields
+    }),
+  }),
+  inject: [ConfigService],
+});
+```
+
+The generic defaults to `any`, so existing code without the type parameter continues to work unchanged.
+
 ## Workspace Commands
 
 ```bash
