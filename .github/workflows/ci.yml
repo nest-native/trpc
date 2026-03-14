@@ -10,16 +10,19 @@ permissions:
   contents: read
   pull-requests: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   tests-and-showcase:
     name: Tests + Coverage + Showcase
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm ci
@@ -40,21 +43,25 @@ jobs:
             lines: summary.lines.pct,
           };
           fs.appendFileSync(process.env.GITHUB_OUTPUT, Object.entries(metrics).map(([k, v]) => k + '=' + v).join('\n') + '\n');
+          const badge = pct => pct >= 100 ? '🟢' : pct >= 99.99 ? '🟡' : '🔴';
+          const avg = Math.round((metrics.statements + metrics.branches + metrics.functions + metrics.lines) / 4 * 100) / 100;
           const report = [
-            '### Coverage',
+            '### 📊 Coverage Report',
             '',
-            '| Metric | % |',
-            '| --- | ---: |',
-            '| Statements | ' + metrics.statements + '% |',
-            '| Branches | ' + metrics.branches + '% |',
-            '| Functions | ' + metrics.functions + '% |',
-            '| Lines | ' + metrics.lines + '% |',
+            '| Metric | Coverage | Status |',
+            '| :--- | ---: | :---: |',
+            '| Statements | ' + metrics.statements + '% | ' + badge(metrics.statements) + ' |',
+            '| Branches | ' + metrics.branches + '% | ' + badge(metrics.branches) + ' |',
+            '| Functions | ' + metrics.functions + '% | ' + badge(metrics.functions) + ' |',
+            '| Lines | ' + metrics.lines + '% | ' + badge(metrics.lines) + ' |',
+            '',
+            '**Overall: ' + avg + '%** ' + badge(avg),
           ].join('\n');
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, report + '\n');
           "
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-report
           path: |
@@ -66,7 +73,7 @@ jobs:
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request'
         continue-on-error: true
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           STATEMENTS: ${{ steps.coverage.outputs.statements }}
           BRANCHES: ${{ steps.coverage.outputs.branches }}
@@ -75,14 +82,22 @@ jobs:
         with:
           script: |
             const marker = '<!-- coverage-report -->';
+            const badge = pct => pct >= 100 ? '🟢' : pct >= 99.99 ? '🟡' : '🔴';
+            const s = Number(process.env.STATEMENTS);
+            const b = Number(process.env.BRANCHES);
+            const f = Number(process.env.FUNCTIONS);
+            const l = Number(process.env.LINES);
+            const avg = Math.round((s + b + f + l) / 4 * 100) / 100;
             const body = `${marker}
-            ## Coverage Report
-            | Metric | % |
-            | --- | ---: |
-            | Statements | ${process.env.STATEMENTS}% |
-            | Branches | ${process.env.BRANCHES}% |
-            | Functions | ${process.env.FUNCTIONS}% |
-            | Lines | ${process.env.LINES}% |`;
+            ### 📊 Coverage Report
+            | Metric | Coverage | Status |
+            | :--- | ---: | :---: |
+            | Statements | ${s}% | ${badge(s)} |
+            | Branches | ${b}% | ${badge(b)} |
+            | Functions | ${f}% | ${badge(f)} |
+            | Lines | ${l}% | ${badge(l)} |
+
+            **Overall: ${avg}%** ${badge(avg)}`;
 
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
