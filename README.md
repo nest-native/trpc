@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://raw.githubusercontent.com/rodrigobnogueira/nest-trpc-native/main/assets/nest-trpc-native-logo.jpg" width="420" alt="nest-trpc-native logo" />
 </p>
 
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest lifecycle support.</p>
