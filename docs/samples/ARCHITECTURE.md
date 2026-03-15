@@ -6,7 +6,7 @@ This repository uses a hybrid model to keep samples understandable while preserv
 
 - `packages/trpc`: publishable integration package.
 - `sample/00-showcase`: full runnable baseline.
-- `sample/01-*` onward: focused sample slices for fast onboarding.
+- `sample/01-*` onward: focused runnable sample slices for fast onboarding.
 
 Why:
 
@@ -49,3 +49,9 @@ Why:
 ## Navigation Rule
 
 Start with `sample/00-showcase`, then use `docs/samples/INDEX.md` to jump to specific topics.
+
+## Extraction Rule
+
+- First, implement or refine behavior in `sample/00-showcase`.
+- Then extract the smallest runnable focused sample under `sample/0X-*` that teaches one topic clearly.
+- Add net-new focused samples only for scenarios not already represented in `00-showcase`.

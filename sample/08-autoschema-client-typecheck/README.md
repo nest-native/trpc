@@ -1,9 +1,21 @@
 # Sample 08: AutoSchema + Client Typecheck
 
-Focus: generated `AppRouter` artifacts and compile-time client safety.
+This sample is a runnable extraction focused on generated router artifacts and typed client safety.
 
-Current canonical implementation lives in:
+It demonstrates:
 
-- `sample/00-showcase/src/generate-types.ts`
-- `sample/00-showcase/src/@generated/server.ts`
-- `sample/00-showcase/src/client.typecheck.ts`
+- `autoSchemaFile` generation
+- importing generated `AppRouter`
+- compile-time client type checks
+
+## Run
+
+```bash
+npm run test --workspace nest-trpc-native-sample-08-autoschema
+```
+
+## Key Files
+
+- `src/generate-types.ts`
+- `src/@generated/server.ts` (generated)
+- `src/client.typecheck.ts`

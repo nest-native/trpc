@@ -1,9 +1,9 @@
 # Samples
 
-This folder follows a two-layer model to keep navigation easy as features grow:
+This folder uses a hybrid model:
 
-- `00-showcase`: full end-to-end sample with all major capabilities in one app.
-- `01-*` and onward: focused sample slices organized by topic.
+- `00-showcase`: full end-to-end baseline with all major capabilities together.
+- `01-*` onward: focused runnable extractions, each isolating one topic.
 
 ## Quick Start
 
@@ -14,18 +14,18 @@ npm run client:subscription --workspace nest-trpc-native-showcase
 npm run ci:sample
 ```
 
-## Sample Map
+## Focused Samples
 
-| Folder | Focus | Current State |
-| --- | --- | --- |
-| `00-showcase` | Full integration baseline | Active and runnable |
-| `01-basics-query-mutation` | Router basics and simple procedures | Navigation scaffold |
-| `02-enhancers-guards-pipes-filters` | Guards/interceptors/pipes/filters | Navigation scaffold |
-| `03-context-request-scope` | `@TrpcContext` and request-scoped DI | Navigation scaffold |
-| `04-validation-zod` | Zod-first validation patterns | Navigation scaffold |
-| `05-validation-class-validator` | DTO + `ValidationPipe` patterns | Navigation scaffold |
-| `06-subscriptions` | Subscription and streaming flow | Navigation scaffold |
-| `07-express-fastify` | Adapter parity examples | Navigation scaffold |
-| `08-autoschema-client-typecheck` | `autoSchemaFile` + typed client checks | Navigation scaffold |
+| Folder | Focus | State | Command |
+| --- | --- | --- | --- |
+| `00-showcase` | Full integration baseline | Runnable | `npm run test --workspace nest-trpc-native-showcase` |
+| `01-basics-query-mutation` | Router basics | Runnable | `npm run test --workspace nest-trpc-native-sample-01-basics` |
+| `02-enhancers-guards-pipes-filters` | Guards/interceptors/pipes/filters | Runnable | `npm run test --workspace nest-trpc-native-sample-02-enhancers` |
+| `03-context-request-scope` | `@TrpcContext` + request scope | Runnable | `npm run test --workspace nest-trpc-native-sample-03-context` |
+| `04-validation-zod` | Zod validation and inference | Runnable | `npm run test --workspace nest-trpc-native-sample-04-zod` |
+| `05-validation-class-validator` | DTO + `ValidationPipe` | Runnable | `npm run test --workspace nest-trpc-native-sample-05-class-validator` |
+| `06-subscriptions` | Server/client subscriptions | Runnable | `npm run test --workspace nest-trpc-native-sample-06-subscriptions` |
+| `07-express-fastify` | Adapter parity | Runnable | `npm run test --workspace nest-trpc-native-sample-07-adapters` |
+| `08-autoschema-client-typecheck` | `autoSchemaFile` + typed client checks | Runnable | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
 
 Use `docs/samples/INDEX.md` for file-level pointers and `docs/samples/ARCHITECTURE.md` for structural rationale.

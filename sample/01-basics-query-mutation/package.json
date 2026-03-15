@@ -1,0 +1,31 @@
+{
+  "name": "nest-trpc-native-sample-01-basics",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sample 01 - Basics query and mutation",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist src/@generated",
+    "generate:types": "ts-node --transpile-only src/generate-types.ts",
+    "typecheck": "npm run generate:types && tsc --noEmit -p tsconfig.json",
+    "smoke": "npm run generate:types && ts-node --transpile-only scripts/smoke.ts",
+    "test": "npm run typecheck && npm run smoke",
+    "start": "npm run generate:types && ts-node src/main.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "11.1.16",
+    "@nestjs/core": "11.1.16",
+    "@nestjs/platform-express": "11.1.16",
+    "@trpc/client": "^11.12.0",
+    "@trpc/server": "^11.12.0",
+    "nest-trpc-native": "0.1.1",
+    "reflect-metadata": "0.2.2",
+    "rimraf": "6.1.3",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.12.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
+  }
+}

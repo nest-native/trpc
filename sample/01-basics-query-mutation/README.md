@@ -1,14 +1,19 @@
 # Sample 01: Basics (Query + Mutation)
 
-Focus: small, first-contact example of router classes and simple procedures.
+This sample is a minimal runnable extraction of the core router flow:
 
-Current canonical implementation lives in:
+- one module
+- one router alias (`todos`)
+- one query + one mutation
 
-- `sample/00-showcase/src/cats/cats.router.ts`
-- `sample/00-showcase/src/users/users.router.ts`
+## Run
 
-When this sample is extracted into a runnable app, keep it limited to:
+```bash
+npm run test --workspace nest-trpc-native-sample-01-basics
+```
 
-1. One module.
-2. One router alias.
-3. One query + one mutation.
+## Key Files
+
+- `src/app.module.ts`
+- `src/todos/todos.router.ts`
+- `src/todos/todos.service.ts`

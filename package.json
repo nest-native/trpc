@@ -22,9 +22,11 @@
     "presmoke:fastify": "npm run build --workspace nest-trpc-native",
     "smoke:fastify": "npm run smoke:fastify --workspace nest-trpc-native-showcase",
     "showcase": "npm run test --workspace nest-trpc-native-showcase",
-    "sample": "npm run showcase",
+    "presample:focused": "npm run build --workspace nest-trpc-native",
+    "sample:focused": "npm run test --workspace nest-trpc-native-sample-01-basics && npm run test --workspace nest-trpc-native-sample-02-enhancers && npm run test --workspace nest-trpc-native-sample-03-context && npm run test --workspace nest-trpc-native-sample-04-zod && npm run test --workspace nest-trpc-native-sample-05-class-validator && npm run test --workspace nest-trpc-native-sample-06-subscriptions && npm run test --workspace nest-trpc-native-sample-07-adapters && npm run test --workspace nest-trpc-native-sample-08-autoschema",
+    "sample": "npm run showcase && npm run sample:focused",
     "ci:showcase": "npm run typecheck:client && npm run smoke:express && npm run smoke:fastify",
-    "ci:sample": "npm run ci:showcase",
+    "ci:sample": "npm run ci:showcase && npm run sample:focused",
     "ci": "npm run test:cov && npm run ci:sample"
   },
   "engines": {

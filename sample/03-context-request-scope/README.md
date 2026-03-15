@@ -1,10 +1,22 @@
 # Sample 03: Context + Request Scope
 
-Focus: `createContext`, `@TrpcContext`, `REQUEST` injection, and request-scoped providers.
+This sample is a runnable extraction for request context and request-scoped DI.
 
-Current canonical implementation lives in:
+It demonstrates:
 
-- `sample/00-showcase/src/common/trpc-context.ts`
-- `sample/00-showcase/src/app.module.ts`
-- `sample/00-showcase/src/users/request-meta.service.ts`
-- `sample/00-showcase/src/users/users.router.ts`
+- `createContext` with typed context
+- `@TrpcContext('requestId')`
+- `REQUEST` injection in a request-scoped provider
+
+## Run
+
+```bash
+npm run test --workspace nest-trpc-native-sample-03-context
+```
+
+## Key Files
+
+- `src/app.module.ts`
+- `src/common/trpc-context.ts`
+- `src/meta/request-meta.service.ts`
+- `src/meta/meta.router.ts`

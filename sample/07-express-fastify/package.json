@@ -1,0 +1,35 @@
+{
+  "name": "nest-trpc-native-sample-07-adapters",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sample 07 - Express and Fastify parity",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist src/@generated",
+    "generate:types": "ts-node --transpile-only src/generate-types.ts",
+    "typecheck": "npm run generate:types && tsc --noEmit -p tsconfig.json",
+    "smoke:express": "npm run generate:types && ts-node --transpile-only scripts/smoke-express.ts",
+    "smoke:fastify": "npm run generate:types && ts-node --transpile-only scripts/smoke-fastify.ts",
+    "test": "npm run typecheck && npm run smoke:express && npm run smoke:fastify",
+    "start": "npm run generate:types && ts-node src/main.ts",
+    "start:fastify": "npm run generate:types && ts-node src/main-fastify.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "11.1.16",
+    "@nestjs/core": "11.1.16",
+    "@nestjs/platform-express": "11.1.16",
+    "@nestjs/platform-fastify": "11.1.16",
+    "@trpc/client": "^11.12.0",
+    "@trpc/server": "^11.12.0",
+    "fastify": "5.8.2",
+    "nest-trpc-native": "0.1.1",
+    "reflect-metadata": "0.2.2",
+    "rimraf": "6.1.3",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.12.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
+  }
+}

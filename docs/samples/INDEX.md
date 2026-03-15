@@ -2,6 +2,19 @@
 
 This index is the fast path for onboarding and contribution.
 
+## Focused Runnable Samples
+
+| Sample | Topic | Command |
+| --- | --- | --- |
+| `sample/01-basics-query-mutation` | Query + mutation essentials | `npm run test --workspace nest-trpc-native-sample-01-basics` |
+| `sample/02-enhancers-guards-pipes-filters` | Guards/interceptors/pipes/filters | `npm run test --workspace nest-trpc-native-sample-02-enhancers` |
+| `sample/03-context-request-scope` | Context + request-scoped providers | `npm run test --workspace nest-trpc-native-sample-03-context` |
+| `sample/04-validation-zod` | Zod input/output validation | `npm run test --workspace nest-trpc-native-sample-04-zod` |
+| `sample/05-validation-class-validator` | DTO + ValidationPipe | `npm run test --workspace nest-trpc-native-sample-05-class-validator` |
+| `sample/06-subscriptions` | Subscription handlers and clients | `npm run test --workspace nest-trpc-native-sample-06-subscriptions` |
+| `sample/07-express-fastify` | Adapter parity | `npm run test --workspace nest-trpc-native-sample-07-adapters` |
+| `sample/08-autoschema-client-typecheck` | AutoSchema + typed client checks | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
+
 ## Suggested Learning Paths
 
 ### 15-minute architecture tour
@@ -49,6 +62,6 @@ This index is the fast path for onboarding and contribution.
 ## Contribution Heuristics
 
 1. Add or change behavior in `sample/00-showcase` first to keep one canonical runnable baseline.
-2. If a topic grows beyond easy scanning, extract a focused sample in `sample/0X-*`.
+2. If a topic grows beyond easy scanning, extract a focused runnable sample in `sample/0X-*`.
 3. Keep each focused sample README short: goal, run command, key files, expected output.
 4. Update this index whenever a new sample or major feature entry point is added.

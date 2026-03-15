@@ -1,8 +1,21 @@
 # Sample 06: Subscriptions
 
-Focus: server-side subscription procedures and client-side subscription consumption.
+This sample is a runnable extraction focused on server-side subscriptions and client consumption.
 
-Current canonical implementation lives in:
+It demonstrates:
 
-- `sample/00-showcase/src/health.router.ts`
-- `sample/00-showcase/src/subscription-client.ts`
+- `@Subscription(...)` procedures
+- async generator events
+- typed client subscription usage (`httpSubscriptionLink`)
+
+## Run
+
+```bash
+npm run test --workspace nest-trpc-native-sample-06-subscriptions
+```
+
+## Key Files
+
+- `src/events.router.ts`
+- `src/events.schema.ts`
+- `src/subscription-client.ts`

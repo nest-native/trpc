@@ -14,7 +14,7 @@ This repository contains:
 
 - `packages/trpc`: the `nest-trpc-native` integration package
 - `sample/00-showcase`: the full end-to-end sample app
-- `sample/*`: future focused samples for single-topic onboarding
+- `sample/01-*` onward: focused runnable samples for single-topic onboarding
 
 `nest-trpc-native` makes tRPC feel native in Nest applications:
 
@@ -205,6 +205,7 @@ npm run ci:sample
 npm run start --workspace nest-trpc-native-showcase
 npm run start:fastify --workspace nest-trpc-native-showcase
 npm run client --workspace nest-trpc-native-showcase
+npm run sample:focused
 ```
 
 For sample details, open `sample/README.md` and `sample/00-showcase/README.md`.

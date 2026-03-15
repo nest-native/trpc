@@ -1,8 +1,19 @@
 # Sample 05: Validation (class-validator + ValidationPipe)
 
-Focus: DTO-based validation with Nest pipes on tRPC procedures.
+This sample is a runnable extraction for Nest DTO validation.
 
-Current canonical implementation lives in:
+It demonstrates:
 
-- `sample/00-showcase/src/users/create-user.dto.ts`
-- `sample/00-showcase/src/users/users.router.ts`
+- class-based DTOs with `class-validator`
+- `@UsePipes(new ValidationPipe(...))` on tRPC procedures
+
+## Run
+
+```bash
+npm run test --workspace nest-trpc-native-sample-05-class-validator
+```
+
+## Key Files
+
+- `src/accounts/create-account.dto.ts`
+- `src/accounts/accounts.router.ts`

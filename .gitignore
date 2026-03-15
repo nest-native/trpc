@@ -3,7 +3,7 @@ dist
 .local
 .local/published-smoke
 .npm-cache
-sample/00-showcase/src/@generated
+sample/**/src/@generated
 *.tsbuildinfo
 .nyc_output
 coverage

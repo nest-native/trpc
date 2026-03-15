@@ -1,10 +1,21 @@
 # Sample 04: Validation (Zod)
 
-Focus: Zod input/output schemas and type inference flow.
+This sample is a runnable extraction for Zod-based input/output validation.
 
-Current canonical implementation lives in:
+It demonstrates:
 
-- `sample/00-showcase/src/cats/cats.schema.ts`
-- `sample/00-showcase/src/users/users.schema.ts`
-- `sample/00-showcase/src/health.schema.ts`
-- `sample/00-showcase/src/cats/cats.router.ts`
+- `@Query({ input, output })` with Zod
+- `@Mutation({ input, output })` with Zod
+- generated `AppRouter` types consumed by a typed client
+
+## Run
+
+```bash
+npm run test --workspace nest-trpc-native-sample-04-zod
+```
+
+## Key Files
+
+- `src/products/products.schema.ts`
+- `src/products/products.router.ts`
+- `src/client.typecheck.ts`
