@@ -41,6 +41,33 @@ describe('TrpcContextCreator (unit)', () => {
     );
   });
 
+  it('should accept enhancer runtime object in constructor', async () => {
+    const runtime = {
+      guardsContextCreator: { create: sinon.stub().returns([]) },
+      guardsConsumer: { tryActivate: sinon.stub().resolves(true) },
+      interceptorsContextCreator: { create: sinon.stub().returns([]) },
+      interceptorsConsumer: { intercept: sinon.stub() },
+      pipesContextCreator: { create: sinon.stub().returns([]) },
+      pipesConsumer: { apply: sinon.stub() },
+      exceptionFiltersContext: createExceptionFiltersContextStub(),
+    };
+
+    const runtimeCreator = new TrpcContextCreator(runtime as any);
+    const instance = {
+      handler: sinon.stub().callsFake((a: unknown, b: unknown) => [a, b]),
+    };
+    const wrapped = runtimeCreator.create(instance, instance.handler, '');
+    const result = await wrapped('input', 'ctx');
+
+    expect(result).to.deep.equal(['input', 'ctx']);
+  });
+
+  it('should throw when legacy constructor args are incomplete', () => {
+    expect(() => {
+      new TrpcContextCreator({ create: sinon.stub() } as any);
+    }).to.throw('Invalid TrpcContextCreator configuration');
+  });
+
   it('should resolve handler args as [input, ctx] when no param metadata exists', async () => {
     const instance = {
       handler: sinon.stub().callsFake((a: unknown, b: unknown) => [a, b]),

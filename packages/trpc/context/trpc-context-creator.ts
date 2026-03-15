@@ -7,16 +7,8 @@ import {
 } from '@nestjs/common';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
 import { Controller } from '@nestjs/common/interfaces';
-import { ExternalExceptionFilterContext } from '@nestjs/core/exceptions/external-exception-filter-context';
-import { ExternalExceptionsHandler } from '@nestjs/core/exceptions/external-exceptions-handler';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
-import { GuardsConsumer } from '@nestjs/core/guards/guards-consumer';
-import { GuardsContextCreator } from '@nestjs/core/guards/guards-context-creator';
 import { STATIC_CONTEXT } from '@nestjs/core/injector/constants';
-import { InterceptorsConsumer } from '@nestjs/core/interceptors/interceptors-consumer';
-import { InterceptorsContextCreator } from '@nestjs/core/interceptors/interceptors-context-creator';
-import { PipesConsumer } from '@nestjs/core/pipes/pipes-consumer';
-import { PipesContextCreator } from '@nestjs/core/pipes/pipes-context-creator';
 import { TRPCError, TRPC_ERROR_CODE_KEY } from '@trpc/server';
 import { isObservable, lastValueFrom } from 'rxjs';
 import { TRPC_PARAM_ARGS_METADATA } from '../constants';
@@ -35,6 +27,96 @@ interface TrpcHandlerOptions {
   resolveInstance: (contextId: { id: number }) => Promise<Controller>;
 }
 
+type TrpcCallback = (...args: any[]) => any;
+type TrpcContextId = { id: number };
+
+interface TrpcGuardsContextCreatorLike {
+  create(
+    instance: Controller,
+    callback: TrpcCallback,
+    moduleKey: string,
+    contextId: TrpcContextId,
+    inquirerId?: string,
+  ): unknown[];
+}
+
+interface TrpcGuardsConsumerLike {
+  tryActivate(
+    guards: unknown[],
+    args: unknown[],
+    instance: Controller,
+    callback: TrpcCallback,
+    type: ContextType,
+  ): Promise<boolean>;
+}
+
+interface TrpcInterceptorsContextCreatorLike {
+  create(
+    instance: Controller,
+    callback: TrpcCallback,
+    moduleKey: string,
+    contextId: TrpcContextId,
+    inquirerId?: string,
+  ): unknown[];
+}
+
+interface TrpcInterceptorsConsumerLike {
+  intercept(
+    interceptors: unknown[],
+    args: unknown[],
+    instance: Controller,
+    callback: TrpcCallback,
+    next: () => Promise<unknown>,
+    type: ContextType,
+  ): Promise<unknown>;
+}
+
+interface TrpcPipesContextCreatorLike {
+  create(
+    instance: Controller,
+    callback: TrpcCallback,
+    moduleKey: string,
+    contextId: TrpcContextId,
+    inquirerId?: string,
+  ): PipeTransform[];
+}
+
+interface TrpcPipesConsumerLike {
+  apply(
+    value: unknown,
+    metadata: {
+      type: unknown;
+      metatype?: unknown;
+      data?: string;
+    },
+    pipes: PipeTransform[],
+  ): Promise<unknown>;
+}
+
+interface TrpcExceptionHandlerLike {
+  next(error: Error, executionContext: ExecutionContextHost): Promise<unknown>;
+}
+
+interface TrpcExceptionFiltersContextLike {
+  create(
+    instance: Controller,
+    callback: TrpcCallback,
+    moduleKey: string,
+    contextId: TrpcContextId,
+    inquirerId?: string,
+  ): TrpcExceptionHandlerLike;
+}
+
+export interface TrpcEnhancerRuntime {
+  guardsContextCreator: TrpcGuardsContextCreatorLike;
+  guardsConsumer: TrpcGuardsConsumerLike;
+  interceptorsContextCreator: TrpcInterceptorsContextCreatorLike;
+  interceptorsConsumer: TrpcInterceptorsConsumerLike;
+  pipesContextCreator: TrpcPipesContextCreatorLike;
+  pipesConsumer: TrpcPipesConsumerLike;
+  exceptionFiltersContext: TrpcExceptionFiltersContextLike;
+}
+
 /**
  * Creates execution-context-aware wrappers for tRPC procedure handlers.
  *
@@ -45,15 +127,71 @@ interface TrpcHandlerOptions {
  */
 @Injectable()
 export class TrpcContextCreator {
+  private readonly runtime: TrpcEnhancerRuntime;
+
+  constructor(runtime: TrpcEnhancerRuntime);
   constructor(
-    private readonly guardsContextCreator: GuardsContextCreator,
-    private readonly guardsConsumer: GuardsConsumer,
-    private readonly interceptorsContextCreator: InterceptorsContextCreator,
-    private readonly interceptorsConsumer: InterceptorsConsumer,
-    private readonly pipesContextCreator: PipesContextCreator,
-    private readonly pipesConsumer: PipesConsumer,
-    private readonly exceptionFiltersContext: ExternalExceptionFilterContext,
-  ) {}
+    guardsContextCreator: TrpcGuardsContextCreatorLike,
+    guardsConsumer: TrpcGuardsConsumerLike,
+    interceptorsContextCreator: TrpcInterceptorsContextCreatorLike,
+    interceptorsConsumer: TrpcInterceptorsConsumerLike,
+    pipesContextCreator: TrpcPipesContextCreatorLike,
+    pipesConsumer: TrpcPipesConsumerLike,
+    exceptionFiltersContext: TrpcExceptionFiltersContextLike,
+  );
+  constructor(
+    runtimeOrGuardsContextCreator:
+      | TrpcEnhancerRuntime
+      | TrpcGuardsContextCreatorLike,
+    guardsConsumer?: TrpcGuardsConsumerLike,
+    interceptorsContextCreator?: TrpcInterceptorsContextCreatorLike,
+    interceptorsConsumer?: TrpcInterceptorsConsumerLike,
+    pipesContextCreator?: TrpcPipesContextCreatorLike,
+    pipesConsumer?: TrpcPipesConsumerLike,
+    exceptionFiltersContext?: TrpcExceptionFiltersContextLike,
+  ) {
+    if (this.isEnhancerRuntime(runtimeOrGuardsContextCreator)) {
+      this.runtime = runtimeOrGuardsContextCreator;
+      return;
+    }
+
+    if (
+      !guardsConsumer ||
+      !interceptorsContextCreator ||
+      !interceptorsConsumer ||
+      !pipesContextCreator ||
+      !pipesConsumer ||
+      !exceptionFiltersContext
+    ) {
+      throw new Error('Invalid TrpcContextCreator configuration');
+    }
+
+    this.runtime = {
+      guardsContextCreator: runtimeOrGuardsContextCreator,
+      guardsConsumer,
+      interceptorsContextCreator,
+      interceptorsConsumer,
+      pipesContextCreator,
+      pipesConsumer,
+      exceptionFiltersContext,
+    };
+  }
+
+  private isEnhancerRuntime(
+    value: TrpcEnhancerRuntime | TrpcGuardsContextCreatorLike,
+  ): value is TrpcEnhancerRuntime {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'guardsContextCreator' in value &&
+      'guardsConsumer' in value &&
+      'interceptorsContextCreator' in value &&
+      'interceptorsConsumer' in value &&
+      'pipesContextCreator' in value &&
+      'pipesConsumer' in value &&
+      'exceptionFiltersContext' in value
+    );
+  }
 
   /**
    * Backward-compatible overload for existing unit tests and internal callers.
@@ -117,28 +255,28 @@ export class TrpcContextCreator {
       }
       const callback = callbackCandidate as (...args: any[]) => any;
 
-      const guards = this.guardsContextCreator.create(
+      const guards = this.runtime.guardsContextCreator.create(
         instance,
         callback,
         options.moduleKey,
         currentContextId,
         options.inquirerId,
       );
-      const interceptors = this.interceptorsContextCreator.create(
+      const interceptors = this.runtime.interceptorsContextCreator.create(
         instance,
         callback,
         options.moduleKey,
         currentContextId,
         options.inquirerId,
       );
-      const pipes = this.pipesContextCreator.create(
+      const pipes = this.runtime.pipesContextCreator.create(
         instance,
         callback,
         options.moduleKey,
         currentContextId,
         options.inquirerId,
       );
-      const exceptionHandler = this.exceptionFiltersContext.create(
+      const exceptionHandler = this.runtime.exceptionFiltersContext.create(
         instance,
         callback as any,
         options.moduleKey,
@@ -156,7 +294,7 @@ export class TrpcContextCreator {
 
       try {
         if (guards.length) {
-          const canActivate = await this.guardsConsumer.tryActivate(
+          const canActivate = await this.runtime.guardsConsumer.tryActivate(
             guards,
             contextArgs,
             instance,
@@ -187,7 +325,7 @@ export class TrpcContextCreator {
 
         const result =
           interceptors.length > 0
-            ? await this.interceptorsConsumer.intercept(
+            ? await this.runtime.interceptorsConsumer.intercept(
                 interceptors,
                 contextArgs,
                 instance,
@@ -206,7 +344,7 @@ export class TrpcContextCreator {
 
   private async handleException(
     error: unknown,
-    exceptionHandler: ExternalExceptionsHandler,
+    exceptionHandler: TrpcExceptionHandlerLike,
     executionContext: ExecutionContextHost,
   ): Promise<unknown> {
     try {
@@ -224,7 +362,7 @@ export class TrpcContextCreator {
   ): Promise<void> {
     const targets = this.getPipeTargets(metadata);
     for (const target of targets) {
-      args[target.index] = await this.pipesConsumer.apply(
+      args[target.index] = await this.runtime.pipesConsumer.apply(
         args[target.index],
         {
           type: RouteParamtypes.BODY as any,

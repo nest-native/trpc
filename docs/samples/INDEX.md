@@ -14,6 +14,7 @@ This index is the fast path for onboarding and contribution.
 | `sample/06-subscriptions` | Subscription handlers and clients | `npm run test --workspace nest-trpc-native-sample-06-subscriptions` |
 | `sample/07-express-fastify` | Adapter parity | `npm run test --workspace nest-trpc-native-sample-07-adapters` |
 | `sample/08-autoschema-client-typecheck` | AutoSchema + typed client checks | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
+| `sample/09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 
 ## Suggested Learning Paths
 
@@ -46,8 +47,10 @@ This index is the fast path for onboarding and contribution.
 | Feature | Primary Files |
 | --- | --- |
 | `TrpcModule.forRootAsync` | `sample/00-showcase/src/app.module.ts` |
+| `forRootAsync` with `ConfigService` | `sample/09-forrootasync-config-middleware/src/app.module.ts` |
 | `@Router`, `@Query`, `@Mutation`, `@Subscription` | `sample/00-showcase/src/cats/cats.router.ts`, `sample/00-showcase/src/users/users.router.ts`, `sample/00-showcase/src/health.router.ts` |
 | `@Input` and `@TrpcContext` | `sample/00-showcase/src/users/users.router.ts`, `sample/00-showcase/src/health.router.ts` |
+| Nest middleware (`configure`) | `sample/09-forrootasync-config-middleware/src/app.module.ts`, `sample/09-forrootasync-config-middleware/src/common/middleware/request-trace.middleware.ts` |
 | Guard integration | `sample/00-showcase/src/common/guards/auth.guard.ts` |
 | Interceptor integration | `sample/00-showcase/src/common/interceptors/logging.interceptor.ts` |
 | Pipe integration | `sample/00-showcase/src/common/pipes/trim.pipe.ts` |
