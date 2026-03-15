@@ -19,7 +19,7 @@
 
 ## Getting Started
 
-See the `showcase` folder in this repository for the full end-to-end sample.
+See `sample/00-showcase` in this repository for the full end-to-end sample.
 
 ## Installation
 
@@ -150,9 +150,9 @@ class UsersRouter {
 export class AppModule {}
 ```
 
-## Showcase
+## Sample
 
-A full production-style showcase lives in `showcase` and demonstrates:
+The full production-style sample lives in `sample/00-showcase` and demonstrates:
 
 - Modular router composition with constructor DI
 - Mixed validation (`zod` + `class-validator`)

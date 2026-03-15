@@ -2,11 +2,11 @@
   "name": "nest-trpc-native-workspace",
   "version": "0.1.0",
   "private": true,
-  "description": "Community standalone monorepo for nest-trpc-native and showcase",
+  "description": "Community standalone monorepo for nest-trpc-native and samples",
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "showcase"
+    "sample/*"
   ],
   "scripts": {
     "postinstall": "npm run build --workspace nest-trpc-native",
@@ -22,8 +22,10 @@
     "presmoke:fastify": "npm run build --workspace nest-trpc-native",
     "smoke:fastify": "npm run smoke:fastify --workspace nest-trpc-native-showcase",
     "showcase": "npm run test --workspace nest-trpc-native-showcase",
+    "sample": "npm run showcase",
     "ci:showcase": "npm run typecheck:client && npm run smoke:express && npm run smoke:fastify",
-    "ci": "npm run test:cov && npm run ci:showcase"
+    "ci:sample": "npm run ci:showcase",
+    "ci": "npm run test:cov && npm run ci:sample"
   },
   "engines": {
     "node": ">=20"

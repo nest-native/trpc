@@ -8,7 +8,7 @@
  *   1. Start the server:  npm run start --workspace nest-trpc-native-showcase
  *   2. Run the client:    npm run client --workspace nest-trpc-native-showcase
  *
- * Or from the showcase/ directory:
+ * Or from the sample/00-showcase directory:
  *   1. Start the server:  npm run start
  *   2. Run the client:    npm run client
  */

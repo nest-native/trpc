@@ -26,8 +26,8 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
   - @Input()                       // optional helper for Zod schemas
 - Generated AppRouter type must be importable and fully typed for the client.
 
-### 3. showcase Folder Rules
-- Must demonstrate:
+### 3. Sample Folder Rules
+- `sample/00-showcase` must demonstrate:
   - Feature modules with routers + services
   - Constructor DI (including request-scoped services)
   - Guards, interceptors, pipes, and filters on procedures
@@ -35,7 +35,8 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
   - Context injection via @TrpcContext
   - Express + Fastify mains
   - Client with full type safety + typecheck step
-- Never simplify the showcase for brevity — richness proves the integration depth.
+- Focused samples under `sample/01-*`, `sample/02-*`, etc. should isolate one topic with minimal noise.
+- Never simplify the full showcase for brevity — richness proves the integration depth.
 
 ### 4. Implementation Rules
 - All routers are plain classes with decorators (no manual createRouter() calls visible to user).

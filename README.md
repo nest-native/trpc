@@ -13,7 +13,8 @@
 This repository contains:
 
 - `packages/trpc`: the `nest-trpc-native` integration package
-- `showcase`: a full sample app
+- `sample/00-showcase`: the full end-to-end sample app
+- `sample/*`: future focused samples for single-topic onboarding
 
 `nest-trpc-native` makes tRPC feel native in Nest applications:
 
@@ -22,6 +23,15 @@ This repository contains:
 - Explicit parameter extraction via `@Input()` and `@TrpcContext()`
 - Full support for guards, interceptors, pipes, filters, and request scope
 - Adapter-agnostic behavior across Express and Fastify
+
+## Sample Layout
+
+The `sample/` directory follows a scalable pattern:
+
+- `sample/00-showcase`: full production-style app with every major capability
+- `sample/01-*` and onward: focused, low-cognitive-load samples by topic
+
+Start with `sample/00-showcase` for end-to-end behavior, then use `sample/README.md` and `docs/samples/INDEX.md` to jump to specific features.
 
 ## Installation
 
@@ -184,10 +194,12 @@ The generic defaults to `any`, so existing code without the type parameter conti
 npm install
 npm run build
 npm run test
-npm run ci:showcase
+npm run ci:sample
 ```
 
-## Showcase Commands
+`ci:showcase` remains as a compatibility alias.
+
+## Sample Commands
 
 ```bash
 npm run start --workspace nest-trpc-native-showcase
@@ -195,4 +207,4 @@ npm run start:fastify --workspace nest-trpc-native-showcase
 npm run client --workspace nest-trpc-native-showcase
 ```
 
-For showcase-specific details, open `showcase/README.md`.
+For sample details, open `sample/README.md` and `sample/00-showcase/README.md`.

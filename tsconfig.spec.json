@@ -4,6 +4,6 @@
     "noEmit": true,
     "types": ["node", "mocha"]
   },
-  "include": ["packages/**/*.ts", "packages/**/*.spec.ts", "showcase/**/*.ts"],
+  "include": ["packages/**/*.ts", "packages/**/*.spec.ts", "sample/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/dist"]
 }

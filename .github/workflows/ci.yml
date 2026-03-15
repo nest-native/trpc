@@ -14,8 +14,8 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  tests-and-showcase:
-    name: Tests + Coverage + Showcase
+  tests-and-samples:
+    name: Tests + Coverage + Samples
     runs-on: ubuntu-latest
 
     steps:
@@ -126,5 +126,5 @@ jobs:
               });
             }
 
-      - name: Run showcase checks
-        run: npm run ci:showcase
+      - name: Run sample checks
+        run: npm run ci:sample
