@@ -8,15 +8,8 @@ import {
   ModulesContainer,
   Reflector,
 } from '@nestjs/core';
-import { ExternalExceptionFilterContext } from '@nestjs/core/exceptions/external-exception-filter-context';
-import { GuardsConsumer } from '@nestjs/core/guards/guards-consumer';
-import { GuardsContextCreator } from '@nestjs/core/guards/guards-context-creator';
 import { ContextIdFactory } from '@nestjs/core/helpers/context-id-factory';
 import { STATIC_CONTEXT } from '@nestjs/core/injector/constants';
-import { InterceptorsConsumer } from '@nestjs/core/interceptors/interceptors-consumer';
-import { InterceptorsContextCreator } from '@nestjs/core/interceptors/interceptors-context-creator';
-import { PipesConsumer } from '@nestjs/core/pipes/pipes-consumer';
-import { PipesContextCreator } from '@nestjs/core/pipes/pipes-context-creator';
 import { initTRPC, AnyRouter } from '@trpc/server';
 import {
   TRPC_INPUT_METADATA,
@@ -27,6 +20,7 @@ import {
   TRPC_ROUTER_METADATA,
 } from './constants';
 import { TrpcContextCreator } from './context/trpc-context-creator';
+import { createTrpcEnhancerRuntime } from './context/trpc-enhancer-runtime.factory';
 import { ProcedureType } from './enums';
 import { generateSchema, RouterInfo } from './generators/schema-generator';
 import { TrpcModuleOptions, TrpcRouterMetadata } from './interfaces';
@@ -51,17 +45,11 @@ export class TrpcRouter<
     @Inject(TRPC_MODULE_OPTIONS)
     private readonly options: TrpcModuleOptions,
   ) {
-    const containerRef = {
-      getModules: () => this.modulesContainer,
-    } as any;
     this.contextCreator = new TrpcContextCreator(
-      new GuardsContextCreator(containerRef, this.applicationConfig),
-      new GuardsConsumer(),
-      new InterceptorsContextCreator(containerRef, this.applicationConfig),
-      new InterceptorsConsumer(),
-      new PipesContextCreator(containerRef, this.applicationConfig),
-      new PipesConsumer(),
-      new ExternalExceptionFilterContext(containerRef, this.applicationConfig),
+      createTrpcEnhancerRuntime(
+        this.modulesContainer,
+        this.applicationConfig,
+      ),
     );
   }
 

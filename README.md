@@ -31,7 +31,15 @@ The `sample/` directory follows a scalable pattern:
 - `sample/00-showcase`: full production-style app with every major capability
 - `sample/01-*` and onward: focused, low-cognitive-load samples by topic
 
-Start with `sample/00-showcase` for end-to-end behavior, then use `sample/README.md` and `docs/samples/INDEX.md` to jump to specific features.
+Start with `sample/00-showcase` for end-to-end behavior, then use [sample/README.md](sample/README.md) and [docs/samples/INDEX.md](docs/samples/INDEX.md) to jump to specific features.
+
+## Setup Patterns
+
+For explicit monorepo and microservice transport topologies, see [docs/setup/monorepo-and-microservices.md](docs/setup/monorepo-and-microservices.md).
+
+For explicit `forRootAsync + ConfigService + middleware`, run:
+
+- `npm run test --workspace nest-trpc-native-sample-09-config-middleware`
 
 ## Installation
 
@@ -73,6 +81,10 @@ No. Zod is optional.
 - If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and schema generation based on those schemas, then your app should install Zod.
 
 We keep Zod support because it is core to tRPC-native DX, but we keep it optional so non-Zod users are not forced to install it.
+
+## Nest Compatibility Boundary
+
+Enhancer lifecycle behavior is preserved through a narrow internal boundary so Nest-version-sensitive wiring stays isolated. See [docs/compatibility/nest-internals-boundary.md](docs/compatibility/nest-internals-boundary.md).
 
 ## Quick Start
 
@@ -208,4 +220,4 @@ npm run client --workspace nest-trpc-native-showcase
 npm run sample:focused
 ```
 
-For sample details, open `sample/README.md` and `sample/00-showcase/README.md`.
+For sample details, open [sample/README.md](sample/README.md) and [sample/00-showcase/README.md](sample/00-showcase/README.md).

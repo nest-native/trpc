@@ -7,6 +7,7 @@ This repository uses a hybrid model to keep samples understandable while preserv
 - `packages/trpc`: publishable integration package.
 - `sample/00-showcase`: full runnable baseline.
 - `sample/01-*` onward: focused runnable sample slices for fast onboarding.
+- `sample/09-forrootasync-config-middleware`: explicit async config + middleware scenario.
 
 Why:
 
