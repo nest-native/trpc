@@ -1,6 +1,6 @@
 {
   "name": "nest-trpc-native-sample-07-adapters",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "description": "Sample 07 - Express and Fastify parity",
   "license": "MIT",

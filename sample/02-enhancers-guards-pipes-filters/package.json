@@ -1,6 +1,6 @@
 {
   "name": "nest-trpc-native-sample-02-enhancers",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "description": "Sample 02 - Guards, interceptors, pipes, and filters",
   "license": "MIT",

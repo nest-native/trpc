@@ -1,6 +1,6 @@
 {
   "name": "nest-trpc-native-showcase",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "description": "Showcase application for nest-trpc-native",
   "license": "MIT",
