@@ -1,6 +1,6 @@
 {
   "name": "nest-trpc-native-sample-05-class-validator",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "description": "Sample 05 - class-validator and ValidationPipe",
   "license": "MIT",
