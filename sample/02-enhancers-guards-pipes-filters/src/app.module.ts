@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { join } from 'path';
 import { TrpcModule } from 'nest-trpc-native';
 import {
@@ -8,6 +9,7 @@ import {
   TRPC_REQUEST_ID_HEADER,
 } from './common/trpc-context';
 import { ApiKeyGuard } from './common/guards/api-key.guard';
+import { RequestIdGuard } from './common/guards/request-id.guard';
 import { ExecutionTimeInterceptor } from './common/interceptors/execution-time.interceptor';
 import { TrimPipe } from './common/pipes/trim.pipe';
 import { RemapBadRequestFilter } from './common/filters/remap-bad-request.filter';
@@ -36,9 +38,17 @@ import { NotesService } from './notes/notes.service';
     NotesService,
     NotesRouter,
     ApiKeyGuard,
+    RequestIdGuard,
     ExecutionTimeInterceptor,
-    TrimPipe,
     RemapBadRequestFilter,
+    {
+      provide: APP_GUARD,
+      useClass: RequestIdGuard,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: TrimPipe,
+    },
   ],
 })
 export class AppModule {}

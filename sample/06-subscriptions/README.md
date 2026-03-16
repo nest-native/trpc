@@ -6,6 +6,7 @@ It demonstrates:
 
 - `@Subscription(...)` procedures
 - async generator events
+- `observable()` events from `@trpc/server/observable`
 - typed client subscription usage (`httpSubscriptionLink`)
 
 ## Run

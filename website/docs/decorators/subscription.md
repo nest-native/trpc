@@ -6,6 +6,13 @@ sidebar_position: 3
 
 The `@Subscription()` decorator defines a tRPC subscription procedure for real-time data streaming.
 
+## Both Patterns Work
+
+`nest-trpc-native` supports both tRPC subscription return styles:
+
+- async generators (`async function*`) - recommended default
+- `observable()` from `@trpc/server/observable` - fully supported
+
 ## Async Generators (Recommended)
 
 tRPC v11 recommends **async generators** for subscriptions. This is the pattern used throughout the samples:
@@ -64,28 +71,43 @@ const subscription = client.ticks.subscribe(
 subscription.unsubscribe();
 ```
 
-## Observable Pattern (Legacy)
+## Observable Pattern (Also Supported)
 
-The `observable()` pattern from `@trpc/server/observable` is still supported but no longer the recommended approach in tRPC v11:
+Use `observable()` when you prefer push-style emission/teardown semantics:
 
 ```ts
-import { Router, Subscription } from 'nest-trpc-native';
+import { Input, Router, Subscription, TrpcContext } from 'nest-trpc-native';
 import { observable } from '@trpc/server/observable';
+import { z } from 'zod';
+
+const TickInputSchema = z.object({ count: z.number().optional() });
 
 @Router('cats')
 class CatsRouter {
-  @Subscription()
-  onCatCreated() {
+  @Subscription({ input: TickInputSchema })
+  ticks(
+    @Input('count') count: number | undefined,
+    @TrpcContext('requestId') requestId: string,
+  ) {
     return observable((emit) => {
+      let tick = 0;
+      const total = count ?? 3;
       const interval = setInterval(() => {
-        emit.next({ id: crypto.randomUUID(), name: 'New Cat' });
-      }, 1000);
+        tick += 1;
+        emit.next({ tick, requestId });
+        if (tick >= total) {
+          clearInterval(interval);
+          emit.complete();
+        }
+      }, 300);
 
       return () => clearInterval(interval);
     });
   }
 }
 ```
+
+Use whichever model matches your team style. For new code, async generators are typically easier to read and test.
 
 :::info Transport
 Subscriptions use **Server-Sent Events (SSE)** by default in tRPC v11 via `httpSubscriptionLink`. WebSocket transport is also available. See the [tRPC subscriptions docs](https://trpc.io/docs/subscriptions) for transport options.

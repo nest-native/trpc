@@ -67,3 +67,23 @@ create(@Input() input: { name: string }) {
   return { id: '1', ...input };
 }
 ```
+
+## Global Pipes
+
+Global pipes registered via `APP_PIPE` apply to all tRPC procedures:
+
+```ts
+import { APP_PIPE } from '@nestjs/core';
+
+@Module({
+  providers: [
+    { provide: APP_PIPE, useClass: TrimPipe },
+  ],
+})
+export class AppModule {}
+```
+
+See the runnable example:
+
+- `sample/02-enhancers-guards-pipes-filters/src/app.module.ts`
+- `sample/02-enhancers-guards-pipes-filters/src/common/pipes/trim.pipe.ts`

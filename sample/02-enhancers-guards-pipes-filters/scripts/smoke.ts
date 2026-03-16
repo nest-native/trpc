@@ -47,12 +47,30 @@ async function smoke() {
       ],
     });
 
+    const invalidRequestIdClient = createTRPCProxyClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          url: `${baseUrl}${TRPC_PATH}`,
+          headers: {
+            [TRPC_REQUEST_ID_HEADER]: 'bad',
+            [TRPC_API_KEY_HEADER]: DEMO_API_KEY,
+          },
+        }),
+      ],
+    });
+
     const searchResults = await authedClient.notes.search.query({
       query: '  hello  ',
     });
     if (searchResults.length !== 1) {
-      throw new Error('Expected trim pipe to allow note lookup by trimmed query');
+      throw new Error(
+        'Expected global APP_PIPE trim behavior to allow note lookup by trimmed query',
+      );
     }
+
+    await expectFailure('global guard', async () => {
+      await invalidRequestIdClient.notes.list.query();
+    });
 
     await expectFailure('guard', async () => {
       await anonClient.notes.create.mutate({ text: 'blocked' });

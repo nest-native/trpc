@@ -3,7 +3,6 @@ import {
   UseFilters,
   UseGuards,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import {
   Input,
@@ -15,7 +14,6 @@ import {
 import { RemapBadRequestFilter } from '../common/filters/remap-bad-request.filter';
 import { ApiKeyGuard } from '../common/guards/api-key.guard';
 import { ExecutionTimeInterceptor } from '../common/interceptors/execution-time.interceptor';
-import { TrimPipe } from '../common/pipes/trim.pipe';
 import { parseCreateNoteInput, parseNoteSearchInput } from './notes.schema';
 import { NotesService } from './notes.service';
 
@@ -30,7 +28,6 @@ export class NotesRouter {
   }
 
   @Query({ input: parseNoteSearchInput })
-  @UsePipes(TrimPipe)
   search(@Input('query') query: string) {
     return this.notesService.search(query);
   }

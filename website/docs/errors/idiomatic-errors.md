@@ -128,3 +128,5 @@ Reference tests:
 
 - `packages/trpc/test/context/trpc-context-creator.spec.ts`
 - `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`
+
+For advanced remapping and app-code conventions, see [Advanced Error Handling](../advanced/error-handling).
