@@ -7,6 +7,17 @@ import ts from 'typescript';
 const ROOT = process.cwd();
 const DOCS_DIR = path.join(ROOT, 'website', 'docs');
 const OUT_DIR = path.join(ROOT, '.tmp', 'docs-snippets');
+const HEADER_LINES = 3;
+
+const MODE = parseMode(process.argv);
+
+const UNIT_DOC_PATHS = new Set([
+  'installation.md',
+  'introduction.md',
+  'advanced/monorepo.md',
+  'advanced/microservices.md',
+  'advanced/nest-internals.md',
+]);
 
 const FENCE_RE = /```(?:ts|typescript)([^\n]*)\n([\s\S]*?)```/g;
 const SKIP_MARKERS = ['no-doc-check', 'ignore-doc-check'];
@@ -45,6 +56,44 @@ function findTopLevelDecoratorIndex(lines) {
   }
 
   return lastTopLevelDecoratorIndex;
+}
+
+function parseMode(argv) {
+  const direct = argv.find(arg => arg.startsWith('--mode='));
+  const value = direct ? direct.split('=')[1] : undefined;
+
+  if (!value) {
+    const modeIndex = argv.findIndex(arg => arg === '--mode');
+    if (modeIndex >= 0 && argv[modeIndex + 1]) {
+      return normalizeMode(argv[modeIndex + 1]);
+    }
+
+    return 'all';
+  }
+
+  return normalizeMode(value);
+}
+
+function normalizeMode(mode) {
+  if (mode === 'unit' || mode === 'sample' || mode === 'all') {
+    return mode;
+  }
+
+  console.error(`Invalid --mode value: ${mode}. Expected one of: all, unit, sample.`);
+  process.exit(1);
+}
+
+function classifyDocMode(filePath) {
+  const rel = path.relative(DOCS_DIR, filePath).replace(/\\/g, '/');
+  return UNIT_DOC_PATHS.has(rel) ? 'unit' : 'sample';
+}
+
+function shouldIncludeForMode(docMode) {
+  if (MODE === 'all') {
+    return true;
+  }
+
+  return MODE === docMode;
 }
 
 function normalizeSnippet(code) {
@@ -107,6 +156,11 @@ function extractSnippetsFromFile(filePath) {
   const snippets = [];
   let match;
   let index = 0;
+  const docMode = classifyDocMode(filePath);
+
+  if (!shouldIncludeForMode(docMode)) {
+    return snippets;
+  }
 
   while ((match = FENCE_RE.exec(content)) !== null) {
     const fenceMeta = (match[1] ?? '').trim();
@@ -124,14 +178,30 @@ function extractSnippetsFromFile(filePath) {
       code: snippet,
       index,
       fenceMeta,
+      docMode,
+      sourcePath: path.relative(ROOT, filePath).replace(/\\/g, '/'),
+      sourceStartLine: lineNumberAt(content, match.index) + 1,
+      sourceEndLine: lineNumberAt(content, match.index + match[0].length - 1),
     });
   }
 
   return snippets;
 }
 
+function lineNumberAt(content, offset) {
+  let lines = 1;
+  for (let i = 0; i < offset; i += 1) {
+    if (content[i] === '\n') {
+      lines += 1;
+    }
+  }
+
+  return lines;
+}
+
 function writeSnippetFiles(markdownFiles) {
   const generatedFiles = [];
+  const snippetIndex = new Map();
   let snippetCount = 0;
 
   for (const mdFile of markdownFiles) {
@@ -152,14 +222,18 @@ function writeSnippetFiles(markdownFiles) {
       fs.writeFileSync(outPath, body, 'utf8');
 
       generatedFiles.push(outPath);
+      snippetIndex.set(path.resolve(outPath), {
+        ...snippet,
+        generatedPath: path.relative(ROOT, outPath).replace(/\\/g, '/'),
+      });
       snippetCount += 1;
     }
   }
 
-  return { generatedFiles, snippetCount };
+  return { generatedFiles, snippetCount, snippetIndex };
 }
 
-function formatDiagnostic(diagnostic) {
+function formatDiagnostic(diagnostic, snippetIndex) {
   const file = diagnostic.file;
   const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
 
@@ -168,8 +242,17 @@ function formatDiagnostic(diagnostic) {
   }
 
   const pos = file.getLineAndCharacterOfPosition(diagnostic.start);
-  const relPath = path.relative(ROOT, file.fileName);
-  return `${relPath}:${pos.line + 1}:${pos.character + 1} - TS${diagnostic.code}: ${message}`;
+  const meta = snippetIndex.get(path.resolve(file.fileName));
+
+  if (!meta) {
+    const relPath = path.relative(ROOT, file.fileName).replace(/\\/g, '/');
+    return `${relPath}:${pos.line + 1}:${pos.character + 1} - TS${diagnostic.code}: ${message}`;
+  }
+
+  const snippetLine = Math.max(1, pos.line + 1 - HEADER_LINES);
+  return `${meta.sourcePath}:${meta.sourceStartLine}-${meta.sourceEndLine} ` +
+    `(snippet ${meta.index}, mode=${meta.docMode}, generated-line=${snippetLine}) - ` +
+    `TS${diagnostic.code}: ${message}`;
 }
 
 function runTypecheck(fileNames) {
@@ -209,29 +292,29 @@ function main() {
   cleanOutDir();
 
   const markdownFiles = collectMarkdownFiles(DOCS_DIR);
-  const { generatedFiles, snippetCount } = writeSnippetFiles(markdownFiles);
+  const { generatedFiles, snippetCount, snippetIndex } = writeSnippetFiles(markdownFiles);
 
   if (generatedFiles.length === 0) {
-    console.log('No TypeScript snippets found in website/docs.');
+    console.log(`No TypeScript snippets found in website/docs for mode=${MODE}.`);
     process.exit(0);
   }
 
   const diagnostics = runTypecheck(generatedFiles);
 
   if (diagnostics.length > 0) {
-    console.error(`Docs snippet typecheck failed.`);
+    console.error(`Docs snippet typecheck failed (mode=${MODE}).`);
     console.error(`Checked ${snippetCount} snippets from ${markdownFiles.length} docs files.`);
     console.error('');
 
     for (const diagnostic of diagnostics) {
-      console.error(formatDiagnostic(diagnostic));
+      console.error(formatDiagnostic(diagnostic, snippetIndex));
     }
 
     process.exit(1);
   }
 
   console.log(
-    `Docs snippet typecheck passed (${snippetCount} snippets, ${markdownFiles.length} files).`,
+    `Docs snippet typecheck passed (mode=${MODE}, ${snippetCount} snippets, ${markdownFiles.length} files).`,
   );
 }
 

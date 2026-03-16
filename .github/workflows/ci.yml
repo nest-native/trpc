@@ -30,8 +30,11 @@ jobs:
       - name: Run package tests with coverage
         run: npm run test:cov
 
-      - name: Typecheck docs snippets
-        run: npm run docs:test:typecheck
+      - name: Typecheck docs snippets (unit)
+        run: npm run docs:test:typecheck:unit
+
+      - name: Typecheck docs snippets (sample-mapped)
+        run: npm run docs:test:typecheck:sample
 
       - name: Build docs site
         run: npm --prefix website run build
