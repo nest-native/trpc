@@ -17,3 +17,9 @@ npm run test --workspace nest-trpc-native-sample-01-basics
 - `src/app.module.ts`
 - `src/todos/todos.router.ts`
 - `src/todos/todos.service.ts`
+- `__tests__/todos.router.spec.ts`
+
+## Test Patterns Included
+
+- direct class-level router unit tests (service delegation)
+- in-process tRPC caller tests using `TrpcRouter.getRouter().createCaller(...)`

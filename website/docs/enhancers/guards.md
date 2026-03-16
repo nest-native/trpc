@@ -30,9 +30,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 @Injectable()
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-    const token = request.headers['authorization'];
-    return !!token;
+    const trpcCtx = context.getArgs()[1] as { apiKey?: string } | undefined;
+    return trpcCtx?.apiKey === 'sample-secret';
   }
 }
 ```
@@ -62,6 +61,8 @@ class CatsRouter {
 Global guards registered via `APP_GUARD` apply to all tRPC procedures automatically:
 
 ```ts
+import { APP_GUARD } from '@nestjs/core';
+
 @Module({
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
@@ -69,3 +70,8 @@ Global guards registered via `APP_GUARD` apply to all tRPC procedures automatica
 })
 export class AppModule {}
 ```
+
+See the runnable example with both global and method-level guards:
+
+- `sample/02-enhancers-guards-pipes-filters/src/app.module.ts`
+- `sample/02-enhancers-guards-pipes-filters/src/common/guards/request-id.guard.ts`
