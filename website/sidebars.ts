@@ -36,6 +36,11 @@ const sidebars: SidebarsConfig = {
       label: 'Validation',
       items: ['validation/zod', 'validation/class-validator'],
     },
+    {
+      type: 'category',
+      label: 'Testing & Errors',
+      items: ['testing/router-testing', 'errors/idiomatic-errors'],
+    },
     'schema-generation',
     'express-and-fastify',
     {
