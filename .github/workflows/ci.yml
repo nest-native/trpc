@@ -36,6 +36,9 @@ jobs:
       - name: Typecheck docs snippets (sample-mapped)
         run: npm run docs:test:typecheck:sample
 
+      - name: Install docs website dependencies
+        run: npm --prefix website ci
+
       - name: Build docs site
         run: npm --prefix website run build
 
