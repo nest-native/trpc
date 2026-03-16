@@ -108,6 +108,7 @@ const created = await trpc.users.create.mutate({ name: 'Bob' });
 - [Module Setup](./module-setup/for-root) — configure `TrpcModule` options
 - [Decorators](./decorators/router) — `@Router`, `@Query`, `@Mutation`, `@Subscription`
 - [Enhancers](./enhancers/guards) — guards, interceptors, pipes, filters
+- [Samples](./samples) — runnable showcase + focused examples by topic
 - [Router Testing](./testing/router-testing) — in-process, HTTP smoke, and client typecheck layers
 - [Idiomatic Error Handling](./errors/idiomatic-errors) — Nest exceptions, filters, and tRPC codes
 - [Migration from REST/GraphQL](./advanced/migration-from-rest-or-graphql) — map existing controllers/resolvers to routers
