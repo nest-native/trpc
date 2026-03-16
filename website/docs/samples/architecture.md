@@ -41,3 +41,7 @@ Why:
 1. Implement or refine behavior in `sample/00-showcase` first.
 2. If a topic becomes hard to scan, extract a focused runnable sample in `sample/0X-*`.
 3. Keep focused samples minimal and single-purpose.
+
+Example:
+
+- `sample/11-microservice-transport` isolates gateway-to-microservice messaging via Nest transport, without bloating `00-showcase`.
