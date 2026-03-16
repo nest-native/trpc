@@ -19,6 +19,7 @@ sidebar_position: 2
 | `sample/08-autoschema-client-typecheck` | `autoSchemaFile` + typed client checks | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
 | `sample/09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 | `sample/10-nested-alias-routers` | Dotted aliases mapped to nested routers | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
+| `sample/11-microservice-transport` | tRPC gateway with Nest microservice transport (TCP) | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 
 ## GitHub Folders
 
@@ -33,3 +34,4 @@ sidebar_position: 2
 - [08-autoschema-client-typecheck](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/08-autoschema-client-typecheck)
 - [09-forrootasync-config-middleware](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/09-forrootasync-config-middleware)
 - [10-nested-alias-routers](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/10-nested-alias-routers)
+- [11-microservice-transport](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/11-microservice-transport)
