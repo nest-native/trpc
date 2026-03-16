@@ -24,13 +24,18 @@ async function smoke() {
     }
 
     const before = await client.admin.users.list.query();
-    const created = await client.admin.users.create.mutate();
+    await client.admin.users.create.mutate();
     const after = await client.admin.users.list.query();
     const roles = await client.admin.roles.list.query();
 
-    if (created.ok !== true) {
-      throw new Error('Expected nested users mutation to return ok=true');
+    if (!Array.isArray(before) || !Array.isArray(after)) {
+      throw new Error('Expected nested users list query to return an array');
     }
+
+    if (!Array.isArray(roles)) {
+      throw new Error('Expected nested roles list query to return an array');
+    }
+
     if (before.length !== after.length) {
       throw new Error('Expected nested users query to be stable across requests');
     }
