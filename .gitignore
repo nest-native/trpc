@@ -7,3 +7,4 @@ sample/**/src/@generated
 *.tsbuildinfo
 .nyc_output
 coverage
+.tmp

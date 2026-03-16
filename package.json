@@ -15,6 +15,8 @@
     "test": "TS_NODE_PROJECT=tsconfig.spec.json mocha packages/**/*.spec.ts",
     "test:cov": "TS_NODE_PROJECT=tsconfig.spec.json nyc mocha packages/**/*.spec.ts",
     "test:watch": "TS_NODE_PROJECT=tsconfig.spec.json mocha -w --watch-files \"packages\" packages/**/*.spec.ts",
+    "docs:test:typecheck": "node scripts/docs-snippets-typecheck.mjs",
+    "ci:docs": "npm run docs:test:typecheck && npm --prefix website run build",
     "pretypecheck:client": "npm run build --workspace nest-trpc-native",
     "typecheck:client": "npm run typecheck:client --workspace nest-trpc-native-showcase",
     "presmoke:express": "npm run build --workspace nest-trpc-native",
@@ -27,7 +29,7 @@
     "sample": "npm run showcase && npm run sample:focused",
     "ci:showcase": "npm run typecheck:client && npm run smoke:express && npm run smoke:fastify",
     "ci:sample": "npm run ci:showcase && npm run sample:focused",
-    "ci": "npm run test:cov && npm run ci:sample"
+    "ci": "npm run test:cov && npm run ci:docs && npm run ci:sample"
   },
   "engines": {
     "node": ">=20"
