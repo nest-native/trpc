@@ -51,6 +51,7 @@ const sidebars: SidebarsConfig = {
         'advanced/monorepo',
         'advanced/microservices',
         'advanced/middleware',
+        'advanced/migration-from-rest-or-graphql',
         'advanced/error-handling',
         'advanced/nest-internals',
       ],

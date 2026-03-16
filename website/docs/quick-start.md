@@ -110,3 +110,4 @@ const created = await trpc.users.create.mutate({ name: 'Bob' });
 - [Enhancers](./enhancers/guards) — guards, interceptors, pipes, filters
 - [Router Testing](./testing/router-testing) — in-process, HTTP smoke, and client typecheck layers
 - [Idiomatic Error Handling](./errors/idiomatic-errors) — Nest exceptions, filters, and tRPC codes
+- [Migration from REST/GraphQL](./advanced/migration-from-rest-or-graphql) — map existing controllers/resolvers to routers
