@@ -221,7 +221,7 @@ export class TrpcRouter<
 
       if (Object.keys(procedureMap).length > 0) {
         if (alias) {
-          routerMap[alias] = t.router(procedureMap);
+          this.assignAliasedRouter(routerMap, alias, t.router(procedureMap));
         } else {
           Object.assign(routerMap, procedureMap);
         }
@@ -230,6 +230,37 @@ export class TrpcRouter<
     }
 
     return t.router(routerMap);
+  }
+
+  private assignAliasedRouter(
+    routerMap: Record<string, any>,
+    alias: string,
+    router: AnyRouter,
+  ): void {
+    const segments = alias
+      .split('.')
+      .map(segment => segment.trim())
+      .filter(Boolean);
+
+    if (segments.length === 0) {
+      return;
+    }
+
+    let cursor: Record<string, any> = routerMap;
+
+    for (let index = 0; index < segments.length - 1; index += 1) {
+      const segment = segments[index];
+      const next = cursor[segment];
+
+      if (!next || typeof next !== 'object') {
+        cursor[segment] = {};
+      }
+
+      cursor = cursor[segment] as Record<string, any>;
+    }
+
+    const leaf = segments[segments.length - 1];
+    cursor[leaf] = router;
   }
 
   private resolveContextId(wrapper: any): { id: number } {

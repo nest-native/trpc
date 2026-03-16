@@ -113,18 +113,17 @@ export function generateSchemaContent(routers: RouterInfo[]): string {
     lines.push('');
   }
 
-  const routerEntries: string[] = [];
+  const nestedRouterMap: Record<string, any> = {};
 
   for (const [alias, procedures] of aliasedGroups) {
     const procedureLines = procedures.map(p => `    ${formatProcedure(p)},`);
-    routerEntries.push(
-      `  ${alias}: t.router({\n${procedureLines.join('\n')}\n  })`,
-    );
+    const routerBlock = `t.router({\n${procedureLines.join('\n')}\n  })`;
+    assignNestedAliasEntry(nestedRouterMap, alias, routerBlock);
   }
 
-  for (const proc of rootProcedures) {
-    routerEntries.push(`  ${formatProcedure(proc)}`);
-  }
+  const nestedEntries = renderNestedMapEntries(nestedRouterMap, 1);
+  const rootEntries = rootProcedures.map(proc => `  ${formatProcedure(proc)}`);
+  const routerEntries = [...nestedEntries, ...rootEntries];
 
   lines.push('const appRouter = t.router({');
   lines.push(routerEntries.join(',\n'));
@@ -134,6 +133,56 @@ export function generateSchemaContent(routers: RouterInfo[]): string {
   lines.push('');
 
   return lines.join('\n');
+}
+
+function assignNestedAliasEntry(
+  target: Record<string, any>,
+  alias: string,
+  routerBlock: string,
+): void {
+  const segments = alias
+    .split('.')
+    .map(segment => segment.trim())
+    .filter(Boolean);
+
+  if (segments.length === 0) {
+    return;
+  }
+
+  let cursor = target;
+  for (let index = 0; index < segments.length - 1; index += 1) {
+    const segment = segments[index];
+    const existing = cursor[segment];
+    if (!existing || typeof existing !== 'object') {
+      cursor[segment] = {};
+    }
+    cursor = cursor[segment];
+  }
+
+  cursor[segments[segments.length - 1]] = routerBlock;
+}
+
+function renderNestedMapEntries(
+  node: Record<string, any>,
+  depth: number,
+): string[] {
+  const indent = '  '.repeat(depth);
+  const childIndent = '  '.repeat(depth + 1);
+  const entries: string[] = [];
+
+  for (const [key, value] of Object.entries(node)) {
+    if (typeof value === 'string') {
+      entries.push(`${indent}${key}: ${value}`);
+      continue;
+    }
+
+    const children = renderNestedMapEntries(value as Record<string, any>, depth + 1);
+    entries.push(
+      `${indent}${key}: {\n${children.join(',\n')}\n${indent}}`,
+    );
+  }
+
+  return entries;
 }
 
 function formatProcedure(proc: RenderableProcedure): string {

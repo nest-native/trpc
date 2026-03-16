@@ -44,6 +44,14 @@ class TypedRouter {
   }
 }
 
+@Router('admin.users')
+class NestedAliasRouter {
+  @Query()
+  list() {
+    return ['alice', 'bob'];
+  }
+}
+
 @Injectable()
 class PlainService {
   doWork() {
@@ -149,6 +157,25 @@ describe('TrpcRouter', () => {
     const caller = router.createCaller({});
     const result = await (caller as any).ping();
     expect(result).to.equal('pong');
+  });
+});
+
+describe('TrpcRouter (nested aliases)', () => {
+  it('should register dotted aliases as nested router objects', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [TrpcModule.forRoot({ path: '/trpc' })],
+      providers: [NestedAliasRouter],
+    }).compile();
+
+    await module.init();
+
+    const router = module.get(TrpcRouter).getRouter();
+    const procedures = router._def.procedures;
+    expect(procedures).to.have.property('admin.users.list');
+
+    const caller = router.createCaller({}) as any;
+    const result = await caller.admin.users.list();
+    expect(result).to.deep.equal(['alice', 'bob']);
   });
 });
 

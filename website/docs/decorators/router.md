@@ -19,6 +19,22 @@ class CatsRouter {
 
 This creates a tRPC router namespace at `cats`, so procedures are accessed as `trpc.cats.list.query()` on the client.
 
+## Multi-Level Namespaces
+
+You can use dotted aliases to create nested router objects:
+
+```ts
+@Router('admin.users')
+class AdminUsersRouter {
+  @Query()
+  list() {
+    return [];
+  }
+}
+```
+
+Client usage: `trpc.admin.users.list.query()`.
+
 ## Root-Level Procedures
 
 Pass an empty string or omit the argument to define flat procedures at the root:

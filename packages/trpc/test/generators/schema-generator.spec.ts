@@ -150,6 +150,23 @@ describe('generateSchemaContent', () => {
     expect(content).to.include('create: t.procedure.mutation');
   });
 
+  it('should generate nested router objects for dotted aliases', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: 'admin.users',
+        procedures: [{ name: 'list', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+
+    expect(content).to.include('admin: {');
+    expect(content).to.include('users: t.router({');
+    expect(content).to.include(
+      'list: t.procedure.query(() => undefined as unknown)',
+    );
+  });
+
   it('should include the auto-generated header', () => {
     const content = generateSchemaContent([]);
     expect(content).to.include('THIS FILE WAS AUTOMATICALLY GENERATED');
