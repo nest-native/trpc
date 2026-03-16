@@ -28,5 +28,6 @@ npm run ci:sample
 | `07-express-fastify` | Adapter parity | Runnable | `npm run test --workspace nest-trpc-native-sample-07-adapters` |
 | `08-autoschema-client-typecheck` | `autoSchemaFile` + typed client checks | Runnable | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
 | `09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | Runnable | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
+| `10-nested-alias-routers` | Dotted aliases as nested router objects | Runnable | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 
 Use `docs/samples/INDEX.md` for file-level pointers and `docs/samples/ARCHITECTURE.md` for structural rationale.

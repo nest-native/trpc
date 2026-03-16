@@ -15,6 +15,7 @@ This index is the fast path for onboarding and contribution.
 | `sample/07-express-fastify` | Adapter parity | `npm run test --workspace nest-trpc-native-sample-07-adapters` |
 | `sample/08-autoschema-client-typecheck` | AutoSchema + typed client checks | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
 | `sample/09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
+| `sample/10-nested-alias-routers` | Dotted aliases to nested router objects | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 
 ## Suggested Learning Paths
 
@@ -48,6 +49,7 @@ This index is the fast path for onboarding and contribution.
 | --- | --- |
 | `TrpcModule.forRootAsync` | `sample/00-showcase/src/app.module.ts` |
 | `forRootAsync` with `ConfigService` | `sample/09-forrootasync-config-middleware/src/app.module.ts` |
+| Dotted alias nesting (`admin.users`) | `sample/10-nested-alias-routers/src/admin/users.router.ts`, `sample/10-nested-alias-routers/src/admin/roles.router.ts`, `sample/10-nested-alias-routers/scripts/smoke.ts` |
 | `@Router`, `@Query`, `@Mutation`, `@Subscription` | `sample/00-showcase/src/cats/cats.router.ts`, `sample/00-showcase/src/users/users.router.ts`, `sample/00-showcase/src/health.router.ts` |
 | `@Input` and `@TrpcContext` | `sample/00-showcase/src/users/users.router.ts`, `sample/00-showcase/src/health.router.ts` |
 | Nest middleware (`configure`) | `sample/09-forrootasync-config-middleware/src/app.module.ts`, `sample/09-forrootasync-config-middleware/src/common/middleware/request-trace.middleware.ts` |
