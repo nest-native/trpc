@@ -52,6 +52,22 @@ class NestedAliasRouter {
   }
 }
 
+@Router('admin.roles')
+class NestedSiblingAliasRouter {
+  @Query()
+  list() {
+    return ['maintainer'];
+  }
+}
+
+@Router(' . ')
+class BlankDottedAliasRouter {
+  @Query()
+  hidden() {
+    return 'hidden';
+  }
+}
+
 @Injectable()
 class PlainService {
   doWork() {
@@ -176,6 +192,39 @@ describe('TrpcRouter (nested aliases)', () => {
     const caller = router.createCaller({}) as any;
     const result = await caller.admin.users.list();
     expect(result).to.deep.equal(['alice', 'bob']);
+  });
+
+  it('should preserve sibling nested aliases under the same parent', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [TrpcModule.forRoot({ path: '/trpc' })],
+      providers: [NestedAliasRouter, NestedSiblingAliasRouter],
+    }).compile();
+
+    await module.init();
+
+    const router = module.get(TrpcRouter).getRouter();
+    const procedures = router._def.procedures;
+    expect(procedures).to.have.property('admin.users.list');
+    expect(procedures).to.have.property('admin.roles.list');
+
+    const caller = router.createCaller({}) as any;
+    const users = await caller.admin.users.list();
+    const roles = await caller.admin.roles.list();
+    expect(users).to.deep.equal(['alice', 'bob']);
+    expect(roles).to.deep.equal(['maintainer']);
+  });
+
+  it('should ignore dotted aliases that normalize to empty segments', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [TrpcModule.forRoot({ path: '/trpc' })],
+      providers: [BlankDottedAliasRouter],
+    }).compile();
+
+    await module.init();
+
+    const router = module.get(TrpcRouter).getRouter();
+    const procedures = router._def.procedures;
+    expect(Object.keys(procedures)).to.deep.equal([]);
   });
 });
 

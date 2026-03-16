@@ -167,6 +167,44 @@ describe('generateSchemaContent', () => {
     );
   });
 
+  it('should generate sibling dotted aliases under the same parent object', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: 'admin.users',
+        procedures: [{ name: 'list', type: ProcedureType.QUERY }],
+      },
+      {
+        alias: 'admin.roles',
+        procedures: [{ name: 'list', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+
+    expect(content).to.include('admin: {');
+    expect(content).to.include('users: t.router({');
+    expect(content).to.include('roles: t.router({');
+    const listProcedureOccurrences =
+      content.match(/list: t\.procedure\.query\(\(\) => undefined as unknown\)/g) ?? [];
+    expect(listProcedureOccurrences).to.have.length(2);
+  });
+
+  it('should ignore dotted aliases that normalize to empty segments', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: ' . ',
+        procedures: [{ name: 'lost', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+
+    expect(content).to.not.include(
+      'lost: t.procedure.query(() => undefined as unknown)',
+    );
+    expect(content).to.include('export type AppRouter = typeof appRouter');
+  });
+
   it('should include the auto-generated header', () => {
     const content = generateSchemaContent([]);
     expect(content).to.include('THIS FILE WAS AUTOMATICALLY GENERATED');

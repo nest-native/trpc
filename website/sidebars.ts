@@ -7,6 +7,11 @@ const sidebars: SidebarsConfig = {
     'quick-start',
     {
       type: 'category',
+      label: 'Samples',
+      items: ['samples/index', 'samples/catalog', 'samples/architecture'],
+    },
+    {
+      type: 'category',
       label: 'Module Setup',
       items: ['module-setup/for-root', 'module-setup/for-root-async', 'module-setup/typed-context'],
     },
