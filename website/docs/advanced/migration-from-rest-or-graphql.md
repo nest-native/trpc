@@ -6,6 +6,8 @@ sidebar_position: 6
 
 This guide helps you migrate existing NestJS APIs from REST controllers or GraphQL resolvers to `nest-trpc-native` routers.
 
+If you also want a side-by-side comparison with WebSocket and gRPC architectural patterns, see [Transport Pattern Parallels](./transport-pattern-parallels).
+
 ## Migration Strategy
 
 Use an incremental rollout instead of a big-bang rewrite:
@@ -184,3 +186,4 @@ Choose one style per module for consistency. If your codebase already uses DTOs,
 - [Validation (class-validator)](../validation/class-validator)
 - [Validation (Zod)](../validation/zod)
 - [Router Testing](../testing/router-testing)
+- [Transport Pattern Parallels](./transport-pattern-parallels)

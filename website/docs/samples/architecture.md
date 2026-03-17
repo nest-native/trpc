@@ -45,3 +45,5 @@ Why:
 Example:
 
 - `sample/11-microservice-transport` isolates gateway-to-microservice messaging via Nest transport, without bloating `00-showcase`.
+
+For side-by-side architectural mapping against GraphQL, WebSocket, and gRPC mental models, see [Transport Pattern Parallels](../advanced/transport-pattern-parallels).
