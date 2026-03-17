@@ -107,6 +107,6 @@ This is the right choice when the service accumulates state across multiple meth
 3. **Keep request-scoped providers in leaf modules** — avoid scoping providers in shared/core modules, as it forces the entire dependency chain to become request-scoped.
 4. **Never scope a provider just to access the request object** — use `createContext` + `@TrpcContext()` instead.
 
-:::tip
-Sample 03 ([context-request-scope](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/03-context-request-scope)) demonstrates both patterns side by side: `@TrpcContext('requestId')` for simple extraction and `RequestMetaService` for stateful per-request data.
+:::tip Sample 03
+[context-request-scope](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/03-context-request-scope) demonstrates both patterns side by side: `@TrpcContext('requestId')` for simple extraction and `RequestMetaService` for stateful per-request data.
 :::
