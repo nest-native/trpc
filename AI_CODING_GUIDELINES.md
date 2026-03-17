@@ -66,3 +66,21 @@ This is not a suggestion — it is the project constitution.
 - Support both Zod AND class-validator in the same router.
 - Prefer autoSchemaFile over external CLI.
 - Always include @TrpcContext decorator.
+
+### 8. Release Version Synchronization (MANDATORY)
+- Version drift between `packages/trpc` and `sample/*` is a release blocker.
+- When bumping `packages/trpc/package.json` version, update ALL `sample/*/package.json` entries for `"nest-trpc-native"` in the same change.
+- Regenerate `package-lock.json` after version alignment (`npm install`) so resolution state is consistent.
+- Never publish if any sample still points to an older package version.
+
+Required pre-publish checklist:
+1. Bump version in `packages/trpc/package.json`.
+2. Update `sample/*/package.json` to the exact same `nest-trpc-native` version.
+3. Run `npm install`.
+4. Run `npm ls nest-trpc-native --workspaces --depth=0` and verify every sample resolves to the target version.
+5. Run full validation: `npm run ci`.
+
+Required post-publish checklist:
+1. Confirm registry version exists: `npm view nest-trpc-native@<version> version`.
+2. Download published artifact: `npm pack nest-trpc-native@<version>`.
+3. Re-run `npm run ci` with samples pinned to that published version before closing the release.
