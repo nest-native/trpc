@@ -1,7 +1,16 @@
 {
   "name": "nest-trpc-native",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Decorator-first tRPC integration bridge for NestJS",
+  "keywords": [
+    "nestjs",
+    "trpc",
+    "nestjs-trpc",
+    "typescript",
+    "rpc",
+    "decorators",
+    "zero-deps"
+  ],
   "author": "Rodrigo Nogueira",
   "license": "MIT",
   "homepage": "https://github.com/rodrigobnogueira/nest-trpc-native#readme",
