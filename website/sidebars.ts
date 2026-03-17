@@ -57,6 +57,7 @@ const sidebars: SidebarsConfig = {
         'advanced/microservices',
         'advanced/middleware',
         'advanced/migration-from-rest-or-graphql',
+        'advanced/transport-pattern-parallels',
         'advanced/error-handling',
         'advanced/nest-internals',
       ],
