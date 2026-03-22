@@ -7,8 +7,10 @@ sidebar_position: 2
 ## Requirements
 
 - Node.js ≥ 20
-- NestJS ≥ 11
-- tRPC ≥ 11
+- NestJS 11.x
+- tRPC 11.x
+
+For the supported API tiers and compatibility boundary, see [Support Policy](./support-policy).
 
 ## Install the Package
 

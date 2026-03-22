@@ -18,9 +18,22 @@
 - Full support for guards, interceptors, pipes, filters, and request scope
 - Adapter-agnostic behavior across Express and Fastify
 
+The documentation site is the canonical source of truth for guides and support policy:
+
+- https://rodrigobnogueira.github.io/nest-trpc-native/docs/introduction
+- https://rodrigobnogueira.github.io/nest-trpc-native/docs/support-policy
+
 ## Getting Started
 
-See `sample/00-showcase` in this repository for the full end-to-end sample.
+See the showcase sample for a full end-to-end application:
+
+- https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/00-showcase
+
+## Requirements
+
+- Node.js `>=20`
+- NestJS `11.x`
+- tRPC `11.x`
 
 ## Installation
 
@@ -163,4 +176,4 @@ The full production-style sample lives in `sample/00-showcase` and demonstrates:
 
 ## License
 
-This project is [MIT licensed](LICENSE).
+This project is MIT licensed.

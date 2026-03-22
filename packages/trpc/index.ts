@@ -5,12 +5,15 @@
  */
 import 'reflect-metadata';
 
-export * from './constants';
-export * from './context';
-export * from './decorators';
-export * from './enums';
-export * from './generators';
-export * from './interfaces';
-export * from './trpc.module';
-export * from './trpc-router';
-export * from './trpc-http-adapter';
+export { TrpcModule } from './trpc.module';
+export { TrpcRouter } from './trpc-router';
+export { Router } from './decorators/router.decorator';
+export {
+  Query,
+  Mutation,
+  Subscription,
+} from './decorators/procedure.decorator';
+export { Input } from './decorators/input.decorator';
+export { TrpcContext } from './decorators/ctx.decorator';
+export { ProcedureType, TrpcParamtype } from './enums';
+export type { TrpcModuleOptions, TrpcModuleAsyncOptions } from './interfaces';

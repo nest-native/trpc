@@ -57,4 +57,5 @@ NestJS has a proven architecture with guards, interceptors, pipes, filters, and 
 ## Next Steps
 
 - [Installation](./installation) — set up the package
+- [Support Policy](./support-policy) — see the supported versions and API tiers
 - [Quick Start](./quick-start) — build your first router in minutes

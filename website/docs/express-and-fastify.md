@@ -53,7 +53,7 @@ class CatsRouter {
 }
 ```
 
-The `TrpcHttpAdapter` internally uses the tRPC Fetch adapter, which normalizes the request/response interface across frameworks.
+Internally, the HTTP transport uses the tRPC Fetch adapter to normalize the request/response interface across frameworks.
 
 ## Verifying Adapter Parity
 

@@ -10,6 +10,8 @@
 
 ## Description
 
+The documentation site under [`website/docs`](website/docs) is the canonical source of truth for usage guides and support policy.
+
 This repository contains:
 
 - `packages/trpc`: the `nest-trpc-native` integration package
@@ -31,15 +33,23 @@ The `sample/` directory follows a scalable pattern:
 - `sample/00-showcase`: full production-style app with every major capability
 - `sample/01-*` and onward: focused, low-cognitive-load samples by topic
 
-Start with `sample/00-showcase` for end-to-end behavior, then use [sample/README.md](sample/README.md) and [docs/samples/INDEX.md](docs/samples/INDEX.md) to jump to specific features.
+Start with `sample/00-showcase` for end-to-end behavior, then use [sample/README.md](sample/README.md) and [website/docs/samples/index.md](website/docs/samples/index.md) to jump to specific features.
 
 ## Setup Patterns
 
-For explicit monorepo and microservice transport topologies, see [docs/setup/monorepo-and-microservices.md](docs/setup/monorepo-and-microservices.md).
+For explicit monorepo and microservice transport topologies, see [website/docs/advanced/monorepo.md](website/docs/advanced/monorepo.md) and [website/docs/advanced/microservices.md](website/docs/advanced/microservices.md).
 
 For explicit `forRootAsync + ConfigService + middleware`, run:
 
 - `npm run test --workspace nest-trpc-native-sample-09-config-middleware`
+
+## Requirements
+
+- Node.js `>=20`
+- NestJS `11.x`
+- tRPC `11.x`
+
+For the supported surface and compatibility policy, see [website/docs/support-policy.md](website/docs/support-policy.md).
 
 ## Installation
 
@@ -84,7 +94,7 @@ We keep Zod support because it is core to tRPC-native DX, but we keep it optiona
 
 ## Nest Compatibility Boundary
 
-Enhancer lifecycle behavior is preserved through a narrow internal boundary so Nest-version-sensitive wiring stays isolated. See [docs/compatibility/nest-internals-boundary.md](docs/compatibility/nest-internals-boundary.md).
+Enhancer lifecycle behavior is preserved through a narrow internal boundary so Nest-version-sensitive wiring stays isolated. See [website/docs/advanced/nest-internals.md](website/docs/advanced/nest-internals.md).
 
 ## Quick Start
 

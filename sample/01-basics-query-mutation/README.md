@@ -22,4 +22,4 @@ npm run test --workspace nest-trpc-native-sample-01-basics
 ## Test Patterns Included
 
 - direct class-level router unit tests (service delegation)
-- in-process tRPC caller tests using `TrpcRouter.getRouter().createCaller(...)`
+- in-process tRPC caller tests using the supported advanced testing API `TrpcRouter.getRouter().createCaller(...)`
