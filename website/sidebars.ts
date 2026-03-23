@@ -4,6 +4,7 @@ const sidebars: SidebarsConfig = {
   docsSidebar: [
     'introduction',
     'installation',
+    'support-policy',
     'quick-start',
     {
       type: 'category',

@@ -15,6 +15,11 @@
     "test": "TS_NODE_PROJECT=tsconfig.spec.json mocha packages/**/*.spec.ts",
     "test:cov": "TS_NODE_PROJECT=tsconfig.spec.json nyc mocha packages/**/*.spec.ts",
     "test:watch": "TS_NODE_PROJECT=tsconfig.spec.json mocha -w --watch-files \"packages\" packages/**/*.spec.ts",
+    "release:check:readme-links": "node scripts/check-readme-links.mjs",
+    "release:check:version-sync": "node scripts/check-version-sync.mjs",
+    "release:check:workspace-resolution": "npm ls nest-trpc-native --workspaces --depth=0",
+    "release:check:pack": "npm run build --workspace nest-trpc-native && node scripts/check-package-pack.mjs",
+    "release:check": "npm run release:check:readme-links && npm run release:check:version-sync && npm run release:check:workspace-resolution && npm run release:check:pack",
     "docs:test:typecheck": "node scripts/docs-snippets-typecheck.mjs --mode all",
     "docs:test:typecheck:unit": "node scripts/docs-snippets-typecheck.mjs --mode unit",
     "docs:test:typecheck:sample": "node scripts/docs-snippets-typecheck.mjs --mode sample",
@@ -31,7 +36,7 @@
     "sample": "npm run showcase && npm run sample:focused",
     "ci:showcase": "npm run typecheck:client && npm run smoke:express && npm run smoke:fastify",
     "ci:sample": "npm run ci:showcase && npm run sample:focused",
-    "ci": "npm run test:cov && npm run ci:docs && npm run ci:sample"
+    "ci": "npm run test:cov && npm run release:check && npm run ci:docs && npm run ci:sample"
   },
   "engines": {
     "node": ">=20"

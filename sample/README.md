@@ -31,4 +31,4 @@ npm run ci:sample
 | `10-nested-alias-routers` | Dotted aliases as nested router objects | Runnable | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `11-microservice-transport` | tRPC gateway + Nest microservice transport (TCP) | Runnable | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 
-Use `docs/samples/INDEX.md` for file-level pointers and `docs/samples/ARCHITECTURE.md` for structural rationale.
+Use [website/docs/samples/index.md](../website/docs/samples/index.md) for file-level pointers and [website/docs/samples/architecture.md](../website/docs/samples/architecture.md) for structural rationale.
