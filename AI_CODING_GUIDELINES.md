@@ -7,6 +7,10 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
 - It is a first-class NestJS integration package, not a thin wrapper around tRPC.
 - Everything must be decorator-first, OOP, and heavily use NestJS DI.
 - Mirror the exact DX of @nestjs/graphql (code-first approach with autoSchemaFile).
+- Current stabilization support line:
+  - Node.js `>=20`
+  - NestJS `11.x`
+  - tRPC `11.x`
 - Full integration with NestJS enhancer pipeline is NON-NEGOTIABLE:
   - @UseGuards, @UseInterceptors, @UsePipes, @UseFilters must work exactly as on @Controller or @Resolver.
   - Request-scoped providers, async providers, and REQUEST injection must work.
@@ -16,15 +20,20 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
   - class-validator + ValidationPipe + DTOs (for classic NestJS users)
 
 ### 2. Public API Assumptions (this is what users will copy-paste)
-- TrpcModule.forRoot({ path, autoSchemaFile, createContext? })
-- Decorators (exactly these names and signatures):
-  - @Router('namespace'?)          // like @Controller or @Resolver
-  - @Query('name', { input?, output? })
-  - @Mutation('name', { input?, output? })
-  - @Subscription('name', { input?, output? })
-  - @TrpcContext('key')            // for context injection
-  - @Input()                       // optional helper for Zod schemas
-- Generated AppRouter type must be importable and fully typed for the client.
+- Primary onboarding API:
+  - TrpcModule.forRoot({ path, autoSchemaFile, createContext? })
+  - Decorators (exactly these names and signatures):
+    - @Router('namespace'?)          // like @Controller or @Resolver
+    - @Query('name', { input?, output? })
+    - @Mutation('name', { input?, output? })
+    - @Subscription('name', { input?, output? })
+    - @TrpcContext('key')            // for context injection
+    - @Input()                       // optional helper for Zod schemas
+  - Generated AppRouter type must be importable and fully typed for the client.
+- Advanced supported testing API:
+  - `TrpcRouter` may remain public when it is part of the official in-process testing story via `getRouter().createCaller(...)`.
+  - `TrpcRouter` must stay out of installation and quick-start docs; it belongs in testing-focused guidance only.
+  - If we ever want `TrpcRouter` to become private, we must first introduce an equally strong official testing abstraction and migrate docs, samples, and tests to it.
 
 ### 3. Sample Folder Rules
 - `sample/00-showcase` must demonstrate:
@@ -45,7 +54,15 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
 - Context creation must be injectable and support both sync and async.
 - Schema generation must produce a clean AppRouter type that works with createTRPCProxyClient.
 - Never expose tRPC internals to the user unless they opt-in via advanced config.
-- Keep the package lean — no unnecessary dependencies.
+- Unsupported internal surface includes:
+  - deep imports into package internals such as `nest-trpc-native/dist/...`
+  - raw context/runtime helpers
+  - raw schema generator helpers
+  - transport internals such as `TrpcHttpAdapter`
+  - metadata constants and DI tokens intended for package internals
+- These internals must not appear in root exports, installation docs, or quick-start examples.
+- Keep the package lean — no unnecessary dependencies in the published library package.
+- Sample-only dependencies are acceptable when they prove an integration scenario; they must not leak into the published package contract.
 
 ### 5. Non-Negotiable Style & Patterns
 - Use NestJS naming conventions (@nestjs/common style).
@@ -53,6 +70,10 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
 - Always support global, module, and method-level enhancers.
 - Tests must cover enhancer pipeline, request scoping, and both adapters.
 - Documentation and README should follow Nest-style clarity without claiming official status.
+- Documentation must preserve API tiers:
+  - onboarding docs center on `TrpcModule`, decorators, and generated `AppRouter`
+  - `TrpcRouter` appears only in testing-oriented docs
+  - unsupported internals are documented as unsupported, not as hidden power-user APIs
 
 ### 6. When in doubt
 - Ask yourself: “Would this feel natural in a @nestjs/graphql project?”
@@ -72,13 +93,19 @@ This is not a suggestion — it is the project constitution.
 - When bumping `packages/trpc/package.json` version, update ALL `sample/*/package.json` entries for `"nest-trpc-native"` in the same change.
 - Regenerate `package-lock.json` after version alignment (`npm install`) so resolution state is consistent.
 - Never publish if any sample still points to an older package version.
+- `npm run release:check` is a release blocker:
+  - sample version sync must pass
+  - README link validation must pass
+  - workspace resolution must show the target version everywhere
+  - package tarball validation must pass and exclude unintended artifacts such as `.tsbuildinfo`
 
 Required pre-publish checklist:
 1. Bump version in `packages/trpc/package.json`.
 2. Update `sample/*/package.json` to the exact same `nest-trpc-native` version.
 3. Run `npm install`.
-4. Run `npm ls nest-trpc-native --workspaces --depth=0` and verify every sample resolves to the target version.
-5. Run full validation: `npm run ci`.
+4. Run `npm run release:check`.
+5. Run `npm ls nest-trpc-native --workspaces --depth=0` and verify every sample resolves to the target version.
+6. Run full validation: `npm run ci`.
 
 Required post-publish checklist:
 1. Confirm registry version exists: `npm view nest-trpc-native@<version> version`.
