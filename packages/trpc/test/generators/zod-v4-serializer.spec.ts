@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { serializeZodSchema } from '../../generators/zod-serializer';
 
-describe('serializeZodSchema', () => {
+describe('serializeZod4Schema', () => {
   it('should serialize primitive types', () => {
     expect(serializeZodSchema(z.string())).to.equal('z.string()');
     expect(serializeZodSchema(z.number())).to.equal('z.number()');
@@ -63,6 +63,9 @@ describe('serializeZodSchema', () => {
     );
     expect(serializeZodSchema(z.literal(42))).to.equal('z.literal(42)');
     expect(serializeZodSchema(z.literal(true))).to.equal('z.literal(true)');
+    expect(serializeZodSchema(z.literal(['red', 'green', 'blue']))).to.equal(
+      'z.literal(["red","green","blue"])'
+    );
   });
 
   it('should serialize z.union()', () => {
@@ -127,17 +130,6 @@ describe('serializeZodSchema', () => {
     );
   });
 
-  it('should support z.object shapes exposed as plain object', () => {
-    const schema = z.object({ id: z.string(), count: z.number() });
-    (schema as any)._def.shape = { id: z.string(), count: z.number() };
-
-    const serialized = serializeZodSchema(schema);
-
-    expect(serialized).to.equal(
-      'z.object({ id: z.string(), count: z.number() })',
-    );
-  });
-
   it('should serialize z.discriminatedUnion()', () => {
     const schema = z.discriminatedUnion('type', [
       z.object({ type: z.literal('a'), value: z.string() }),
@@ -168,7 +160,7 @@ describe('serializeZodSchema', () => {
   });
 
   it('should serialize z.pipeline()', () => {
-    const schema = z.string().pipe(z.number());
+    const schema = z.string().pipe(z.coerce.number());
     expect(serializeZodSchema(schema)).to.equal('z.number()');
   });
 
@@ -189,16 +181,8 @@ describe('serializeZodSchema', () => {
     );
   });
 
-  it('should serialize z.nativeEnum() as z.any()', () => {
-    enum Color {
-      Red = 'red',
-      Blue = 'blue',
-    }
-    expect(serializeZodSchema(z.nativeEnum(Color))).to.equal('z.any()');
-  });
-
   it('should fall back to z.any() for unknown typeName', () => {
-    const fakeSchema = { _def: { typeName: 'ZodCustomFutureThing' } };
+    const fakeSchema = { _def: { type: 'customfuturething' } };
     expect(serializeZodSchema(fakeSchema)).to.equal('z.any()');
   });
 });
