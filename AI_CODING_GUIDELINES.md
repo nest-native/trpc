@@ -67,7 +67,22 @@ This is not a suggestion — it is the project constitution.
 - Prefer autoSchemaFile over external CLI.
 - Always include @TrpcContext decorator.
 
-### 8. Release Version Synchronization (MANDATORY)
+### 8. Security Review Requirements (MANDATORY)
+- Every PR analysis must include an explicit security pass; security is never implicit.
+- Supply-chain checks are NON-NEGOTIABLE:
+  - Review every dependency addition/update (including lockfile changes) for legitimacy and necessity.
+  - Flag unpinned Git/URL dependencies unless there is explicit, documented approval.
+  - Inspect install/lifecycle scripts (`preinstall`, `install`, `postinstall`, `prepare`) for malicious behavior risk.
+  - Watch for typosquatting, suspicious package ownership changes, abandoned packages, and sudden lockfile churn.
+- Application security checks are required in PR reviews:
+  - Auth/authz bypass risk, privilege escalation, and data exposure in handlers, decorators, and context wiring.
+  - Input-validation gaps and injection surfaces (command/template/SQL-like patterns, prototype pollution, path traversal).
+  - Unsafe dynamic execution (`eval`, `new Function`) and unsafe deserialization patterns.
+  - Secret leakage in code, tests, sample files, logs, and documentation.
+  - Transport risks such as insecure CORS/CSRF assumptions, SSRF vectors, and open redirects when relevant.
+- Any unresolved high-risk security finding blocks merge until mitigated or explicitly accepted by maintainers.
+
+### 9. Release Version Synchronization (MANDATORY)
 - Version drift between `packages/trpc` and `sample/*` is a release blocker.
 - When bumping `packages/trpc/package.json` version, update ALL `sample/*/package.json` entries for `"nest-trpc-native"` in the same change.
 - Regenerate `package-lock.json` after version alignment (`npm install`) so resolution state is consistent.
