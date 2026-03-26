@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- standardize Zod support on `4.x` as the supported optional peer dependency
+- simplify Zod serializer/test coverage around a single Zod v4-focused path
+- update docs and support policy to explicitly document the Zod v4 contract
+
 ## 0.3.0
 
 Stabilization release ahead of 1.0:
