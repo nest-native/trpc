@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { serializeZodSchema } from '../../generators/zod-serializer';
 
-describe('serializeZod4Schema', () => {
+describe('serializeZodSchema', () => {
   it('should serialize primitive types', () => {
     expect(serializeZodSchema(z.string())).to.equal('z.string()');
     expect(serializeZodSchema(z.number())).to.equal('z.number()');
@@ -30,6 +30,19 @@ describe('serializeZod4Schema', () => {
     });
     expect(serializeZodSchema(schema)).to.equal(
       'z.object({ user: z.object({ id: z.string() }) })',
+    );
+  });
+
+  it('should serialize object schemas when shape is exposed as a function', () => {
+    const schema = {
+      _def: {
+        type: 'object',
+        shape: () => ({ id: z.string(), count: z.number() }),
+      },
+    };
+
+    expect(serializeZodSchema(schema)).to.equal(
+      'z.object({ id: z.string(), count: z.number() })',
     );
   });
 
@@ -140,6 +153,21 @@ describe('serializeZod4Schema', () => {
     expect(result).to.include('z.object({');
   });
 
+  it('should serialize legacy discriminatedUnion schema nodes', () => {
+    const schema = {
+      _def: {
+        type: 'discriminatedUnion',
+        discriminator: 'type',
+        options: [
+          z.object({ type: z.literal('a'), value: z.string() }),
+          z.object({ type: z.literal('b'), count: z.number() }),
+        ],
+      },
+    };
+
+    expect(serializeZodSchema(schema)).to.include('z.discriminatedUnion("type"');
+  });
+
   it('should serialize z.tuple() with .rest()', () => {
     const schema = z.tuple([z.string(), z.number()]).rest(z.boolean());
     expect(serializeZodSchema(schema)).to.equal(
@@ -164,9 +192,53 @@ describe('serializeZod4Schema', () => {
     expect(serializeZodSchema(schema)).to.equal('z.number()');
   });
 
+  it('should serialize legacy pipeline schema nodes', () => {
+    const schema = {
+      _def: {
+        type: 'pipeline',
+        in: z.string(),
+        out: z.number(),
+      },
+    };
+    expect(serializeZodSchema(schema)).to.equal('z.number()');
+  });
+
+  it('should unwrap transform pipelines when out schema only exposes def', () => {
+    const schema = {
+      _def: {
+        type: 'pipeline',
+        in: z.string(),
+        out: {
+          def: { type: 'transform' },
+        },
+      },
+    };
+    expect(serializeZodSchema(schema)).to.equal('z.string()');
+  });
+
+  it('should serialize legacy effects schema nodes', () => {
+    const schema = { _def: { type: 'effects', schema: z.string() } };
+    expect(serializeZodSchema(schema)).to.equal('z.string()');
+  });
+
   it('should serialize z.branded()', () => {
     const schema = z.string().brand<'UserId'>();
     expect(serializeZodSchema(schema)).to.equal('z.string()');
+  });
+
+  it('should serialize legacy branded schema nodes with innerType', () => {
+    const schema = { _def: { type: 'branded', innerType: z.string() } };
+    expect(serializeZodSchema(schema)).to.equal('z.string()');
+  });
+
+  it('should serialize legacy branded schema nodes with schema', () => {
+    const schema = { _def: { type: 'branded', schema: z.string() } };
+    expect(serializeZodSchema(schema)).to.equal('z.string()');
+  });
+
+  it('should fall back to z.any() for unsupported branded schema nodes', () => {
+    const schema = { _def: { type: 'branded' } };
+    expect(serializeZodSchema(schema)).to.equal('z.any()');
   });
 
   it('should serialize z.catch()', () => {
@@ -181,8 +253,13 @@ describe('serializeZod4Schema', () => {
     );
   });
 
-  it('should fall back to z.any() for unknown typeName', () => {
+  it('should fall back to z.any() for unknown schema type', () => {
     const fakeSchema = { _def: { type: 'customfuturething' } };
     expect(serializeZodSchema(fakeSchema)).to.equal('z.any()');
+  });
+
+  it('should serialize legacy nativeEnum schema nodes as z.any()', () => {
+    const schema = { _def: { type: 'nativeEnum' } };
+    expect(serializeZodSchema(schema)).to.equal('z.any()');
   });
 });

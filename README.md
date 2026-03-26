@@ -63,10 +63,10 @@ Required peers:
 npm i @nestjs/common @nestjs/core reflect-metadata rxjs
 ```
 
-Optional (recommended for schema inference and tRPC-style validation):
+Optional (recommended for schema inference and tRPC-style validation, Zod v4):
 
 ```bash
-npm i zod
+npm i zod@^4
 ```
 
 ## Zero Runtime Dependencies
@@ -88,9 +88,9 @@ Why:
 No. Zod is optional.
 
 - If you use Nest-style validation (`class-validator` + `ValidationPipe`), you can use `nest-trpc-native` without Zod schemas.
-- If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and schema generation based on those schemas, then your app should install Zod.
+- If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and schema generation based on those schemas, then your app should install Zod v4.
 
-We keep Zod support because it is core to tRPC-native DX, but we keep it optional so non-Zod users are not forced to install it.
+We support Zod v4 as an optional peer dependency so non-Zod users are not forced to install it.
 
 ## Nest Compatibility Boundary
 

@@ -21,7 +21,7 @@ Your router classes and decorators should work the same across both adapters.
 
 ## Validation Support
 
-- Zod is supported and remains optional.
+- Zod `4.x` is supported and remains optional.
 - `class-validator` + `ValidationPipe` DTO workflows are supported.
 - Mixed validation strategies in the same application are supported.
 

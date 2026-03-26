@@ -26,12 +26,12 @@ These are required by any NestJS app and should already be installed:
 npm i @nestjs/common @nestjs/core reflect-metadata rxjs
 ```
 
-## Optional: Zod
+## Optional: Zod v4
 
 If you want tRPC-style schema validation (`@Query({ input: z.object(...) })`) and auto schema generation:
 
 ```bash
-npm i zod
+npm i zod@^4
 ```
 
 :::tip Zod is optional
