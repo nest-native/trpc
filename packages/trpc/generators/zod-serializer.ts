@@ -92,7 +92,11 @@ export function serializeZodSchema(schema: any): string {
     case 'ZodLiteral':
     case 'literal':
       return `z.literal(${JSON.stringify(
-        v4 ? schema._def.values[0] : schema._def.value
+        v4
+          ? schema._def.values.length > 1
+            ? schema._def.values
+            : schema._def.values[0]
+          : schema._def.value,
       )})`;
 
     case 'ZodUnion':

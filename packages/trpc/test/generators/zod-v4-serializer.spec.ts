@@ -63,6 +63,9 @@ describe('serializeZod4Schema', () => {
     );
     expect(serializeZodSchema(z.literal(42))).to.equal('z.literal(42)');
     expect(serializeZodSchema(z.literal(true))).to.equal('z.literal(true)');
+    expect(serializeZodSchema(z.literal(['red', 'green', 'blue']))).to.equal(
+      'z.literal(["red","green","blue"])'
+    );
   });
 
   it('should serialize z.union()', () => {
@@ -179,7 +182,7 @@ describe('serializeZod4Schema', () => {
   });
 
   it('should fall back to z.any() for unknown typeName', () => {
-    const fakeSchema = { _def: { typeName: 'ZodCustomFutureThing' } };
+    const fakeSchema = { _def: { type: 'customfuturething' } };
     expect(serializeZodSchema(fakeSchema)).to.equal('z.any()');
   });
 });
