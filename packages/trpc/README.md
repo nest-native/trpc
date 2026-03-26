@@ -47,10 +47,10 @@ Peer dependencies:
 npm i @nestjs/common @nestjs/core reflect-metadata rxjs
 ```
 
-Optional (recommended for schema inference and validation):
+Optional (recommended for schema inference and validation, Zod v4):
 
 ```bash
-npm i zod
+npm i zod@^4
 ```
 
 ## Zero Runtime Dependency Design
@@ -72,12 +72,12 @@ Why this is intentional:
 Short answer: **Zod is not mandatory** for the package to work.
 
 - If you prefer classic Nest validation (`class-validator` + `ValidationPipe`), you can use this package without Zod-specific decorators/schemas.
-- If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and `autoSchemaFile` generation for those schemas, then Zod is required by your app code.
+- If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and `autoSchemaFile` generation for those schemas, then Zod v4 is required by your app code.
 
 Should we remove Zod support entirely?
 
 - We should **not** remove it: Zod support is a core part of the tRPC-first DX and one of the main interoperability goals.
-- Keeping `zod` as an **optional peer dependency** is the best balance:
+- Keeping `zod@^4` as an **optional peer dependency** is the best balance:
   - no forced runtime dependency
   - clear compatibility contract when users choose Zod
   - full support for mixed validation strategies in the same project

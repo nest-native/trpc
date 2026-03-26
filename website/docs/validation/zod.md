@@ -5,6 +5,7 @@ sidebar_position: 1
 # Zod Validation
 
 Use tRPC-native Zod schemas for input and output validation with automatic type inference.
+Examples in this guide target Zod `4.x`.
 
 ## Input Validation
 

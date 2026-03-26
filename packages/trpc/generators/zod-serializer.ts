@@ -11,45 +11,32 @@ export function serializeZodSchema(schema: any): string {
     return 'z.any()';
   }
 
-  const { type, typeName } = schema._def;
-  const v4 = typeName === undefined;
+  const { type } = schema._def;
 
-  switch (v4 ? type : typeName) {
-    case 'ZodString':
+  switch (type) {
     case 'string':
       return 'z.string()';
-    case 'ZodNumber':
     case 'number':
       return 'z.number()';
-    case 'ZodBoolean':
     case 'boolean':
       return 'z.boolean()';
-    case 'ZodBigInt':
     case 'bigint':
       return 'z.bigint()';
-    case 'ZodDate':
     case 'date':
       return 'z.date()';
-    case 'ZodUndefined':
     case 'undefined':
       return 'z.undefined()';
-    case 'ZodNull':
     case 'null':
       return 'z.null()';
-    case 'ZodVoid':
     case 'void':
       return 'z.void()';
-    case 'ZodAny':
     case 'any':
       return 'z.any()';
-    case 'ZodUnknown':
     case 'unknown':
       return 'z.unknown()';
-    case 'ZodNever':
     case 'never':
       return 'z.never()';
 
-    case 'ZodObject':
     case 'object': {
       const shape =
         typeof schema._def.shape === 'function'
@@ -67,39 +54,30 @@ export function serializeZodSchema(schema: any): string {
       return `z.object({ ${entries} })`;
     }
 
-    case 'ZodArray':
     case 'array':
-      return `z.array(${serializeZodSchema(v4 ? schema._def.element : schema._def.type)})`;
+      return `z.array(${serializeZodSchema(schema._def.element)})`;
 
-    case 'ZodOptional':
     case 'optional':
       return `${serializeZodSchema(schema._def.innerType)}.optional()`;
 
-    case 'ZodNullable':
     case 'nullable':
       return `${serializeZodSchema(schema._def.innerType)}.nullable()`;
 
-    case 'ZodDefault':
     case 'default': {
-      const defaultValue = v4 ? schema._def.defaultValue : schema._def.defaultValue();
+      const defaultValue = schema._def.defaultValue;
       return `${serializeZodSchema(schema._def.innerType)}.default(${JSON.stringify(defaultValue)})`;
     }
 
-    case 'ZodEnum':
     case 'enum':
-      return `z.enum(${JSON.stringify(v4 ? Object.values(schema._def.entries) : schema._def.values)})`;
+      return `z.enum(${JSON.stringify(Object.values(schema._def.entries))})`;
 
-    case 'ZodLiteral':
-    case 'literal':
+    case 'literal': {
+      const values = schema._def.values as any[];
       return `z.literal(${JSON.stringify(
-        v4
-          ? schema._def.values.length > 1
-            ? schema._def.values
-            : schema._def.values[0]
-          : schema._def.value,
+        values.length > 1 ? values : values[0],
       )})`;
+    }
 
-    case 'ZodUnion':
     case 'union': {
       const options = schema._def.options
         .map((opt: any) => serializeZodSchema(opt))
@@ -113,7 +91,6 @@ export function serializeZodSchema(schema: any): string {
       return `z.union([${options}])`;
     }
 
-    case 'ZodDiscriminatedUnion':
     case 'discriminatedUnion': {
       const discriminator = JSON.stringify(schema._def.discriminator);
       const options = schema._def.options
@@ -122,11 +99,9 @@ export function serializeZodSchema(schema: any): string {
       return `z.discriminatedUnion(${discriminator}, [${options}])`;
     }
 
-    case 'ZodIntersection':
     case 'intersection':
       return `z.intersection(${serializeZodSchema(schema._def.left)}, ${serializeZodSchema(schema._def.right)})`;
 
-    case 'ZodTuple':
     case 'tuple': {
       const items = schema._def.items
         .map((item: any) => serializeZodSchema(item))
@@ -137,56 +112,51 @@ export function serializeZodSchema(schema: any): string {
       return `z.tuple([${items}])${rest}`;
     }
 
-    case 'ZodRecord':
     case 'record':
       return `z.record(${serializeZodSchema(schema._def.keyType)}, ${serializeZodSchema(schema._def.valueType)})`;
 
-    case 'ZodMap':
     case 'map':
       return `z.map(${serializeZodSchema(schema._def.keyType)}, ${serializeZodSchema(schema._def.valueType)})`;
 
-    case 'ZodSet':
     case 'set':
       return `z.set(${serializeZodSchema(schema._def.valueType)})`;
 
-    case 'ZodPromise':
     case 'promise':
-      return `z.promise(${serializeZodSchema(v4 ? schema._def.innerType : schema._def.type)})`;
+      return `z.promise(${serializeZodSchema(schema._def.innerType)})`;
 
-    case 'ZodEffects':
     case 'effects':
       // Effects (transform, refine, preprocess) — serialize the inner schema.
       // The effect itself is runtime-only and doesn't affect the type used for inference.
       return serializeZodSchema(schema._def.schema);
 
-    case 'ZodLazy':
     case 'lazy':
       // Lazy schemas can't be serialized; fall back.
       return 'z.any()';
 
-    case 'ZodPipeline':
     case 'pipeline':
     case 'pipe':
       // For type inference, use the output schema.
-      if (v4 && schema._def.out.def.type === 'transform') {
+      // If the output side is a pure transform, preserve the input type schema.
+      const outSchema = schema._def.out;
+      const outDef = outSchema?._def ?? outSchema?.def;
+      if (outDef?.type === 'transform') {
         return serializeZodSchema(schema._def.in);
       }
 
-      return serializeZodSchema(schema._def.out);
+      return serializeZodSchema(outSchema);
 
-    case 'ZodBranded':
     case 'branded':
-      return serializeZodSchema(schema._def.type);
+      return serializeZodSchema(
+        schema._def.innerType ?? schema._def.schema ?? schema._def.type,
+      );
 
-    case 'ZodCatch':
     case 'catch':
       return serializeZodSchema(schema._def.innerType);
 
-    case 'ZodReadonly':
     case 'readonly':
       return `${serializeZodSchema(schema._def.innerType)}.readonly()`;
 
-    case 'ZodNativeEnum':
+    case 'nativeEnum':
       // Native enums reference runtime values that can't be reconstructed.
       return 'z.any()';
 
