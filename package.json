@@ -88,5 +88,6 @@
     "lines": 100,
     "statements": 100,
     "cache": false
-  }
+  },
+  "packageManager": "npm@10.9.7"
 }
