@@ -1,0 +1,6 @@
+{
+  "reporterEnabled": "spec, .github/scripts/mocha-json-file-reporter.js",
+  ".github/scripts/mocha-json-file-reporter.js": {
+    "output": "test-results.json"
+  }
+}
