@@ -32,16 +32,16 @@ jobs:
         id: base-ci-data
         uses: actions/cache/restore@v5
         with:
-          path: base-ci-data
+          path: ci-data
           key: ci-data-${{ github.base_ref }}-
           restore-keys: ci-data-${{ github.base_ref }}-
 
       - name: Extract base CI data
-        if: steps.base-ci-data.outputs.cache-hit != ''
+        if: steps.base-ci-data.outputs.cache-matched-key
         run: |
-          cp base-ci-data/coverage-summary.json base-coverage-summary.json 2>/dev/null || true
-          cp base-ci-data/test-results.json base-test-results.json 2>/dev/null || true
-          cp base-ci-data/test-step-duration-ms.txt base-test-step-duration-ms.txt 2>/dev/null || true
+          cp ci-data/coverage-summary.json base-coverage-summary.json 2>/dev/null || true
+          cp ci-data/test-results.json base-test-results.json 2>/dev/null || true
+          cp ci-data/test-step-duration-ms.txt base-test-step-duration-ms.txt 2>/dev/null || true
 
       - name: Run tests with coverage
         run: |
