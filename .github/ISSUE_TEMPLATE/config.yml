@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security-sensitive report
+    url: https://github.com/rodrigobnogueira/nest-trpc-native/security/advisories/new
+    about: Please use private vulnerability reporting when available. If unavailable, read SECURITY.md before opening a public issue.
+  - name: Support policy
+    url: https://github.com/rodrigobnogueira/nest-trpc-native/blob/main/website/docs/support-policy.md
+    about: Check supported Node, NestJS, tRPC, adapter, validation, and public API tiers.
