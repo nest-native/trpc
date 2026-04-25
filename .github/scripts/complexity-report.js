@@ -24,23 +24,26 @@ module.exports = async ({ github, context, core }) => {
 
   const diffNumber = (currentValue, baseValue) => {
     if (baseValue == null) {
-      return 'new';
+      return '🆕 new';
     }
     const diff = currentValue - baseValue;
     if (diff > 0) {
-      return `+${diff}`;
+      return `🔴 +${diff}`;
     }
-    return String(diff);
+    if (diff < 0) {
+      return `🟢 ${diff}`;
+    }
+    return '⚪ 0';
   };
 
   const status = value => {
     if (value >= 25) {
-      return 'High';
+      return '🔴 High';
     }
     if (value >= 15) {
-      return 'Watch';
+      return '🟡 Watch';
     }
-    return 'OK';
+    return '🟢 OK';
   };
 
   const topEntries = current.entries.slice(0, 10).map(entry => {
@@ -64,7 +67,7 @@ module.exports = async ({ github, context, core }) => {
   const baseMax = base?.totals.maxComplexity;
   const sections = [
     '<!-- cognitive-complexity-report -->',
-    '## Cognitive Complexity Report',
+    '## 🧠 Cognitive Complexity Report',
     '',
     '| Metric | PR | Base | Diff |',
     '| --- | ---: | ---: | ---: |',
@@ -73,11 +76,11 @@ module.exports = async ({ github, context, core }) => {
     `| Functions measured | ${current.totals.functions} | ${base?.totals.functions ?? '-'} | ${diffNumber(current.totals.functions, base?.totals.functions)} |`,
     '',
     '<details>',
-    '<summary><strong>Most complex functions</strong></summary>',
+    '<summary><strong>🧩 Most complex functions</strong></summary>',
     '',
     '| Function | Location | Complexity | Status |',
     '| --- | --- | ---: | --- |',
-    ...(topEntries.length > 0 ? topEntries : ['| - | - | 0 | OK |']),
+    ...(topEntries.length > 0 ? topEntries : ['| - | - | 0 | 🟢 OK |']),
     '',
     '</details>',
   ];
@@ -86,7 +89,7 @@ module.exports = async ({ github, context, core }) => {
     sections.push(
       '',
       '<details>',
-      '<summary><strong>Changed files</strong></summary>',
+      '<summary><strong>🧾 Changed files</strong></summary>',
       '',
       '| File | Total | Max | Functions | Total diff |',
       '| --- | ---: | ---: | ---: | ---: |',
@@ -98,7 +101,7 @@ module.exports = async ({ github, context, core }) => {
 
   sections.push(
     '',
-    '> Cognitive complexity is reported as a review signal, not a merge gate. Prefer small, intention-revealing refactors when complexity rises.',
+    '> 🧭 Cognitive complexity is reported as a review signal, not a merge gate. Prefer small, intention-revealing refactors when complexity rises.',
     '',
     '---',
     `<sub>Updated for [\`${context.sha.slice(0, 7)}\`](${context.payload.repository.html_url}/commit/${context.sha}) | ${hasBase ? 'Compared against base branch' : 'No base complexity cached yet - will compare after first merge to base'}</sub>`,
