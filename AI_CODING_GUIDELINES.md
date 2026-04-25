@@ -126,3 +126,9 @@ Required post-publish checklist:
 1. Confirm registry version exists: `npm view nest-trpc-native@<version> version`.
 2. Download published artifact: `npm pack nest-trpc-native@<version>`.
 3. Re-run `npm run ci` with samples pinned to that published version before closing the release.
+
+### 10. Cognitive Complexity Review
+- When complexity tooling is present, AI agents should run `npm run complexity:report` for changes touching `packages/trpc/**/*.ts`.
+- Treat cognitive complexity as a maintainability signal, not an automatic refactor mandate.
+- Do not reduce complexity by weakening Nest-native architecture, public API clarity, validation behavior, or test coverage.
+- CI may post cognitive-complexity deltas on PRs; hard failure thresholds require an explicit maintainer-approved policy.

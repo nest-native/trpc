@@ -19,9 +19,9 @@ module.exports = async ({ github, context, core }) => {
   const fmtDiff = (currMs, baseMs) => {
     if (baseMs == null) return '-';
     const diffMs = currMs - baseMs;
-    if (Math.abs(diffMs) < 50) return '~0';
+    if (Math.abs(diffMs) < 50) return '⚪ ~0';
     const sign = diffMs > 0 ? '+' : '';
-    const icon = diffMs > 0 ? '+' : '-';
+    const icon = diffMs > 0 ? '🔴' : '🟢';
     return diffMs >= 1000 || diffMs <= -1000
       ? `${icon} ${sign}${(diffMs / 1000).toFixed(2)}s`
       : `${icon} ${sign}${diffMs}ms`;
@@ -92,17 +92,17 @@ module.exports = async ({ github, context, core }) => {
   const { stats } = results;
   const sections = [
     '<!-- test-performance-report -->',
-    `## Performance Report`,
+    `## ⏱️ Performance Report`,
     '',
     `| | |`,
     `|---|---|`,
-    `| **Tests** | ${stats.passes} passed, ${stats.failures} failed, ${stats.pending} skipped |`,
-    `| **Suites** | ${stats.suites} |`,
-    `| **Total step time** | ${fmtDuration(stepDurationMs)} (install + tests) ${baseStepDurationMs != null ? fmtDiff(stepDurationMs, baseStepDurationMs) : ''} |`,
-    `| **Test execution** | ${fmtDuration(totalTestTime)} ${baseTotalTestTime != null ? fmtDiff(totalTestTime, baseTotalTestTime) : ''} |`,
+    `| **✅ Tests** | ${stats.passes} passed, ${stats.failures} failed, ${stats.pending} skipped |`,
+    `| **🧪 Suites** | ${stats.suites} |`,
+    `| **⏱️ Total step time** | ${fmtDuration(stepDurationMs)} (install + tests) ${baseStepDurationMs != null ? fmtDiff(stepDurationMs, baseStepDurationMs) : ''} |`,
+    `| **⚙️ Test execution** | ${fmtDuration(totalTestTime)} ${baseTotalTestTime != null ? fmtDiff(totalTestTime, baseTotalTestTime) : ''} |`,
     '',
     '<details>',
-    '<summary><strong>Slowest test suites</strong></summary>',
+    '<summary><strong>🐢 Slowest test suites</strong></summary>',
     '',
     `| # | Suite | Tests | Duration | vs Base |`,
     `|---|-------|-------|----------|---------|`,
@@ -111,7 +111,7 @@ module.exports = async ({ github, context, core }) => {
     '</details>',
     '',
     '<details>',
-    '<summary><strong>Slowest individual tests</strong></summary>',
+    '<summary><strong>🐌 Slowest individual tests</strong></summary>',
     '',
     `| # | Suite | Test | Duration | vs Base |`,
     `|---|-------|------|----------|---------|`,

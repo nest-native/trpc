@@ -42,12 +42,16 @@ jobs:
           cp ci-data/coverage-summary.json base-coverage-summary.json 2>/dev/null || true
           cp ci-data/test-results.json base-test-results.json 2>/dev/null || true
           cp ci-data/test-step-duration-ms.txt base-test-step-duration-ms.txt 2>/dev/null || true
+          cp ci-data/cognitive-complexity-summary.json base-cognitive-complexity-summary.json 2>/dev/null || true
 
       - name: Run tests with coverage
         run: |
           START=$SECONDS
           TS_NODE_PROJECT=tsconfig.spec.json npx nyc mocha 'packages/**/*.spec.ts' --reporter mocha-multi-reporters --reporter-option configFile=.github/scripts/mocha-reporters-config.json
           echo $(( (SECONDS - START) * 1000 )) > test-step-duration-ms.txt
+
+      - name: Run cognitive complexity report
+        run: npm run complexity:report
 
       - name: Cache CI data for base branch
         if: github.event_name == 'push'
@@ -56,6 +60,7 @@ jobs:
           cp coverage/coverage-summary.json ci-data/coverage-summary.json
           cp test-results.json ci-data/test-results.json
           cp test-step-duration-ms.txt ci-data/test-step-duration-ms.txt
+          cp complexity/cognitive-complexity-summary.json ci-data/cognitive-complexity-summary.json
       - if: github.event_name == 'push'
         uses: actions/cache/save@v5
         with:
@@ -82,6 +87,14 @@ jobs:
         with:
           script: |
             const report = require('./.github/scripts/performance-report.js');
+            await report({ github, context, core });
+
+      - name: Complexity Report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const report = require('./.github/scripts/complexity-report.js');
             await report({ github, context, core });
 
       - name: Capture coverage summary

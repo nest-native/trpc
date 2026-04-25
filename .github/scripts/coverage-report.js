@@ -19,9 +19,9 @@ module.exports = async ({ github, context, core }) => {
 
   const diffStr = (curr, prev) => {
     const diff = (curr - prev).toFixed(2);
-    if (diff > 0) return `+${diff}%`;
-    if (diff < 0) return `${diff}%`;
-    return `0%`;
+    if (diff > 0) return `🟢 +${diff}%`;
+    if (diff < 0) return `🔴 ${diff}%`;
+    return `⚪ 0%`;
   };
 
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -54,7 +54,7 @@ module.exports = async ({ github, context, core }) => {
     const prev = baseFile ? base[baseFile] : null;
 
     const stmtBar = `\`${bar(curr.statements.pct)}\``;
-    const diff = prev ? diffStr(curr.statements.pct, prev.statements.pct) : 'new';
+    const diff = prev ? diffStr(curr.statements.pct, prev.statements.pct) : '🆕 new';
     const shortName = file.replace(/^packages\//, '');
 
     fileRows.push(
@@ -65,7 +65,7 @@ module.exports = async ({ github, context, core }) => {
   // --- Build comment body ---
   const sections = [
     '<!-- coverage-report -->',
-    `## ${badge} Coverage Report`,
+    `## 📊 ${badge} Coverage Report`,
     '',
     '| Metric | | PR | Base | Diff |',
     '|--------|---|-----|------|------|',
@@ -76,7 +76,7 @@ module.exports = async ({ github, context, core }) => {
     sections.push(
       '',
       '<details>',
-      '<summary><strong>Changed files</strong></summary>',
+    '<summary><strong>🧾 Changed files</strong></summary>',
       '',
       '| File | | Statements | Branches | Diff |',
       '|------|---|------------|----------|------|',
