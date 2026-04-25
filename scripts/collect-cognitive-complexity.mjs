@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import ts from 'typescript';
 
 const ROOT = process.cwd();
 const require = createRequire(import.meta.url);
@@ -42,9 +43,11 @@ const eslintOutput = execFileSync(
 
 const eslintResults = JSON.parse(eslintOutput);
 const entries = [];
+const sourceFileCache = new Map();
 
 for (const result of eslintResults) {
   const filePath = path.relative(ROOT, result.filePath).replace(/\\/g, '/');
+  const sourceFile = getSourceFile(result.filePath);
 
   for (const message of result.messages) {
     if (message.ruleId !== 'sonarjs/cognitive-complexity') {
@@ -60,6 +63,7 @@ for (const result of eslintResults) {
       file: filePath,
       line: message.line,
       column: message.column,
+      ...findNearestFunctionSymbol(sourceFile, message.line, message.column),
       complexity,
       message: message.message,
     });
@@ -145,4 +149,148 @@ function readPackageVersion(packageName) {
     'utf8',
   );
   return JSON.parse(packageJson).version;
+}
+
+function getSourceFile(filePath) {
+  const resolved = path.resolve(filePath);
+  const cached = sourceFileCache.get(resolved);
+  if (cached) {
+    return cached;
+  }
+
+  const sourceText = fs.readFileSync(resolved, 'utf8');
+  const sourceFile = ts.createSourceFile(
+    resolved,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  sourceFileCache.set(resolved, sourceFile);
+  return sourceFile;
+}
+
+function findNearestFunctionSymbol(sourceFile, line, column) {
+  const position = sourceFile.getPositionOfLineAndCharacter(
+    Math.max(0, line - 1),
+    Math.max(0, column - 1),
+  );
+  const candidates = [];
+
+  visit(sourceFile, []);
+
+  candidates.sort((a, b) => {
+    const aWidth = a.end - a.start;
+    const bWidth = b.end - b.start;
+    return aWidth - bWidth || b.start - a.start;
+  });
+
+  const candidate = candidates[0];
+  if (!candidate) {
+    return {
+      symbol: '(unknown function)',
+      kind: 'unknown',
+    };
+  }
+
+  return {
+    symbol: candidate.symbol,
+    kind: candidate.kind,
+  };
+
+  function visit(node, classStack) {
+    const nextClassStack = ts.isClassLike(node) && node.name
+      ? [...classStack, node.name.text]
+      : classStack;
+
+    if (isFunctionLikeNode(node)) {
+      const start = node.getStart(sourceFile);
+      const end = node.end;
+      if (position >= start && position <= end) {
+        candidates.push({
+          start,
+          end,
+          ...describeFunctionLike(node, nextClassStack, sourceFile),
+        });
+      }
+    }
+
+    ts.forEachChild(node, child => visit(child, nextClassStack));
+  }
+}
+
+function isFunctionLikeNode(node) {
+  return (
+    ts.isFunctionDeclaration(node) ||
+    ts.isMethodDeclaration(node) ||
+    ts.isGetAccessorDeclaration(node) ||
+    ts.isSetAccessorDeclaration(node) ||
+    ts.isConstructorDeclaration(node) ||
+    ts.isFunctionExpression(node) ||
+    ts.isArrowFunction(node)
+  );
+}
+
+function describeFunctionLike(node, classStack, sourceFile) {
+  if (ts.isMethodDeclaration(node) || ts.isGetAccessorDeclaration(node) || ts.isSetAccessorDeclaration(node)) {
+    const methodName = node.name ? propertyNameToText(node.name, sourceFile) : '(anonymous method)';
+    const className = classStack.at(-1);
+    return {
+      symbol: className ? `${className}.${methodName}` : methodName,
+      kind: 'method',
+    };
+  }
+
+  if (ts.isConstructorDeclaration(node)) {
+    const className = classStack.at(-1);
+    return {
+      symbol: className ? `${className}.constructor` : 'constructor',
+      kind: 'constructor',
+    };
+  }
+
+  if (ts.isFunctionDeclaration(node)) {
+    return {
+      symbol: node.name?.text ?? '(anonymous function)',
+      kind: 'function',
+    };
+  }
+
+  const assignedName = getAssignedFunctionName(node, sourceFile);
+  return {
+    symbol: assignedName ?? '(anonymous callback)',
+    kind: ts.isArrowFunction(node) ? 'arrow-function' : 'function-expression',
+  };
+}
+
+function propertyNameToText(name, sourceFile) {
+  if (ts.isIdentifier(name) || ts.isPrivateIdentifier(name)) {
+    return name.text;
+  }
+  if (ts.isStringLiteral(name) || ts.isNumericLiteral(name)) {
+    return name.text;
+  }
+  return name.getText(sourceFile);
+}
+
+function getAssignedFunctionName(node, sourceFile) {
+  const parent = node.parent;
+  if (!parent) {
+    return undefined;
+  }
+
+  if (ts.isVariableDeclaration(parent) && ts.isIdentifier(parent.name)) {
+    return parent.name.text;
+  }
+
+  if (
+    ts.isPropertyAssignment(parent) ||
+    ts.isPropertyDeclaration(parent) ||
+    ts.isBinaryExpression(parent)
+  ) {
+    const name = ts.isBinaryExpression(parent) ? parent.left : parent.name;
+    return name ? propertyNameToText(name, sourceFile) : undefined;
+  }
+
+  return undefined;
 }

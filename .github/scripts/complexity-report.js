@@ -44,7 +44,7 @@ module.exports = async ({ github, context, core }) => {
   };
 
   const topEntries = current.entries.slice(0, 10).map(entry => {
-    return `| \`${entry.file}:${entry.line}\` | ${entry.complexity} | ${status(entry.complexity)} |`;
+    return `| \`${entry.symbol ?? '(unknown function)'}\` | \`${entry.file}:${entry.line}\` | ${entry.complexity} | ${status(entry.complexity)} |`;
   });
 
   const changedRows = [];
@@ -75,9 +75,9 @@ module.exports = async ({ github, context, core }) => {
     '<details>',
     '<summary><strong>Most complex functions</strong></summary>',
     '',
-    '| Location | Complexity | Status |',
-    '| --- | ---: | --- |',
-    ...(topEntries.length > 0 ? topEntries : ['| - | 0 | OK |']),
+    '| Function | Location | Complexity | Status |',
+    '| --- | --- | ---: | --- |',
+    ...(topEntries.length > 0 ? topEntries : ['| - | - | 0 | OK |']),
     '',
     '</details>',
   ];
