@@ -8,32 +8,42 @@
   <a href="https://rodrigobnogueira.github.io/nest-trpc-native/"><img src="https://img.shields.io/badge/docs-nest--trpc--native-e0234e.svg" alt="Documentation" /></a>
 </p>
 
-## Description
+## What This Is
 
-`nest-trpc-native` makes tRPC feel native in Nest applications:
+`nest-trpc-native` is a community NestJS integration for building tRPC APIs with Nest-style modules, decorators, DI, enhancers, and request scope.
+
+It makes tRPC feel native in Nest applications:
 
 - Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
 - Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
 - Explicit parameter extraction via `@Input()` and `@TrpcContext()`
-- Full support for guards, interceptors, pipes, filters, and request scope
+- Nest enhancer support for guards, interceptors, pipes, filters, and request scope
 - Adapter-agnostic behavior across Express and Fastify
+- Zod or `class-validator` validation, without forcing either style on every project
+- Generated `AppRouter` types for fully typed tRPC clients
+
+## Documentation
 
 The documentation site is the canonical source of truth for guides and support policy:
 
-- https://rodrigobnogueira.github.io/nest-trpc-native/docs/introduction
-- https://rodrigobnogueira.github.io/nest-trpc-native/docs/support-policy
-
-## Getting Started
+- [Introduction](https://rodrigobnogueira.github.io/nest-trpc-native/docs/introduction)
+- [Quick Start](https://rodrigobnogueira.github.io/nest-trpc-native/docs/quick-start)
+- [Samples](https://rodrigobnogueira.github.io/nest-trpc-native/docs/samples)
+- [Support Policy](https://rodrigobnogueira.github.io/nest-trpc-native/docs/support-policy)
 
 See the showcase sample for a full end-to-end application:
 
 - https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/00-showcase
 
-## Requirements
+## Compatibility
 
-- Node.js `>=20`
-- NestJS `11.x`
-- tRPC `11.x`
+| Runtime | Supported line |
+| --- | --- |
+| Node.js | `>=20` |
+| NestJS | `11.x` |
+| tRPC | `11.x` |
+| Zod | `4.x`, optional peer |
+| Adapters | Express, Fastify |
 
 ## Installation
 

@@ -9,6 +9,11 @@
     "typescript",
     "rpc",
     "decorators",
+    "zod",
+    "class-validator",
+    "validation",
+    "express",
+    "fastify",
     "zero-deps"
   ],
   "author": "Rodrigo Nogueira",

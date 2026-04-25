@@ -8,9 +8,42 @@
   <a href="https://rodrigobnogueira.github.io/nest-trpc-native/"><img src="https://img.shields.io/badge/docs-nest--trpc--native-e0234e.svg" alt="Documentation" /></a>
 </p>
 
-## Description
+## What This Is
 
-The documentation site under [`website/docs`](website/docs) is the canonical source of truth for usage guides and support policy.
+`nest-trpc-native` is a community NestJS integration for building tRPC APIs with Nest-style modules, decorators, DI, enhancers, and request scope.
+
+The documentation site is the canonical source of truth for usage guides and support policy:
+
+- [Introduction](https://rodrigobnogueira.github.io/nest-trpc-native/docs/introduction)
+- [Quick Start](https://rodrigobnogueira.github.io/nest-trpc-native/docs/quick-start)
+- [Samples](https://rodrigobnogueira.github.io/nest-trpc-native/docs/samples)
+- [Support Policy](https://rodrigobnogueira.github.io/nest-trpc-native/docs/support-policy)
+
+## Why Use It
+
+`nest-trpc-native` makes tRPC feel native in Nest applications:
+
+- Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
+- Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
+- Explicit parameter extraction via `@Input()` and `@TrpcContext()`
+- Nest enhancer support for guards, interceptors, pipes, filters, and request scope
+- Adapter-agnostic behavior across Express and Fastify
+- Zod or `class-validator` validation, without forcing either style on every project
+- Generated `AppRouter` types for fully typed tRPC clients
+
+## Compatibility
+
+| Runtime | Supported line |
+| --- | --- |
+| Node.js | `>=20` |
+| NestJS | `11.x` |
+| tRPC | `11.x` |
+| Zod | `4.x`, optional peer |
+| Adapters | Express, Fastify |
+
+For the supported API surface and compatibility policy, see [website/docs/support-policy.md](website/docs/support-policy.md).
+
+## Repository Layout
 
 This repository contains:
 
@@ -18,20 +51,22 @@ This repository contains:
 - `sample/00-showcase`: the full end-to-end sample app
 - `sample/01-*` onward: focused runnable samples for single-topic onboarding
 
-`nest-trpc-native` makes tRPC feel native in Nest applications:
-
-- Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
-- Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
-- Explicit parameter extraction via `@Input()` and `@TrpcContext()`
-- Full support for guards, interceptors, pipes, filters, and request scope
-- Adapter-agnostic behavior across Express and Fastify
-
 ## Sample Layout
 
-The `sample/` directory follows a scalable pattern:
-
-- `sample/00-showcase`: full production-style app with every major capability
-- `sample/01-*` and onward: focused, low-cognitive-load samples by topic
+| Folder | Focus | Command |
+| --- | --- | --- |
+| `sample/00-showcase` | Full production-style integration baseline | `npm run test --workspace nest-trpc-native-showcase` |
+| `sample/01-basics-query-mutation` | Query and mutation essentials | `npm run test --workspace nest-trpc-native-sample-01-basics` |
+| `sample/02-enhancers-guards-pipes-filters` | Guards, interceptors, pipes, filters | `npm run test --workspace nest-trpc-native-sample-02-enhancers` |
+| `sample/03-context-request-scope` | `@TrpcContext` and request scope | `npm run test --workspace nest-trpc-native-sample-03-context` |
+| `sample/04-validation-zod` | Zod validation and inference | `npm run test --workspace nest-trpc-native-sample-04-zod` |
+| `sample/05-validation-class-validator` | DTOs with `ValidationPipe` | `npm run test --workspace nest-trpc-native-sample-05-class-validator` |
+| `sample/06-subscriptions` | Subscription handlers and clients | `npm run test --workspace nest-trpc-native-sample-06-subscriptions` |
+| `sample/07-express-fastify` | Express/Fastify adapter parity | `npm run test --workspace nest-trpc-native-sample-07-adapters` |
+| `sample/08-autoschema-client-typecheck` | `autoSchemaFile` and typed clients | `npm run test --workspace nest-trpc-native-sample-08-autoschema` |
+| `sample/09-forrootasync-config-middleware` | `forRootAsync`, config, middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
+| `sample/10-nested-alias-routers` | Nested router aliases | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
+| `sample/11-microservice-transport` | tRPC gateway with Nest microservice transport | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 
 Start with `sample/00-showcase` for end-to-end behavior, then use [sample/README.md](sample/README.md) and [website/docs/samples/index.md](website/docs/samples/index.md) to jump to specific features.
 
@@ -42,14 +77,6 @@ For explicit monorepo and microservice transport topologies, see [website/docs/a
 For explicit `forRootAsync + ConfigService + middleware`, run:
 
 - `npm run test --workspace nest-trpc-native-sample-09-config-middleware`
-
-## Requirements
-
-- Node.js `>=20`
-- NestJS `11.x`
-- tRPC `11.x`
-
-For the supported surface and compatibility policy, see [website/docs/support-policy.md](website/docs/support-policy.md).
 
 ## Installation
 
