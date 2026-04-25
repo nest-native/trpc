@@ -20,6 +20,7 @@ npm run ci:sample
 1. Open the [showcase sample](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/00-showcase).
 2. Use [Samples Catalog](./catalog) to jump straight to the feature you need.
 3. Use [Samples Architecture](./architecture) to understand why the sample tree is organized this way.
+4. Use [How To Review](./how-to-review) for exact commands to validate package, docs, showcase, and focused sample changes.
 
 ## Why This Structure?
 

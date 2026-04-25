@@ -56,7 +56,7 @@ These gaps should guide future PRs:
 - Add package-level real `@trpc/client` E2E tests that boot Nest apps on both Express and Fastify. Current real-client coverage mostly lives in runnable samples.
 - Add a dedicated duplicate-router/procedure-name validation test once runtime diagnostics are improved.
 - Add golden tests for generated schema formatting if output formatting becomes part of the release claim.
-- Keep benchmark claims out of README and docs until a reproducible benchmark harness exists.
+- Keep benchmark claims out of README and docs until a reproducible benchmark harness exists. See [Benchmark Methodology](../advanced/benchmark-methodology).
 
 ## Unsupported Claim Examples
 

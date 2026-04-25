@@ -32,3 +32,5 @@ npm run ci:sample
 | `11-microservice-transport` | tRPC gateway + Nest microservice transport (TCP) | Runnable | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 
 Use [website/docs/samples/index.md](../website/docs/samples/index.md) for file-level pointers and [website/docs/samples/architecture.md](../website/docs/samples/architecture.md) for structural rationale.
+
+For reviewer-oriented commands, see [website/docs/samples/how-to-review.md](../website/docs/samples/how-to-review.md).

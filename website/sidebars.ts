@@ -17,7 +17,12 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Samples',
-      items: ['samples/index', 'samples/catalog', 'samples/architecture'],
+      items: [
+        'samples/index',
+        'samples/catalog',
+        'samples/architecture',
+        'samples/how-to-review',
+      ],
     },
     {
       type: 'category',
@@ -68,6 +73,7 @@ const sidebars: SidebarsConfig = {
         'advanced/migration-from-rest-or-graphql',
         'advanced/transport-pattern-parallels',
         'advanced/error-handling',
+        'advanced/benchmark-methodology',
         'advanced/nest-internals',
       ],
     },
