@@ -27,6 +27,8 @@ Your router classes and decorators should work the same across both adapters.
 
 ## Supported Public API
 
+The package has three support tiers. Keeping those tiers distinct prevents quick-start docs from accidentally turning testing helpers or internals into application APIs.
+
 ### Primary onboarding API
 
 These are the APIs intended for installation docs, quick starts, and copy-paste usage:
@@ -44,6 +46,17 @@ These are the APIs intended for installation docs, quick starts, and copy-paste 
 
 - `TrpcRouter` is supported for in-process testing via `getRouter().createCaller(...)`.
 
+`TrpcRouter` should stay in testing-oriented guidance. It should not replace the normal application setup path based on `TrpcModule`, decorators, and generated `AppRouter` types.
+
+### Low-level compatibility exports
+
+These exports are public because they are part of the current top-level package entrypoint, but they are not onboarding APIs:
+
+- `ProcedureType`
+- `TrpcParamtype`
+
+They are intended for compatibility with existing low-level metadata or test integrations. New application code should usually not need them. If future `0.x` work removes or replaces them, the project should document that migration separately instead of silently changing the package entrypoint.
+
 ## Unsupported Internal Surface
 
 The following are implementation details and should not be treated as stable application APIs:
@@ -55,3 +68,5 @@ The following are implementation details and should not be treated as stable app
 - metadata constants and DI tokens intended for package internals
 
 These internals may change during `0.x` stabilization without being treated as a breaking change.
+
+For a table view of the current exports and evidence behind public claims, see [Public API Reference](./reference/public-api) and [Claims Matrix](./reference/claims-matrix).
