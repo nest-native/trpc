@@ -1,0 +1,56 @@
+name: Feature request
+description: Propose a focused improvement.
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests should fit the library's Nest-native design goals: decorator-first APIs, class-based routers, NestJS DI, and no unnecessary runtime dependencies.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or maintainer problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the API, docs, sample, or tooling change you want.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Public API
+        - Runtime internals
+        - Documentation
+        - Samples
+        - Testing
+        - CI/release tooling
+        - Website
+    validations:
+      required: true
+  - type: checkboxes
+    id: design
+    attributes:
+      label: Design constraints
+      options:
+        - label: This keeps the public API decorator-first and Nest-native.
+          required: true
+        - label: This does not require adding runtime dependencies to `packages/trpc`, or I explained why that tradeoff is necessary.
+          required: true
+        - label: This does not expose unsupported internals as user-facing API.
+          required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approach did you consider?
+    validations:
+      required: false

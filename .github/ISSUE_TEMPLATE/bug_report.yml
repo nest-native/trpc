@@ -1,0 +1,103 @@
+name: Bug report
+description: Report a reproducible problem in nest-trpc-native.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please keep the report focused and include a minimal reproduction where possible.
+
+        If this is security-sensitive, do not include exploit details here. See `SECURITY.md` first.
+  - type: input
+    id: version
+    attributes:
+      label: nest-trpc-native version
+      description: The installed package version or commit SHA.
+      placeholder: "0.3.1"
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      placeholder: "20.x or 22.x"
+    validations:
+      required: true
+  - type: input
+    id: nest
+    attributes:
+      label: NestJS version
+      placeholder: "11.x"
+    validations:
+      required: true
+  - type: input
+    id: trpc
+    attributes:
+      label: tRPC version
+      placeholder: "11.x"
+    validations:
+      required: true
+  - type: dropdown
+    id: adapter
+    attributes:
+      label: Adapter
+      options:
+        - Express
+        - Fastify
+        - Both
+        - Not adapter-related
+    validations:
+      required: true
+  - type: dropdown
+    id: validation
+    attributes:
+      label: Validation stack
+      options:
+        - Zod
+        - class-validator + ValidationPipe
+        - Both
+        - Neither
+        - Not validation-related
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Link to a repository or paste the smallest relevant router/module/client snippet.
+      render: ts
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error output
+      description: Remove secrets, private URLs, and production data before posting.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submit checks
+      options:
+        - label: I checked the support policy and this version/runtime is in scope.
+          required: true
+        - label: I removed secrets, tokens, private URLs, and user data from this report.
+          required: true

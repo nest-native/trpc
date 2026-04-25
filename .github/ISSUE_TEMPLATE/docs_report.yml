@@ -1,0 +1,33 @@
+name: Documentation issue
+description: Report unclear, missing, or incorrect documentation.
+title: "docs: "
+labels:
+  - documentation
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page or file
+      placeholder: "website/docs/quick-start.md"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Suggested correction
+      description: Optional, but very helpful.
+    validations:
+      required: false
+  - type: checkboxes
+    id: api-tier
+    attributes:
+      label: Public API tier check
+      options:
+        - label: This request does not ask quick-start or installation docs to expose unsupported internals.
+          required: true
