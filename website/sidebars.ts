@@ -4,8 +4,16 @@ const sidebars: SidebarsConfig = {
   docsSidebar: [
     'introduction',
     'installation',
-    'support-policy',
     'quick-start',
+    {
+      type: 'category',
+      label: 'Support & Reference',
+      items: [
+        'support-policy',
+        'reference/public-api',
+        'reference/claims-matrix',
+      ],
+    },
     {
       type: 'category',
       label: 'Samples',

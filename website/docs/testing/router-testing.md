@@ -6,7 +6,7 @@ sidebar_position: 1
 
 This guide shows pragmatic testing layers for `nest-trpc-native` routers.
 
-`TrpcRouter` is a supported advanced testing API. It is appropriate in tests, but it should not replace the main onboarding path centered on `TrpcModule`, decorators, and generated `AppRouter` types.
+`TrpcRouter` is a supported advanced testing API. It is appropriate in tests, but it should not replace the main onboarding path centered on `TrpcModule`, decorators, and generated `AppRouter` types. See [Public API Reference](../reference/public-api) for the full support-tier breakdown.
 
 ## Testing Strategy
 
