@@ -14,27 +14,54 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  tests-and-samples:
-    name: Tests + Coverage + Samples
+  package-build:
+    name: Package build/typecheck (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20', '22']
 
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build --workspace nest-trpc-native
+
+      - name: Typecheck package
+        run: npm run typecheck --workspace nest-trpc-native
+
+  package-coverage:
+    name: Package coverage (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20', '22']
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: npm ci
 
       - name: Restore base branch CI data
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && matrix.node-version == '22'
         id: base-ci-data
         uses: actions/cache/restore@v5
         with:
           path: ci-data
-          key: ci-data-${{ github.base_ref }}-
-          restore-keys: ci-data-${{ github.base_ref }}-
+          key: ci-data-node-22-${{ github.base_ref }}-
+          restore-keys: ci-data-node-22-${{ github.base_ref }}-
 
       - name: Extract base CI data
         if: steps.base-ci-data.outputs.cache-matched-key
@@ -51,30 +78,32 @@ jobs:
           echo $(( (SECONDS - START) * 1000 )) > test-step-duration-ms.txt
 
       - name: Run cognitive complexity report
+        if: matrix.node-version == '22'
         run: npm run complexity:report
 
       - name: Cache CI data for base branch
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && matrix.node-version == '22'
         run: |
           mkdir -p ci-data
           cp coverage/coverage-summary.json ci-data/coverage-summary.json
           cp test-results.json ci-data/test-results.json
           cp test-step-duration-ms.txt ci-data/test-step-duration-ms.txt
           cp complexity/cognitive-complexity-summary.json ci-data/cognitive-complexity-summary.json
-      - if: github.event_name == 'push'
+
+      - if: github.event_name == 'push' && matrix.node-version == '22'
         uses: actions/cache/save@v5
         with:
           path: ci-data
-          key: ci-data-${{ github.ref_name }}-${{ github.sha }}
+          key: ci-data-node-22-${{ github.ref_name }}-${{ github.sha }}
 
       - name: Get changed files
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && matrix.node-version == '22'
         run: |
           git fetch origin ${{ github.base_ref }} --depth=1
           git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'packages/**/*.ts' | tee changed-files.txt
 
       - name: Coverage Report
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && matrix.node-version == '22'
         uses: actions/github-script@v8
         with:
           script: |
@@ -82,7 +111,7 @@ jobs:
             await report({ github, context, core });
 
       - name: Performance Report
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && matrix.node-version == '22'
         uses: actions/github-script@v8
         with:
           script: |
@@ -90,7 +119,7 @@ jobs:
             await report({ github, context, core });
 
       - name: Complexity Report
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && matrix.node-version == '22'
         uses: actions/github-script@v8
         with:
           script: |
@@ -98,7 +127,7 @@ jobs:
             await report({ github, context, core });
 
       - name: Capture coverage summary
-        id: coverage
+        if: matrix.node-version == '22'
         run: |
           node -e "
           const fs = require('node:fs');
@@ -109,7 +138,6 @@ jobs:
             functions: summary.functions.pct,
             lines: summary.lines.pct,
           };
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, Object.entries(metrics).map(([k, v]) => k + '=' + v).join('\n') + '\n');
           const badge = pct => pct >= 100 ? '🟢' : pct >= 99.99 ? '🟡' : '🔴';
           const avg = Math.round((metrics.statements + metrics.branches + metrics.functions + metrics.lines) / 4 * 100) / 100;
           const report = [
@@ -128,6 +156,7 @@ jobs:
           "
 
       - name: Upload coverage artifacts
+        if: matrix.node-version == '22'
         uses: actions/upload-artifact@v7
         with:
           name: coverage-report
@@ -135,7 +164,21 @@ jobs:
             coverage/coverage-summary.json
             coverage/lcov.info
             coverage/lcov-report/**
+            test-results.json
           if-no-files-found: error
+
+  docs-snippets:
+    name: Docs snippet typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Typecheck docs snippets (unit)
         run: npm run docs:test:typecheck:unit
@@ -143,11 +186,66 @@ jobs:
       - name: Typecheck docs snippets (sample-mapped)
         run: npm run docs:test:typecheck:sample
 
+  docs-site:
+    name: Docusaurus build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
       - name: Install docs website dependencies
         run: npm --prefix website ci
 
       - name: Build docs site
         run: npm --prefix website run build
 
-      - name: Run sample checks
-        run: npm run ci:sample
+  showcase:
+    name: Showcase checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run showcase checks
+        run: npm run ci:showcase
+
+  focused-samples:
+    name: Focused sample checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run focused sample checks
+        run: npm run sample:focused
+
+  release-checks:
+    name: Release checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run release checks
+        run: npm run release:check
