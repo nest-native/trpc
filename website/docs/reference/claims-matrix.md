@@ -63,6 +63,6 @@ These gaps should guide future PRs:
 Do not make these claims unless new code, docs, and tests are added:
 
 - "Official NestJS integration."
-- "Production security is handled by the library."
+- "Production security is handled by the library." Authentication, authorization, rate limiting, CORS, and secret handling are application responsibilities. See [Security Responsibilities](../advanced/security-responsibilities).
 - "Benchmarked faster than REST, GraphQL, or vanilla tRPC."
 - "All package internals are stable extension points."

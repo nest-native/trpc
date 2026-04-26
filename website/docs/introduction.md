@@ -59,3 +59,6 @@ NestJS has a proven architecture with guards, interceptors, pipes, filters, and 
 - [Installation](./installation) — set up the package
 - [Support Policy](./support-policy) — see the supported versions and API tiers
 - [Quick Start](./quick-start) — build your first router in minutes
+- [Client Consumption](./client-consumption) — consume generated `AppRouter` types from applications
+- [Production Practices](./advanced/production-practices) — review production readiness signals
+- [Security Responsibilities](./advanced/security-responsibilities) — separate library behavior from app security
