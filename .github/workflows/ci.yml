@@ -77,6 +77,10 @@ jobs:
           TS_NODE_PROJECT=tsconfig.spec.json npx nyc mocha 'packages/**/*.spec.ts' --reporter mocha-multi-reporters --reporter-option configFile=.github/scripts/mocha-reporters-config.json
           echo $(( (SECONDS - START) * 1000 )) > test-step-duration-ms.txt
 
+      - name: Enforce cognitive complexity threshold
+        if: matrix.node-version == '22'
+        run: npm run complexity:check
+
       - name: Run cognitive complexity report
         if: matrix.node-version == '22'
         run: npm run complexity:report

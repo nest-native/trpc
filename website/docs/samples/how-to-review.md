@@ -17,10 +17,11 @@ npm run build --workspace nest-trpc-native
 
 ## Fast Package Checks
 
-Run package tests and the cognitive-complexity report:
+Run package tests and cognitive-complexity checks:
 
 ```bash
 npm run test
+npm run complexity:check
 npm run complexity:report
 ```
 
