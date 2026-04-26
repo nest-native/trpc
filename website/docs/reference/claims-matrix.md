@@ -50,6 +50,7 @@ This page maps the main public claims to current verification evidence. It is a 
 | Package and sample versions stay synchronized for releases. | `scripts/check-version-sync.mjs`, `RELEASING.md` | Covered by release check and release docs. |
 | README links stay valid. | `scripts/check-readme-links.mjs`, `npm run release:check:readme-links` | Covered by release check. |
 | Package tarball excludes unintended artifacts. | `scripts/check-package-pack.mjs`, `npm run release:check:pack` | Covered by release check. |
+| Package source functions stay within the cognitive-complexity threshold. | `eslint.complexity-check.config.mjs`, `npm run complexity:check`, `.github/workflows/ci.yml` | Covered by dedicated CI threshold check. |
 
 ## Known Verification Gaps
 

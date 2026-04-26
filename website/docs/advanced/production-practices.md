@@ -54,10 +54,11 @@ Router classes should not need to change when the app switches between Express a
 
 ## Watch Complexity And Coverage
 
-Use the package test suite and complexity report as review signals:
+Use the package test suite and cognitive-complexity checks during review:
 
 ```bash
 npm run test
+npm run complexity:check
 npm run complexity:report
 ```
 
@@ -67,7 +68,7 @@ Run coverage when behavior changes:
 npm run test:cov
 ```
 
-The complexity report is not a merge gate by itself. It should help reviewers spot code that needs a smaller shape, clearer names, or stronger tests.
+The threshold check is a merge gate for package source functions. The report adds review context so reviewers can spot code that needs a smaller shape, clearer names, or stronger tests.
 
 ## Release Checklist
 

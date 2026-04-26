@@ -167,6 +167,22 @@ jobs:
             test-results.json
           if-no-files-found: error
 
+  cognitive-complexity:
+    name: Cognitive complexity
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Enforce cognitive complexity threshold
+        run: npm run complexity:check
+
   docs-snippets:
     name: Docs snippet typecheck
     runs-on: ubuntu-latest
