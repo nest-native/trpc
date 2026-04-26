@@ -17,6 +17,7 @@ This page maps the main public claims to current verification evidence. It is a 
 | `@TrpcContext()` supports full context and field extraction. | `packages/trpc/test/context/trpc-context-creator.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/03-context-request-scope` | Covered by package tests and samples. |
 | `autoSchemaFile` generates importable `AppRouter` types. | `packages/trpc/test/generators/schema-generator.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/08-autoschema-client-typecheck/src/client.typecheck.ts` | Covered by package tests and client typecheck sample. |
 | `TrpcRouter` is supported for in-process testing. | `website/docs/testing/router-testing.md`, `packages/trpc/test/router/trpc-router.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts` | Covered as advanced testing API. |
+| Invalid router aliases and duplicate procedure paths fail with actionable diagnostics. | `packages/trpc/test/router/trpc-router.spec.ts` | Covered by package tests. |
 
 ## NestJS Integration Claims
 
@@ -54,7 +55,6 @@ This page maps the main public claims to current verification evidence. It is a 
 
 These gaps should guide future PRs:
 
-- Add a dedicated duplicate-router/procedure-name validation test once runtime diagnostics are improved.
 - Add golden tests for generated schema formatting if output formatting becomes part of the release claim.
 - Keep benchmark claims out of README and docs until a reproducible benchmark harness exists. See [Benchmark Methodology](../advanced/benchmark-methodology).
 

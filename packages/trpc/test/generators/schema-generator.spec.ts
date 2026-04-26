@@ -239,6 +239,59 @@ describe('generateSchemaContent', () => {
       '123start: t.procedure.input(schema_unknown__123start_input_0).query(() => undefined as unknown)',
     );
   });
+
+  it('should keep generated schema formatting stable', () => {
+    const content = generateSchemaContent([
+      {
+        alias: 'users',
+        procedures: [
+          {
+            name: 'list',
+            type: ProcedureType.QUERY,
+            inputSchema: z.object({ limit: z.number() }),
+            outputSchema: z.array(z.object({ id: z.string() })),
+          },
+        ],
+      },
+      {
+        procedures: [
+          { name: 'ping', type: ProcedureType.QUERY },
+          {
+            name: 'ticks',
+            type: ProcedureType.SUBSCRIPTION,
+            outputSchema: z.object({ tick: z.number() }),
+          },
+        ],
+      },
+    ]);
+
+    expect(content).to.equal([
+      '// ------------------------------------------------------',
+      '// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)',
+      '// nest-trpc-native',
+      '// ------------------------------------------------------',
+      '',
+      "import { initTRPC } from '@trpc/server';",
+      "import { z } from 'zod';",
+      '',
+      'const t = initTRPC.create();',
+      '',
+      'const schema_users_list_input_0 = z.object({ limit: z.number() });',
+      'const schema_users_list_output_1 = z.array(z.object({ id: z.string() }));',
+      'const schema_root_ticks_output_2 = z.object({ tick: z.number() });',
+      '',
+      'const appRouter = t.router({',
+      '  users: t.router({',
+      '    list: t.procedure.input(schema_users_list_input_0).output(schema_users_list_output_1).query(() => null as unknown as z.infer<typeof schema_users_list_output_1>),',
+      '  }),',
+      '  ping: t.procedure.query(() => undefined as unknown),',
+      '  ticks: t.procedure.subscription(async function* () { yield null as unknown as z.infer<typeof schema_root_ticks_output_2>; })',
+      '});',
+      '',
+      'export type AppRouter = typeof appRouter;',
+      '',
+    ].join('\n'));
+  });
 });
 
 describe('generateSchema (file output)', () => {
