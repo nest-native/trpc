@@ -410,6 +410,8 @@ describe('generateSchemaContent (type-level AppRouter contract)', () => {
             'commonjs',
             '--moduleResolution',
             'node',
+            '--ignoreDeprecations',
+            '6.0',
             '--skipLibCheck',
             typecheckFile,
           ],

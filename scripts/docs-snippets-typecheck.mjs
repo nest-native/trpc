@@ -268,6 +268,7 @@ function runTypecheck(fileNames) {
     allowSyntheticDefaultImports: true,
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
+    ignoreDeprecations: '6.0',
     resolveJsonModule: true,
     types: ['node', 'mocha'],
     lib: ['lib.es2022.d.ts', 'lib.dom.d.ts'],
