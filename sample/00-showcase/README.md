@@ -38,3 +38,5 @@ npm run typecheck:client
 npm run smoke:express
 npm run smoke:fastify
 ```
+
+For the full reviewer checklist across package tests, docs, showcase, and focused samples, see [website/docs/samples/how-to-review.md](../../website/docs/samples/how-to-review.md).
