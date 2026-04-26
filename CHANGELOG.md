@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0
+
+Production-readiness release focused on documentation, verification, and release confidence:
+
+- add contributor, security, issue, and pull request workflows
+- publish a Docusaurus documentation site with support policy, public API tiers, claims matrix, samples, testing, production, and benchmark methodology guidance
+- refresh README and package discovery content around supported Node, NestJS, tRPC, Zod, samples, and zero-runtime-dependency expectations
+- add real `@trpc/client` E2E coverage for Express and Fastify adapters
+- split CI into focused package, coverage, docs, Docusaurus, release, showcase, and sample jobs across Node 20 and Node 22 where relevant
+- add release checks for README links, sample version synchronization, workspace resolution, and package tarball contents
+- enforce SonarJS cognitive complexity for package source functions and publish cognitive complexity PR reports
+- update the test runner to support Chai 6's ESM-only package
+- add Dependabot automation for npm workspaces, website dependencies, and GitHub Actions updates
+
 ## 0.3.1
 
 - standardize Zod support on `4.x` as the supported optional peer dependency
