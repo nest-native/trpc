@@ -77,10 +77,6 @@ jobs:
           TS_NODE_PROJECT=tsconfig.spec.json npx nyc mocha 'packages/**/*.spec.ts' --reporter mocha-multi-reporters --reporter-option configFile=.github/scripts/mocha-reporters-config.json
           echo $(( (SECONDS - START) * 1000 )) > test-step-duration-ms.txt
 
-      - name: Enforce cognitive complexity threshold
-        if: matrix.node-version == '22'
-        run: npm run complexity:check
-
       - name: Run cognitive complexity report
         if: matrix.node-version == '22'
         run: npm run complexity:report
@@ -170,6 +166,22 @@ jobs:
             coverage/lcov-report/**
             test-results.json
           if-no-files-found: error
+
+  cognitive-complexity:
+    name: Cognitive complexity
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Enforce cognitive complexity threshold
+        run: npm run complexity:check
 
   docs-snippets:
     name: Docs snippet typecheck
