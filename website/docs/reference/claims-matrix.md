@@ -33,11 +33,12 @@ This page maps the main public claims to current verification evidence. It is a 
 
 | Claim | Current evidence | Status |
 | --- | --- | --- |
-| Express is supported. | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `sample/00-showcase/scripts/smoke-express.ts`, `sample/07-express-fastify/scripts/smoke-express.ts` | Covered by package tests and smoke samples. |
-| Fastify is supported. | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `sample/00-showcase/scripts/smoke-fastify.ts`, `sample/07-express-fastify/scripts/smoke-fastify.ts` | Covered by package tests and smoke samples. |
-| Zod input and output schemas are supported. | `packages/trpc/test/generators/zod-serializer.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/04-validation-zod` | Covered by package tests and samples. |
+| Express is supported. | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `sample/00-showcase/scripts/smoke-express.ts`, `sample/07-express-fastify/scripts/smoke-express.ts` | Covered by package tests and smoke samples. |
+| Fastify is supported. | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `sample/00-showcase/scripts/smoke-fastify.ts`, `sample/07-express-fastify/scripts/smoke-fastify.ts` | Covered by package tests and smoke samples. |
+| Zod input and output schemas are supported. | `packages/trpc/test/generators/zod-serializer.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `sample/04-validation-zod` | Covered by package tests and samples. |
 | Zod is optional. | `packages/trpc/package.json`, `website/docs/installation.md`, `website/docs/validation/class-validator.md`, `sample/05-validation-class-validator` | Covered by package metadata, docs, and samples. |
-| `class-validator` plus `ValidationPipe` DTO workflows are supported. | `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/05-validation-class-validator`, `website/docs/validation/class-validator.md` | Covered by package tests and samples. |
+| `class-validator` plus `ValidationPipe` DTO workflows are supported. | `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `sample/05-validation-class-validator`, `website/docs/validation/class-validator.md` | Covered by package tests and samples. |
+| Real `@trpc/client` calls work against Express and Fastify adapters. | `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `sample/00-showcase/scripts/smoke-express.ts`, `sample/00-showcase/scripts/smoke-fastify.ts`, `sample/07-express-fastify/scripts/smoke-express.ts`, `sample/07-express-fastify/scripts/smoke-fastify.ts` | Covered by package tests and smoke samples. |
 | Generated `AppRouter` works with `createTRPCProxyClient`. | `sample/00-showcase/scripts/smoke-express.ts`, `sample/07-express-fastify/scripts/smoke-express.ts`, `sample/08-autoschema-client-typecheck/src/client.typecheck.ts` | Covered by smoke and typecheck samples. |
 
 ## Release and Packaging Claims
@@ -53,7 +54,6 @@ This page maps the main public claims to current verification evidence. It is a 
 
 These gaps should guide future PRs:
 
-- Add package-level real `@trpc/client` E2E tests that boot Nest apps on both Express and Fastify. Current real-client coverage mostly lives in runnable samples.
 - Add a dedicated duplicate-router/procedure-name validation test once runtime diagnostics are improved.
 - Add golden tests for generated schema formatting if output formatting becomes part of the release claim.
 - Keep benchmark claims out of README and docs until a reproducible benchmark harness exists. See [Benchmark Methodology](../advanced/benchmark-methodology).
