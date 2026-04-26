@@ -42,6 +42,8 @@ const cats = await trpc.cats.list.query();
 const user = await trpc.users.create.mutate({ name: 'Ada' });
 ```
 
+For multi-app and monorepo patterns, see [Client Consumption](./client-consumption).
+
 ## Compile-Time Client Checking
 
 Create a typecheck-only file to ensure your client calls stay in sync:

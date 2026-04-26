@@ -61,6 +61,7 @@ const sidebars: SidebarsConfig = {
       items: ['testing/router-testing', 'errors/idiomatic-errors'],
     },
     'schema-generation',
+    'client-consumption',
     'express-and-fastify',
     {
       type: 'category',
@@ -73,6 +74,8 @@ const sidebars: SidebarsConfig = {
         'advanced/migration-from-rest-or-graphql',
         'advanced/transport-pattern-parallels',
         'advanced/error-handling',
+        'advanced/production-practices',
+        'advanced/security-responsibilities',
         'advanced/benchmark-methodology',
         'advanced/nest-internals',
       ],
