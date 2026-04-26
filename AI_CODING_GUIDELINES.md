@@ -92,6 +92,8 @@ This is not a suggestion — it is the project constitution.
 - Every PR analysis must include an explicit security pass; security is never implicit.
 - Supply-chain checks are NON-NEGOTIABLE:
   - Review every dependency addition/update (including lockfile changes) for legitimacy and necessity.
+  - `packages/trpc/package.json` must keep an explicit empty `"dependencies": {}` block.
+  - Runtime requirements belong in `peerDependencies`; package-local test/build tools belong in `devDependencies`.
   - Flag unpinned Git/URL dependencies unless there is explicit, documented approval.
   - Inspect install/lifecycle scripts (`preinstall`, `install`, `postinstall`, `prepare`) for malicious behavior risk.
   - Watch for typosquatting, suspicious package ownership changes, abandoned packages, and sudden lockfile churn.

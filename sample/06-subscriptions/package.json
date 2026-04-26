@@ -15,11 +15,11 @@
     "client:subscription": "npm run generate:types && ts-node src/subscription-client.ts"
   },
   "dependencies": {
-    "@nestjs/common": "11.1.16",
-    "@nestjs/core": "11.1.16",
-    "@nestjs/platform-express": "11.1.16",
-    "@trpc/client": "^11.12.0",
-    "@trpc/server": "^11.12.0",
+    "@nestjs/common": "11.1.19",
+    "@nestjs/core": "11.1.19",
+    "@nestjs/platform-express": "11.1.19",
+    "@trpc/client": "^11.16.0",
+    "@trpc/server": "^11.16.0",
     "eventsource": "4.1.0",
     "nest-trpc-native": "0.3.1",
     "reflect-metadata": "0.2.2",
@@ -27,8 +27,8 @@
     "rxjs": "7.8.2"
   },
   "devDependencies": {
-    "@types/node": "24.12.0",
+    "@types/node": "25.6.0",
     "ts-node": "10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "6.0.3"
   }
 }
