@@ -97,6 +97,11 @@ This is not a suggestion — it is the project constitution.
   - Flag unpinned Git/URL dependencies unless there is explicit, documented approval.
   - Inspect install/lifecycle scripts (`preinstall`, `install`, `postinstall`, `prepare`) for malicious behavior risk.
   - Watch for typosquatting, suspicious package ownership changes, abandoned packages, and sudden lockfile churn.
+  - Treat Dependabot PRs as automation assistance, not approval to merge:
+    - Keep major updates isolated unless a maintainer explicitly requests grouping.
+    - Verify `packages/trpc/package.json` still has `"dependencies": {}` after every dependency PR.
+    - Run the same validation expected for a human-authored dependency update.
+    - Do not auto-accept lockfile churn without understanding which direct dependency caused it.
 - Application security checks are required in PR reviews:
   - Auth/authz bypass risk, privilege escalation, and data exposure in handlers, decorators, and context wiring.
   - Input-validation gaps and injection surfaces (command/template/SQL-like patterns, prototype pollution, path traversal).
