@@ -63,6 +63,7 @@
       "optional": true
     }
   },
+  "dependencies": {},
   "devDependencies": {
     "@nestjs/common": "^11.1.19",
     "@nestjs/core": "^11.1.19",
