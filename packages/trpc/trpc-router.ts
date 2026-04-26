@@ -26,6 +26,33 @@ import { generateSchema, RouterInfo } from './generators/schema-generator';
 import { TrpcModuleOptions, TrpcRouterMetadata } from './interfaces';
 import { trpcRequestStorage } from './trpc-request-storage';
 
+interface RegisteredProcedure {
+  routerClassName: string;
+  methodName: string;
+  procedureName: string;
+  path: string;
+}
+
+interface RouterBuildState {
+  trpc: any;
+  routerMap: Record<string, any>;
+  registeredAliases: Set<string>;
+  namespaceAliases: Set<string>;
+  registeredProcedures: Map<string, RegisteredProcedure>;
+}
+
+interface RouterProviderContext {
+  state: RouterBuildState;
+  wrapper: any;
+  metatype: Type | Function;
+  routerClassName: string;
+  alias: string | undefined;
+  moduleKey: string;
+  procedureMap: Record<string, any>;
+  routerInfo: RouterInfo;
+  prototype: Record<string, any>;
+}
+
 @Injectable()
 export class TrpcRouter<
   TRouter extends AnyRouter = AnyRouter,
@@ -78,158 +105,368 @@ export class TrpcRouter<
   }
 
   private buildRouter(): AnyRouter {
-    const t = initTRPC.context<any>().create();
-    const routerMap: Record<string, any> = {};
+    const state: RouterBuildState = {
+      trpc: initTRPC.context<any>().create(),
+      routerMap: {},
+      registeredAliases: new Set<string>(),
+      namespaceAliases: new Set<string>(),
+      registeredProcedures: new Map<string, RegisteredProcedure>(),
+    };
     this.collectedRouterInfos = [];
 
-    const providers = this.discoveryService.getProviders();
+    for (const wrapper of this.discoveryService.getProviders()) {
+      this.registerRouterProvider(state, wrapper);
+    }
 
-    for (const wrapper of providers) {
-      const { instance, metatype } = wrapper;
-      if (!metatype) {
-        continue;
-      }
+    return state.trpc.router(state.routerMap);
+  }
 
-      const routerMeta: TrpcRouterMetadata | undefined = this.reflector.get(
-        TRPC_ROUTER_METADATA,
-        metatype,
-      );
+  private registerRouterProvider(
+    state: RouterBuildState,
+    wrapper: any,
+  ): void {
+    const context = this.createRouterProviderContext(state, wrapper);
+    if (!context) {
+      return;
+    }
 
-      if (!routerMeta) {
-        continue;
-      }
+    const methodNames = this.metadataScanner.getAllMethodNames(
+      context.prototype,
+    );
+    for (const methodName of methodNames) {
+      this.registerRouterMethod(context, methodName);
+    }
 
-      const alias = routerMeta.alias;
-      const moduleKey = this.resolveModuleKey(metatype);
-      const procedureMap: Record<string, any> = {};
-      const routerInfo: RouterInfo = { alias, procedures: [] };
-      const prototype =
-        instance && typeof instance === 'object'
-          ? Object.getPrototypeOf(instance)
-          : (metatype as Type).prototype;
-      if (!prototype) {
-        continue;
-      }
+    this.commitRouterProvider(context);
+  }
 
-      const methodNames = this.metadataScanner.getAllMethodNames(prototype);
+  private createRouterProviderContext(
+    state: RouterBuildState,
+    wrapper: any,
+  ): RouterProviderContext | undefined {
+    const { instance, metatype } = wrapper;
+    if (!metatype) {
+      return undefined;
+    }
 
-      for (const methodName of methodNames) {
-        const methodRef = prototype[methodName];
-        if (typeof methodRef !== 'function') {
-          continue;
-        }
+    const routerMeta: TrpcRouterMetadata | undefined = this.reflector.get(
+      TRPC_ROUTER_METADATA,
+      metatype,
+    );
+    if (!routerMeta) {
+      return undefined;
+    }
 
-        const procedureName: string | undefined = Reflect.getMetadata(
-          TRPC_PROCEDURE_METADATA,
-          methodRef,
+    const prototype =
+      instance && typeof instance === 'object'
+        ? Object.getPrototypeOf(instance)
+        : (metatype as Type).prototype;
+    if (!prototype) {
+      return undefined;
+    }
+
+    const routerClassName = this.getRouterClassName(metatype);
+    const alias = this.normalizeRouterAlias(routerMeta.alias, routerClassName);
+
+    return {
+      state,
+      wrapper,
+      metatype,
+      routerClassName,
+      alias,
+      moduleKey: this.resolveModuleKey(metatype),
+      procedureMap: {},
+      routerInfo: { alias, procedures: [] },
+      prototype,
+    };
+  }
+
+  private registerRouterMethod(
+    context: RouterProviderContext,
+    methodName: string,
+  ): void {
+    const methodRef = context.prototype[methodName];
+    if (typeof methodRef !== 'function') {
+      return;
+    }
+
+    const procedureName: string | undefined = Reflect.getMetadata(
+      TRPC_PROCEDURE_METADATA,
+      methodRef,
+    );
+    const procedureType: ProcedureType | undefined = Reflect.getMetadata(
+      TRPC_PROCEDURE_TYPE_METADATA,
+      methodRef,
+    );
+
+    if (!procedureName && !procedureType) {
+      return;
+    }
+    this.assertValidProcedureMetadata(
+      context.routerClassName,
+      methodName,
+      procedureName,
+      procedureType,
+    );
+
+    const resolvedProcedureType = procedureType as ProcedureType;
+    const inputSchema = Reflect.getMetadata(TRPC_INPUT_METADATA, methodRef);
+    const outputSchema = Reflect.getMetadata(TRPC_OUTPUT_METADATA, methodRef);
+    const wrappedHandler = this.createWrappedHandler(context, methodName, methodRef);
+
+    this.assertUniqueProcedurePath(
+      context.state.registeredProcedures,
+      {
+        routerClassName: context.routerClassName,
+        methodName,
+        procedureName,
+        path: this.formatProcedurePath(context.alias, procedureName),
+      },
+    );
+
+    context.procedureMap[procedureName] = this.createProcedure(
+      context.state.trpc.procedure,
+      resolvedProcedureType,
+      inputSchema,
+      outputSchema,
+      wrappedHandler,
+    );
+
+    this.logger.log(
+      `Mapped {${resolvedProcedureType}} "${context.alias ? context.alias + '.' : ''}${procedureName}" procedure`,
+    );
+
+    context.routerInfo.procedures.push({
+      name: procedureName,
+      type: resolvedProcedureType,
+      inputSchema,
+      outputSchema,
+    });
+  }
+
+  private createWrappedHandler(
+    context: RouterProviderContext,
+    methodName: string,
+    methodRef: (...args: any[]) => any,
+  ): (input: unknown, ctx: unknown) => Promise<unknown> {
+    const paramTypes: unknown[] =
+      Reflect.getMetadata(PARAMTYPES_METADATA, context.prototype, methodName) ??
+      [];
+
+    return this.contextCreator.create({
+      callback: methodRef,
+      methodName,
+      moduleKey: context.moduleKey,
+      paramTypes,
+      inquirerId: context.wrapper.id,
+      resolveContextId: () => this.resolveContextId(context.wrapper),
+      resolveInstance: (contextId: { id: number }) =>
+        this.resolveRouterInstance(context.wrapper, context.metatype, contextId),
+    });
+  }
+
+  private createProcedure(
+    baseProcedure: any,
+    procedureType: ProcedureType,
+    inputSchema: any,
+    outputSchema: any,
+    wrappedHandler: (input: unknown, ctx: unknown) => Promise<unknown>,
+  ): any {
+    let procedure = baseProcedure;
+
+    if (inputSchema) {
+      procedure = procedure.input(inputSchema) as any;
+    }
+    if (outputSchema && procedureType !== ProcedureType.SUBSCRIPTION) {
+      procedure = procedure.output(outputSchema) as any;
+    }
+
+    switch (procedureType) {
+      case ProcedureType.QUERY:
+        return procedure.query(
+          async ({ input, ctx }: { input: unknown; ctx: unknown }) => {
+            return wrappedHandler(input, ctx);
+          },
         );
-        const procedureType: ProcedureType | undefined = Reflect.getMetadata(
-          TRPC_PROCEDURE_TYPE_METADATA,
-          methodRef,
+      case ProcedureType.MUTATION:
+        return procedure.mutation(
+          async ({ input, ctx }: { input: unknown; ctx: unknown }) => {
+            return wrappedHandler(input, ctx);
+          },
         );
-
-        if (!procedureName || !procedureType) {
-          continue;
-        }
-
-        const inputSchema = Reflect.getMetadata(TRPC_INPUT_METADATA, methodRef);
-        const outputSchema = Reflect.getMetadata(
-          TRPC_OUTPUT_METADATA,
-          methodRef,
-        );
-
-        let procedure = t.procedure;
-
-        if (inputSchema) {
-          procedure = procedure.input(inputSchema) as any;
-        }
-        if (outputSchema && procedureType !== ProcedureType.SUBSCRIPTION) {
-          procedure = procedure.output(outputSchema) as any;
-        }
-
-        const paramTypes: unknown[] =
-          Reflect.getMetadata(PARAMTYPES_METADATA, prototype, methodName) ?? [];
-
-        // Create a context-aware handler that runs guards → interceptors → pipes → handler,
-        // including request-scoped providers and filters.
-        const wrappedHandler = this.contextCreator.create({
-          callback: methodRef,
-          methodName,
-          moduleKey,
-          paramTypes,
-          inquirerId: wrapper.id,
-          resolveContextId: () => this.resolveContextId(wrapper),
-          resolveInstance: (contextId: { id: number }) =>
-            this.resolveRouterInstance(wrapper, metatype, contextId),
-        });
-
-        switch (procedureType) {
-          case ProcedureType.QUERY:
-            procedureMap[procedureName] = procedure.query(
-              async ({ input, ctx }: { input: unknown; ctx: unknown }) => {
-                return wrappedHandler(input, ctx);
-              },
-            );
-            break;
-          case ProcedureType.MUTATION:
-            procedureMap[procedureName] = procedure.mutation(
-              async ({ input, ctx }: { input: unknown; ctx: unknown }) => {
-                return wrappedHandler(input, ctx);
-              },
-            );
-            break;
-          case ProcedureType.SUBSCRIPTION: {
-            const validateOutput = (value: unknown) =>
-              this.validateSubscriptionOutput(outputSchema, value);
-            procedureMap[procedureName] = procedure.subscription(
-              async function* ({
-                input,
-                ctx,
-              }: {
-                input: unknown;
-                ctx: unknown;
-              }) {
-                const result = await wrappedHandler(input, ctx);
-                if (
-                  result != null &&
-                  typeof result === 'object' &&
-                  Symbol.asyncIterator in (result as any)
-                ) {
-                  for await (const chunk of result as AsyncIterable<unknown>) {
-                    yield await validateOutput(chunk);
-                  }
-                } else {
-                  yield await validateOutput(result);
-                }
-              },
-            );
-            break;
-          }
-        }
-
-        this.logger.log(
-          `Mapped {${procedureType}} "${alias ? alias + '.' : ''}${procedureName}" procedure`,
-        );
-
-        routerInfo.procedures.push({
-          name: procedureName,
-          type: procedureType,
-          inputSchema,
+      case ProcedureType.SUBSCRIPTION:
+        return this.createSubscriptionProcedure(
+          procedure,
           outputSchema,
-        });
-      }
+          wrappedHandler,
+        );
+    }
+  }
 
-      if (Object.keys(procedureMap).length > 0) {
-        if (alias) {
-          this.assignAliasedRouter(routerMap, alias, t.router(procedureMap));
+  private createSubscriptionProcedure(
+    procedure: any,
+    outputSchema: any,
+    wrappedHandler: (input: unknown, ctx: unknown) => Promise<unknown>,
+  ): any {
+    const validateOutput = (value: unknown) =>
+      this.validateSubscriptionOutput(outputSchema, value);
+
+    return procedure.subscription(
+      async function* ({
+        input,
+        ctx,
+      }: {
+        input: unknown;
+        ctx: unknown;
+      }) {
+        const result = await wrappedHandler(input, ctx);
+        if (
+          result != null &&
+          typeof result === 'object' &&
+          Symbol.asyncIterator in (result as any)
+        ) {
+          for await (const chunk of result as AsyncIterable<unknown>) {
+            yield await validateOutput(chunk);
+          }
         } else {
-          Object.assign(routerMap, procedureMap);
+          yield await validateOutput(result);
         }
-        this.collectedRouterInfos.push(routerInfo);
+      },
+    );
+  }
+
+  private commitRouterProvider(context: RouterProviderContext): void {
+    if (Object.keys(context.procedureMap).length === 0) {
+      return;
+    }
+
+    if (context.alias) {
+      this.assertUniqueAliasPath(
+        context.alias,
+        context.routerClassName,
+        context.state.registeredAliases,
+        context.state.namespaceAliases,
+      );
+      this.assignAliasedRouter(
+        context.state.routerMap,
+        context.alias,
+        context.state.trpc.router(context.procedureMap),
+      );
+    } else {
+      Object.assign(context.state.routerMap, context.procedureMap);
+    }
+
+    this.collectedRouterInfos.push(context.routerInfo);
+  }
+
+  private getRouterClassName(metatype: Type | Function): string {
+    return metatype.name;
+  }
+
+  private normalizeRouterAlias(
+    alias: string | undefined,
+    routerClassName: string,
+  ): string | undefined {
+    if (alias === undefined) {
+      return undefined;
+    }
+
+    const segments = alias
+      .split('.')
+      .map(segment => segment.trim());
+
+    if (segments.some(segment => segment.length === 0)) {
+      throw this.createConfigurationError(
+        `Invalid tRPC router alias "${alias}" on ${routerClassName}.`,
+        'Use @Router() for a root router, or provide a non-empty dotted alias such as @Router("users") or @Router("admin.users").',
+      );
+    }
+
+    return segments.join('.');
+  }
+
+  private assertValidProcedureMetadata(
+    routerClassName: string,
+    methodName: string,
+    procedureName: string | undefined,
+    procedureType: ProcedureType | undefined,
+  ): asserts procedureName is string {
+    if (!procedureName || procedureName.trim().length === 0) {
+      throw this.createConfigurationError(
+        `Invalid tRPC procedure name on ${routerClassName}.${methodName}.`,
+        'Pass a non-empty name to @Query(), @Mutation(), or @Subscription(), or omit the name to use the method name.',
+      );
+    }
+
+    if (!procedureType) {
+      throw this.createConfigurationError(
+        `Invalid tRPC procedure metadata on ${routerClassName}.${methodName} for procedure "${procedureName}".`,
+        'Apply exactly one procedure decorator: @Query(), @Mutation(), or @Subscription().',
+      );
+    }
+  }
+
+  private formatProcedurePath(
+    alias: string | undefined,
+    procedureName: string,
+  ): string {
+    return alias ? `${alias}.${procedureName}` : procedureName;
+  }
+
+  private assertUniqueProcedurePath(
+    registeredProcedures: Map<string, RegisteredProcedure>,
+    candidate: RegisteredProcedure,
+  ): void {
+    const existing = registeredProcedures.get(candidate.path);
+    if (existing) {
+      throw this.createConfigurationError(
+        `Duplicate tRPC procedure path "${candidate.path}" discovered in ${candidate.routerClassName}.${candidate.methodName}.`,
+        `It was already registered by ${existing.routerClassName}.${existing.methodName}. Rename one procedure with @Query("name"), @Mutation("name"), or @Subscription("name"), or change one router alias.`,
+      );
+    }
+
+    registeredProcedures.set(candidate.path, candidate);
+  }
+
+  private assertUniqueAliasPath(
+    alias: string,
+    routerClassName: string,
+    registeredAliases: Set<string>,
+    namespaceAliases: Set<string>,
+  ): void {
+    if (registeredAliases.has(alias)) {
+      throw this.createConfigurationError(
+        `Duplicate tRPC router alias "${alias}" discovered on ${routerClassName}.`,
+        'Use a unique router alias, or merge the procedures into a single router class.',
+      );
+    }
+
+    const segments = alias.split('.');
+    for (let index = 1; index < segments.length; index += 1) {
+      const prefix = segments.slice(0, index).join('.');
+      if (registeredAliases.has(prefix)) {
+        throw this.createConfigurationError(
+          `Conflicting tRPC router alias "${alias}" discovered on ${routerClassName}.`,
+          `The alias "${prefix}" is already registered as a router. Rename one alias so a path segment is not both a router and a namespace.`,
+        );
       }
     }
 
-    return t.router(routerMap);
+    if (namespaceAliases.has(alias)) {
+      throw this.createConfigurationError(
+        `Conflicting tRPC router alias "${alias}" discovered on ${routerClassName}.`,
+        'That alias is already used as a namespace for another router. Rename one alias so a path segment is not both a router and a namespace.',
+      );
+    }
+
+    registeredAliases.add(alias);
+    for (let index = 1; index < segments.length; index += 1) {
+      namespaceAliases.add(segments.slice(0, index).join('.'));
+    }
+  }
+
+  private createConfigurationError(message: string, suggestion: string): Error {
+    return new Error(`${message} Suggested fix: ${suggestion}`);
   }
 
   private assignAliasedRouter(
@@ -241,10 +478,6 @@ export class TrpcRouter<
       .split('.')
       .map(segment => segment.trim())
       .filter(Boolean);
-
-    if (segments.length === 0) {
-      return;
-    }
 
     let cursor: Record<string, any> = routerMap;
 

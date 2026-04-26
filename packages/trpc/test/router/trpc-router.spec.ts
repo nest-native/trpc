@@ -5,6 +5,7 @@ import { PARAMTYPES_METADATA } from '@nestjs/common/constants';
 import { STATIC_CONTEXT } from '@nestjs/core/injector/constants';
 import * as sinon from 'sinon';
 import { z } from 'zod';
+import { TRPC_PROCEDURE_METADATA } from '../../constants';
 import { TrpcModule } from '../../trpc.module';
 import { TrpcRouter } from '../../trpc-router';
 import { trpcRequestStorage } from '../../trpc-request-storage';
@@ -52,11 +53,27 @@ class NestedAliasRouter {
   }
 }
 
+@Router('admin.users')
+class DuplicateNestedAliasRouter {
+  @Query()
+  list() {
+    return ['duplicate'];
+  }
+}
+
 @Router('admin.roles')
 class NestedSiblingAliasRouter {
   @Query()
   list() {
     return ['maintainer'];
+  }
+}
+
+@Router('admin')
+class NestedParentAliasRouter {
+  @Query()
+  list() {
+    return ['root'];
   }
 }
 
@@ -96,6 +113,13 @@ class MixedRouter {
   }
 }
 
+@Router('empty')
+class EmptyRouter {
+  helperMethod() {
+    return 'helper';
+  }
+}
+
 @Router('nullproto')
 class NullPrototypeRouter {
   @Query()
@@ -119,6 +143,68 @@ class PrototypeFallbackRouter {
   value() {
     return 'from-prototype';
   }
+}
+
+@Router()
+class DuplicateRootRouter {
+  @Query('ping')
+  duplicatePing() {
+    return 'duplicate';
+  }
+}
+
+@Router('greeting')
+class DuplicateGreetingAliasRouter {
+  @Query()
+  salutation() {
+    return 'hello';
+  }
+}
+
+@Router('invalid')
+class EmptyProcedureNameRouter {
+  @Query('')
+  emptyName() {
+    return 'invalid';
+  }
+}
+
+@Router('broken')
+class MissingProcedureTypeRouter {
+  broken() {
+    return 'broken';
+  }
+}
+Reflect.defineMetadata(
+  TRPC_PROCEDURE_METADATA,
+  'broken',
+  MissingProcedureTypeRouter.prototype.broken,
+);
+
+async function expectModuleInitFailure(
+  providers: any[],
+  expectedMessage: RegExp,
+) {
+  let module: TestingModule | undefined;
+  let error: Error | undefined;
+
+  try {
+    module = await Test.createTestingModule({
+      imports: [TrpcModule.forRoot({ path: '/trpc' })],
+      providers,
+    }).compile();
+
+    await module.init();
+  } catch (err) {
+    error = err as Error;
+  } finally {
+    if (!error) {
+      await module?.close();
+    }
+  }
+
+  expect(error).to.be.instanceOf(Error);
+  expect(String(error?.message)).to.match(expectedMessage);
 }
 
 describe('TrpcRouter', () => {
@@ -214,17 +300,62 @@ describe('TrpcRouter (nested aliases)', () => {
     expect(roles).to.deep.equal(['maintainer']);
   });
 
-  it('should ignore dotted aliases that normalize to empty segments', async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [TrpcModule.forRoot({ path: '/trpc' })],
-      providers: [BlankDottedAliasRouter],
-    }).compile();
+  it('should reject aliases that normalize to empty segments', async () => {
+    await expectModuleInitFailure(
+      [BlankDottedAliasRouter],
+      /Invalid tRPC router alias " \. ".*BlankDottedAliasRouter.*Suggested fix:.*non-empty dotted alias/s,
+    );
+  });
+});
 
-    await module.init();
+describe('TrpcRouter diagnostics', () => {
+  it('should reject duplicate root procedure paths', async () => {
+    await expectModuleInitFailure(
+      [FlatRouter, DuplicateRootRouter],
+      /Duplicate tRPC procedure path "ping".*DuplicateRootRouter\.duplicatePing.*Suggested fix:.*FlatRouter\.ping.*Rename one procedure/s,
+    );
+  });
 
-    const router = module.get(TrpcRouter).getRouter();
-    const procedures = router._def.procedures;
-    expect(Object.keys(procedures)).to.deep.equal([]);
+  it('should reject duplicate aliased procedure paths', async () => {
+    await expectModuleInitFailure(
+      [NestedAliasRouter, DuplicateNestedAliasRouter],
+      /Duplicate tRPC procedure path "admin\.users\.list".*DuplicateNestedAliasRouter\.list.*Suggested fix:.*NestedAliasRouter\.list.*change one router alias/s,
+    );
+  });
+
+  it('should reject duplicate router aliases even when procedure names differ', async () => {
+    await expectModuleInitFailure(
+      [GreetingRouter, DuplicateGreetingAliasRouter],
+      /Duplicate tRPC router alias "greeting".*DuplicateGreetingAliasRouter.*Suggested fix:.*unique router alias/s,
+    );
+  });
+
+  it('should reject aliases that reuse an existing router as a namespace', async () => {
+    await expectModuleInitFailure(
+      [NestedParentAliasRouter, NestedAliasRouter],
+      /Conflicting tRPC router alias "admin\.users".*NestedAliasRouter.*Suggested fix:.*alias "admin" is already registered as a router/s,
+    );
+  });
+
+  it('should reject aliases that replace an existing namespace', async () => {
+    await expectModuleInitFailure(
+      [NestedAliasRouter, NestedParentAliasRouter],
+      /Conflicting tRPC router alias "admin".*NestedParentAliasRouter.*Suggested fix:.*already used as a namespace/s,
+    );
+  });
+
+  it('should reject empty custom procedure names', async () => {
+    await expectModuleInitFailure(
+      [EmptyProcedureNameRouter],
+      /Invalid tRPC procedure name on EmptyProcedureNameRouter\.emptyName.*Suggested fix:.*non-empty name/s,
+    );
+  });
+
+  it('should reject incomplete procedure metadata', async () => {
+    await expectModuleInitFailure(
+      [MissingProcedureTypeRouter],
+      /Invalid tRPC procedure metadata on MissingProcedureTypeRouter\.broken.*procedure "broken".*Suggested fix:.*@Query\(\).*@Mutation\(\).*@Subscription\(\)/s,
+    );
   });
 });
 
@@ -301,6 +432,17 @@ describe('TrpcRouter (edge cases)', () => {
     // Only the decorated method should appear
     expect(procedures).to.have.property('mixed.decorated');
     expect(procedures).to.not.have.property('mixed.helperMethod');
+  });
+
+  it('should skip routers with no procedure decorators', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [TrpcModule.forRoot({ path: '/trpc' })],
+      providers: [EmptyRouter],
+    }).compile();
+
+    await module.init();
+    const router = module.get(TrpcRouter).getRouter();
+    expect(router._def.procedures).to.deep.equal({});
   });
 
   it('should skip providers with null instance or metatype', async () => {

@@ -22,19 +22,23 @@ module.exports = async ({ github, context, core }) => {
   const baseByFile = new Map((base?.files ?? []).map(file => [file.file, file]));
   const currentByFile = new Map(current.files.map(file => [file.file, file]));
 
-  const diffNumber = (currentValue, baseValue) => {
+  const formatDiff = (currentValue, baseValue, { higherIsBad }) => {
     if (baseValue == null) {
       return '🆕 new';
     }
     const diff = currentValue - baseValue;
     if (diff > 0) {
-      return `🔴 +${diff}`;
+      return `${higherIsBad ? '🔴' : '⚪'} +${diff}`;
     }
     if (diff < 0) {
-      return `🟢 ${diff}`;
+      return `${higherIsBad ? '🟢' : '⚪'} ${diff}`;
     }
     return '⚪ 0';
   };
+  const complexityDiff = (currentValue, baseValue) =>
+    formatDiff(currentValue, baseValue, { higherIsBad: true });
+  const neutralDiff = (currentValue, baseValue) =>
+    formatDiff(currentValue, baseValue, { higherIsBad: false });
 
   const status = value => {
     if (value >= 25) {
@@ -59,7 +63,7 @@ module.exports = async ({ github, context, core }) => {
     }
 
     changedRows.push(
-      `| \`${file.replace(/^packages\//, '')}\` | ${currentFile?.totalComplexity ?? 0} | ${currentFile?.maxComplexity ?? 0} | ${currentFile?.functionCount ?? 0} | ${diffNumber(currentFile?.totalComplexity ?? 0, baseFile?.totalComplexity)} |`,
+      `| \`${file.replace(/^packages\//, '')}\` | ${currentFile?.totalComplexity ?? 0} | ${currentFile?.maxComplexity ?? 0} | ${currentFile?.functionCount ?? 0} | ${complexityDiff(currentFile?.totalComplexity ?? 0, baseFile?.totalComplexity)} |`,
     );
   }
 
@@ -71,9 +75,9 @@ module.exports = async ({ github, context, core }) => {
     '',
     '| Metric | PR | Base | Diff |',
     '| --- | ---: | ---: | ---: |',
-    `| Total complexity | ${current.totals.totalComplexity} | ${baseTotal ?? '-'} | ${diffNumber(current.totals.totalComplexity, baseTotal)} |`,
-    `| Max function complexity | ${current.totals.maxComplexity} | ${baseMax ?? '-'} | ${diffNumber(current.totals.maxComplexity, baseMax)} |`,
-    `| Functions measured | ${current.totals.functions} | ${base?.totals.functions ?? '-'} | ${diffNumber(current.totals.functions, base?.totals.functions)} |`,
+    `| Total complexity | ${current.totals.totalComplexity} | ${baseTotal ?? '-'} | ${complexityDiff(current.totals.totalComplexity, baseTotal)} |`,
+    `| Max function complexity | ${current.totals.maxComplexity} | ${baseMax ?? '-'} | ${complexityDiff(current.totals.maxComplexity, baseMax)} |`,
+    `| Functions measured | ${current.totals.functions} | ${base?.totals.functions ?? '-'} | ${neutralDiff(current.totals.functions, base?.totals.functions)} |`,
     '',
     '<details>',
     '<summary><strong>🧩 Most complex functions</strong></summary>',
