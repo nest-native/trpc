@@ -20,6 +20,7 @@ sidebar_position: 2
 | `sample/09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 | `sample/10-nested-alias-routers` | Dotted aliases mapped to nested routers | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `sample/11-microservice-transport` | tRPC gateway with Nest microservice transport (TCP) | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
+| `sample/12-angular-fullstack-showcase` | Angular browser client + NestJS backend | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
 
 ## GitHub Folders
 
@@ -35,3 +36,4 @@ sidebar_position: 2
 - [09-forrootasync-config-middleware](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/09-forrootasync-config-middleware)
 - [10-nested-alias-routers](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/10-nested-alias-routers)
 - [11-microservice-transport](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/11-microservice-transport)
+- [12-angular-fullstack-showcase](https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/12-angular-fullstack-showcase)

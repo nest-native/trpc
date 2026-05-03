@@ -50,6 +50,7 @@ This repository contains:
 - `packages/trpc`: the `nest-trpc-native` integration package
 - `sample/00-showcase`: the full end-to-end sample app
 - `sample/01-*` onward: focused runnable samples for single-topic onboarding
+- `sample/12-angular-fullstack-showcase`: browser-client showcase using Angular with `@trpc/client`
 
 ## Sample Layout
 
@@ -67,6 +68,7 @@ This repository contains:
 | `sample/09-forrootasync-config-middleware` | `forRootAsync`, config, middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 | `sample/10-nested-alias-routers` | Nested router aliases | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `sample/11-microservice-transport` | tRPC gateway with Nest microservice transport | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
+| `sample/12-angular-fullstack-showcase` | Angular browser client + NestJS backend | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
 
 Start with `sample/00-showcase` for end-to-end behavior, then use [sample/README.md](sample/README.md) and [website/docs/samples/index.md](website/docs/samples/index.md) to jump to specific features.
 

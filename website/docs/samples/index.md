@@ -8,6 +8,7 @@ The samples are the fastest way to understand how `nest-trpc-native` behaves in 
 
 - `sample/00-showcase`: full end-to-end baseline with all major capabilities.
 - `sample/01-*` onward: focused runnable slices that isolate one topic each.
+- `sample/12-angular-fullstack-showcase`: Angular browser-client showcase using `@trpc/client`.
 
 ## Run The Full Sample Matrix
 
@@ -21,6 +22,7 @@ npm run ci:sample
 2. Use [Samples Catalog](./catalog) to jump straight to the feature you need.
 3. Use [Samples Architecture](./architecture) to understand why the sample tree is organized this way.
 4. Use [How To Review](./how-to-review) for exact commands to validate package, docs, showcase, and focused sample changes.
+5. Use [Angular Showcase](./angular-showcase) when you want to inspect a typed browser client.
 
 ## Why This Structure?
 
