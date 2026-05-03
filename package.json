@@ -95,5 +95,5 @@
     "statements": 100,
     "cache": false
   },
-  "packageManager": "npm@10.9.7"
+  "packageManager": "npm@11.13.0"
 }
