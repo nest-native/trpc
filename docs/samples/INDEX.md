@@ -17,6 +17,14 @@ This index is the fast path for onboarding and contribution.
 | `sample/09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 | `sample/10-nested-alias-routers` | Dotted aliases to nested router objects | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `sample/11-microservice-transport` | tRPC gateway + Nest microservice transport (TCP) | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
+| `sample/12-angular-fullstack-showcase` | Angular browser client + NestJS backend | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
+
+## Browser Showcase
+
+`sample/12-angular-fullstack-showcase` is the browser-client showcase. It keeps
+the NestJS side decorator-first and uses Angular with the standard
+`@trpc/client` package. It is intentionally separate from `sample/00-showcase`
+so the compact backend baseline remains easy to scan.
 
 ## Suggested Learning Paths
 
@@ -65,6 +73,8 @@ This index is the fast path for onboarding and contribution.
 | Auto-generated router types | `sample/00-showcase/src/generate-types.ts`, `sample/00-showcase/src/@generated/server.ts` |
 | Typed client checks | `sample/00-showcase/src/client.typecheck.ts` |
 | Express/Fastify parity | `sample/00-showcase/src/main.ts`, `sample/00-showcase/src/main-fastify.ts`, `sample/00-showcase/scripts/smoke-*.ts` |
+| Angular client provider | `sample/12-angular-fullstack-showcase/frontend/src/app/trpc/trpc.client.ts` |
+| Angular typed service | `sample/12-angular-fullstack-showcase/frontend/src/app/health/health-api.service.ts` |
 
 ## Contribution Heuristics
 

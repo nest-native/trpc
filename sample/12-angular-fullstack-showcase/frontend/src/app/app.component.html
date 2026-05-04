@@ -1,0 +1,37 @@
+<main class="shell">
+  <section class="panel">
+    <div class="eyebrow">Angular + NestJS</div>
+    <h1>nest-trpc-native showcase</h1>
+    <p class="summary">
+      A typed Angular client calling a NestJS tRPC router generated from
+      decorator-first server code.
+    </p>
+
+    <dl class="status-grid">
+      <div>
+        <dt>API status</dt>
+        <dd>{{ statusLabel() }}</dd>
+      </div>
+      <div>
+        <dt>Service</dt>
+        <dd>{{ status()?.service ?? 'pending' }}</dd>
+      </div>
+      <div>
+        <dt>Request id</dt>
+        <dd>{{ status()?.requestId ?? 'pending' }}</dd>
+      </div>
+      <div>
+        <dt>Uptime</dt>
+        <dd>{{ status()?.uptimeSeconds | number: '1.0-2' }}s</dd>
+      </div>
+    </dl>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ loading() ? 'Checking...' : 'Refresh' }}
+    </button>
+  </section>
+</main>

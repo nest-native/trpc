@@ -11,6 +11,7 @@ The sample tree uses a hybrid model to stay scalable while preserving full funct
 - `packages/trpc`: publishable integration package.
 - `sample/00-showcase`: full runnable integration baseline.
 - `sample/01-*` onward: focused runnable topic slices.
+- `sample/12-angular-fullstack-showcase`: browser-client showcase.
 
 Why:
 
@@ -45,5 +46,6 @@ Why:
 Example:
 
 - `sample/11-microservice-transport` isolates gateway-to-microservice messaging via Nest transport, without bloating `00-showcase`.
+- `sample/12-angular-fullstack-showcase` isolates browser-client wiring so `00-showcase` can stay focused on the NestJS integration baseline.
 
 For side-by-side architectural mapping against GraphQL, WebSocket, and gRPC mental models, see [Transport Pattern Parallels](../advanced/transport-pattern-parallels).

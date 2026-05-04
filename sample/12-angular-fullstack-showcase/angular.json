@@ -1,0 +1,46 @@
+{
+  "$schema": "../../node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "frontend",
+  "projects": {
+    "angular-showcase": {
+      "projectType": "application",
+      "root": "frontend",
+      "sourceRoot": "frontend/src",
+      "prefix": "showcase",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/frontend",
+            "index": "frontend/src/index.html",
+            "browser": "frontend/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "frontend/tsconfig.app.json",
+            "assets": [],
+            "styles": ["frontend/src/styles.css"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractLicenses": true
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "angular-showcase:build:development"
+          }
+        }
+      }
+    }
+  }
+}

@@ -51,6 +51,25 @@ For Fastify parity:
 npm run start:fastify --workspace nest-trpc-native-showcase
 ```
 
+## Angular Showcase Review
+
+The Angular showcase proves a browser application can consume generated
+`AppRouter` types with standard `@trpc/client` APIs:
+
+```bash
+npm run test --workspace nest-trpc-native-sample-12-angular-showcase
+```
+
+For manual review, run the API and Angular app in separate terminals:
+
+```bash
+npm run start:api --workspace nest-trpc-native-sample-12-angular-showcase
+npm run start:web --workspace nest-trpc-native-sample-12-angular-showcase
+```
+
+The Angular sample follows Angular 21's Node.js support range. The core package
+support policy remains the source of truth for `nest-trpc-native` itself.
+
 ## Focused Sample Matrix
 
 Run the full sample matrix before merging changes that affect documented behavior:
@@ -74,6 +93,7 @@ For targeted review, run the focused sample that matches the change:
 | Async module config and middleware | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 | Nested aliases | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | Microservice transport bridge | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
+| Angular browser showcase | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
 
 ## Docs Review
 
@@ -98,4 +118,5 @@ npm run release:check:pack
 - Unsupported internals should not be presented as extension points.
 - Zod and DTO validation should both remain supported.
 - Express and Fastify should require no router-code changes.
+- Angular examples should import `AppRouter` as a type and use `@trpc/client`, not package internals.
 - Complexity increases should be intentional and explained.

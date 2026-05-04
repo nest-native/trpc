@@ -4,6 +4,7 @@ This folder uses a hybrid model:
 
 - `00-showcase`: full end-to-end baseline with all major capabilities together.
 - `01-*` onward: focused runnable extractions, each isolating one topic.
+- `12-angular-fullstack-showcase`: browser-client showcase using Angular with `@trpc/client`.
 
 ## Quick Start
 
@@ -11,6 +12,7 @@ This folder uses a hybrid model:
 npm run start --workspace nest-trpc-native-showcase
 npm run client --workspace nest-trpc-native-showcase
 npm run client:subscription --workspace nest-trpc-native-showcase
+npm run angular-showcase
 npm run ci:sample
 ```
 
@@ -30,6 +32,7 @@ npm run ci:sample
 | `09-forrootasync-config-middleware` | `forRootAsync` + `ConfigService` + middleware | Runnable | `npm run test --workspace nest-trpc-native-sample-09-config-middleware` |
 | `10-nested-alias-routers` | Dotted aliases as nested router objects | Runnable | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `11-microservice-transport` | tRPC gateway + Nest microservice transport (TCP) | Runnable | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
+| `12-angular-fullstack-showcase` | Angular browser client + NestJS backend | Runnable | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
 
 Use [website/docs/samples/index.md](../website/docs/samples/index.md) for file-level pointers and [website/docs/samples/architecture.md](../website/docs/samples/architecture.md) for structural rationale.
 

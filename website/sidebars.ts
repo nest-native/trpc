@@ -20,6 +20,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'samples/index',
         'samples/catalog',
+        'samples/angular-showcase',
         'samples/architecture',
         'samples/how-to-review',
       ],

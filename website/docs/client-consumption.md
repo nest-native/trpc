@@ -98,3 +98,28 @@ Client setup is application-owned:
 - Use subscriptions only when the server and client deployment path both support streaming.
 
 For schema generation details, see [Schema Generation](./schema-generation). For a runnable client, see the [showcase sample](./samples).
+
+## Angular Applications
+
+Angular applications can use the same generated `AppRouter` type with
+`@trpc/client`. The repository's Angular showcase wraps the typed client in an
+Angular injection token:
+
+```ts title="frontend/src/app/trpc/trpc.client.ts"
+import { InjectionToken } from '@angular/core';
+import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import type { AppRouter } from '../../../../src/@generated/server';
+
+export type TrpcClient = ReturnType<typeof createTRPCProxyClient<AppRouter>>;
+
+export const TRPC_CLIENT = new InjectionToken<TrpcClient>('TRPC_CLIENT', {
+  providedIn: 'root',
+  factory: () =>
+    createTRPCProxyClient<AppRouter>({
+      links: [httpBatchLink({ url: 'http://localhost:3000/trpc' })],
+    }),
+});
+```
+
+Keep the `AppRouter` import type-only so Angular does not bundle NestJS runtime
+code. For a runnable Angular app, see [Angular Showcase](./samples/angular-showcase).
