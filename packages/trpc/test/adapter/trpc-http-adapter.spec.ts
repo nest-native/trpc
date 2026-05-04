@@ -1,9 +1,14 @@
 import {
   BadRequestException,
+  CallHandler,
   CanActivate,
   ExecutionContext,
   Injectable,
+  NestInterceptor,
+  PipeTransform,
   UseGuards,
+  UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { expect } from 'chai';
 import {
@@ -11,7 +16,9 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
+import { map, Observable } from 'rxjs';
 import { z } from 'zod';
+import { Input } from '../../decorators/input.decorator';
 import { Router } from '../../decorators/router.decorator';
 import {
   Mutation,
@@ -28,6 +35,35 @@ class DenyGuard implements CanActivate {
   }
 }
 
+@Injectable()
+class TrimNamePipe implements PipeTransform {
+  transform(value: unknown): unknown {
+    if (value && typeof value === 'object' && 'name' in value) {
+      const input = value as { name?: unknown };
+      if (typeof input.name === 'string') {
+        return { ...input, name: input.name.trim() };
+      }
+    }
+
+    return value;
+  }
+}
+
+@Injectable()
+class MarkResponseInterceptor implements NestInterceptor {
+  intercept(
+    _context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<unknown> {
+    return next.handle().pipe(
+      map(value => ({
+        ...(value as Record<string, unknown>),
+        intercepted: true,
+      })),
+    );
+  }
+}
+
 @Router('items')
 class ItemsRouter {
   @Query()
@@ -38,6 +74,13 @@ class ItemsRouter {
   @Mutation({ input: z.object({ name: z.string() }) })
   create(input: { name: string }) {
     return { id: '2', name: input.name };
+  }
+
+  @Mutation({ input: z.object({ name: z.string() }) })
+  @UsePipes(TrimNamePipe)
+  @UseInterceptors(MarkResponseInterceptor)
+  enhanced(@Input() input: { name: string }) {
+    return { name: input.name };
   }
 
   @Mutation()
@@ -69,7 +112,12 @@ describe('TrpcHttpAdapter', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TrpcModule.forRoot({ path: '/trpc' })],
-      providers: [ItemsRouter, DenyGuard],
+      providers: [
+        ItemsRouter,
+        DenyGuard,
+        TrimNamePipe,
+        MarkResponseInterceptor,
+      ],
     }).compile();
 
     app = module.createNestApplication();
@@ -112,6 +160,24 @@ describe('TrpcHttpAdapter', () => {
       expect(response.status).to.equal(200);
       const body = await response.json();
       expect(body.result.data).to.deep.equal({ id: '2', name: 'New Item' });
+    });
+
+    it('should apply method pipes and interceptors through HTTP requests', async () => {
+      const response = await fetch(
+        `http://localhost:${port}/trpc/items.enhanced`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: '  Enhanced Item  ' }),
+        },
+      );
+
+      expect(response.status).to.equal(200);
+      const body = await response.json();
+      expect(body.result.data).to.deep.equal({
+        name: 'Enhanced Item',
+        intercepted: true,
+      });
     });
 
     it('should map guard-denied execution to FORBIDDEN/403', async () => {
@@ -213,7 +279,12 @@ describe('TrpcHttpAdapter', () => {
     beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
         imports: [TrpcModule.forRoot({ path: '/trpc' })],
-        providers: [ItemsRouter, DenyGuard],
+        providers: [
+          ItemsRouter,
+          DenyGuard,
+          TrimNamePipe,
+          MarkResponseInterceptor,
+        ],
       }).compile();
 
       fastifyApp = module.createNestApplication<NestFastifyApplication>(
