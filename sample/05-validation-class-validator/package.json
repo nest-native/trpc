@@ -16,7 +16,7 @@
     "@nestjs/common": "11.1.19",
     "@nestjs/core": "11.1.19",
     "@nestjs/platform-express": "11.1.19",
-    "@trpc/client": "^11.16.0",
+    "@trpc/client": "^11.17.0",
     "@trpc/server": "^11.16.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
