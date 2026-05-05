@@ -14,7 +14,8 @@ module.exports = async ({ github, context, core }) => {
     : null;
 
   // --- Helpers ---
-  const fmtDuration = (ms) => (ms >= 1000 ? `**${(ms / 1000).toFixed(2)}s**` : `${ms}ms`);
+  const fmtMilliseconds = (ms) => `${Math.round(ms)}ms`;
+  const fmtDuration = (ms) => (ms >= 1000 ? `**${(ms / 1000).toFixed(2)}s**` : fmtMilliseconds(ms));
 
   const fmtDiff = (currMs, baseMs) => {
     if (baseMs == null) return '-';
@@ -24,7 +25,7 @@ module.exports = async ({ github, context, core }) => {
     const icon = diffMs > 0 ? '🔴' : '🟢';
     return diffMs >= 1000 || diffMs <= -1000
       ? `${icon} ${sign}${(diffMs / 1000).toFixed(2)}s`
-      : `${icon} ${sign}${diffMs}ms`;
+      : `${icon} ${sign}${fmtMilliseconds(diffMs)}`;
   };
 
   const suiteKey = (file) => file.split('/').slice(-3).join('/');
