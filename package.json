@@ -49,10 +49,10 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@nestjs/testing": "11.1.19",
+    "@nestjs/testing": "11.1.21",
     "@types/chai": "5.2.3",
     "@types/mocha": "10.0.10",
-    "@types/node": "25.6.2",
+    "@types/node": "25.8.0",
     "@types/sinon": "21.0.1",
     "@typescript-eslint/parser": "^8.59.3",
     "chai": "6.2.2",
