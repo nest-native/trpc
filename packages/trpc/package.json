@@ -18,10 +18,10 @@
   ],
   "author": "Rodrigo Nogueira",
   "license": "MIT",
-  "homepage": "https://github.com/rodrigobnogueira/nest-trpc-native#readme",
+  "homepage": "https://github.com/nest-native/nest-trpc-native#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rodrigobnogueira/nest-trpc-native.git",
+    "url": "git+https://github.com/nest-native/nest-trpc-native.git",
     "directory": "packages/trpc"
   },
   "main": "./dist/index.js",
