@@ -14,9 +14,9 @@
     "start": "npm run generate:types && ts-node src/main.ts"
   },
   "dependencies": {
-    "@nestjs/common": "11.1.19",
-    "@nestjs/core": "11.1.19",
-    "@nestjs/platform-express": "11.1.19",
+    "@nestjs/common": "11.1.21",
+    "@nestjs/core": "11.1.21",
+    "@nestjs/platform-express": "11.1.21",
     "@trpc/client": "^11.17.0",
     "@trpc/server": "^11.16.0",
     "nest-trpc-native": "0.4.0",
