@@ -14,7 +14,7 @@ The current stabilization line is documented in [website/docs/support-policy.md]
 
 Use GitHub private vulnerability reporting if it is available for this repository:
 
-https://github.com/rodrigobnogueira/nest-trpc-native/security/advisories/new
+https://github.com/nest-native/nest-trpc-native/security/advisories/new
 
 If that private report flow is unavailable, open a public issue with only a non-sensitive summary and ask for a private disclosure channel. Do not include proof-of-concept payloads, tokens, stack traces with secrets, private endpoints, or customer/user data in the public issue.
 

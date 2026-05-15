@@ -5,7 +5,7 @@
   <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/dm/nest-trpc-native.svg" alt="NPM Downloads" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen.svg" alt="Test Coverage" />
-  <a href="https://rodrigobnogueira.github.io/nest-trpc-native/"><img src="https://img.shields.io/badge/docs-nest--trpc--native-e0234e.svg" alt="Documentation" /></a>
+  <a href="https://nest-native.github.io/nest-trpc-native/"><img src="https://img.shields.io/badge/docs-nest--trpc--native-e0234e.svg" alt="Documentation" /></a>
 </p>
 
 ## What This Is
@@ -26,14 +26,14 @@ It makes tRPC feel native in Nest applications:
 
 The documentation site is the canonical source of truth for guides and support policy:
 
-- [Introduction](https://rodrigobnogueira.github.io/nest-trpc-native/docs/introduction)
-- [Quick Start](https://rodrigobnogueira.github.io/nest-trpc-native/docs/quick-start)
-- [Samples](https://rodrigobnogueira.github.io/nest-trpc-native/docs/samples)
-- [Support Policy](https://rodrigobnogueira.github.io/nest-trpc-native/docs/support-policy)
+- [Introduction](https://nest-native.github.io/nest-trpc-native/docs/introduction)
+- [Quick Start](https://nest-native.github.io/nest-trpc-native/docs/quick-start)
+- [Samples](https://nest-native.github.io/nest-trpc-native/docs/samples)
+- [Support Policy](https://nest-native.github.io/nest-trpc-native/docs/support-policy)
 
 See the showcase sample for a full end-to-end application:
 
-- https://github.com/rodrigobnogueira/nest-trpc-native/tree/main/sample/00-showcase
+- https://github.com/nest-native/nest-trpc-native/tree/main/sample/00-showcase
 
 ## Compatibility
 
