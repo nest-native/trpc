@@ -33,4 +33,4 @@ packages/trpc/context/trpc-enhancer-runtime.factory.ts
 
 Long-term, the ideal path is a public NestJS API for external context creators so integrations like GraphQL and tRPC do not rely on internals.
 
-Tracking issue: [#10 — Decouple TrpcContextCreator from NestJS internals](https://github.com/rodrigobnogueira/nest-trpc-native/issues/10)
+Tracking issue: [#10 — Decouple TrpcContextCreator from NestJS internals](https://github.com/nest-native/nest-trpc-native/issues/10)
