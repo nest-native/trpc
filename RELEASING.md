@@ -28,6 +28,17 @@ Publish the package from the workspace:
 npm publish --workspace nest-trpc-native
 ```
 
+## Tag
+
+After `npm publish` succeeds, tag the release commit on `main`:
+
+```bash
+git tag v<version> <release-commit-sha>
+git push origin v<version>
+```
+
+Use a lightweight tag named `v<version>` (e.g. `v0.4.3`) pointing at the `chore: release v<version>` commit on `main`. This matches the convention used by every release since `v0.1.1`. Tag pushes are not blocked by `main`'s branch-protection rules — push the tag directly, no PR required.
+
 ## Post-publish
 
 1. Confirm the registry version exists:
