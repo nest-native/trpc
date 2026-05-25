@@ -1,7 +1,14 @@
-import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { expect } from 'chai';
 import 'reflect-metadata';
-import { of } from 'rxjs';
+import { defer, of } from 'rxjs';
 import * as sinon from 'sinon';
 import { TRPCError } from '@trpc/server';
 import { TRPC_PARAM_ARGS_METADATA } from '../../constants';
@@ -445,5 +452,125 @@ describe('TrpcContextCreator (unit)', () => {
     expect(error).to.be.instanceOf(TRPCError);
     expect((error as TRPCError).code).to.equal('INTERNAL_SERVER_ERROR');
     expect((error as TRPCError).message).to.include('teapot');
+  });
+
+  /**
+   * Regression: when an interceptor is present in the chain (e.g. ClsModule's
+   * default passthrough APP_INTERCEPTOR), an HttpException thrown by the
+   * handler used to be silently coerced to INTERNAL_SERVER_ERROR because
+   * `return this.transformToResult(result)` was not awaited inside the
+   * try/catch — the rejected Promise escaped past `handleException` and the
+   * @trpc/server boundary wrapped it as a generic 500.
+   *
+   * The interceptor must subscribe to a deferred Observable (mirroring real
+   * `InterceptorsConsumer.intercept` semantics) for the bug to manifest;
+   * a previous test (`should handle interceptors that return observables`)
+   * awaits `next()` eagerly and therefore does not exercise the bug.
+   */
+  describe('HttpException through interceptor chain (regression)', () => {
+    const createCreatorWithDeferredInterceptor = () => {
+      const interceptorCreator = {
+        create: sinon.stub().returns([{}]),
+      };
+      const interceptorConsumer = {
+        intercept: sinon
+          .stub()
+          .callsFake(
+            async (
+              _interceptors: any,
+              _args: any,
+              _instance: any,
+              _callback: any,
+              next: () => Promise<unknown>,
+            ) => {
+              // Mirror real Nest InterceptorsConsumer: return an Observable
+              // that defers the handler invocation until subscription.
+              return defer(() => next());
+            },
+          ),
+      };
+
+      return new TrpcContextCreator(
+        { create: sinon.stub().returns([]) } as any,
+        { tryActivate: sinon.stub().resolves(true) } as any,
+        interceptorCreator as any,
+        interceptorConsumer as any,
+        { create: sinon.stub().returns([]) } as any,
+        {} as any,
+        createExceptionFiltersContextStub() as any,
+      );
+    };
+
+    const captureError = async (
+      wrapped: (input: unknown, ctx: unknown) => Promise<unknown>,
+    ): Promise<unknown> => {
+      try {
+        await wrapped({}, {});
+        return undefined;
+      } catch (err) {
+        return err;
+      }
+    };
+
+    it('should map UnauthorizedException to UNAUTHORIZED through interceptors', async () => {
+      const handler = sinon.stub().throws(new UnauthorizedException('nope'));
+      const creator = createCreatorWithDeferredInterceptor();
+      const wrapped = creator.create({ handler } as any, handler, '');
+
+      const error = await captureError(wrapped);
+      expect(error).to.be.instanceOf(TRPCError);
+      expect((error as TRPCError).code).to.equal('UNAUTHORIZED');
+      expect((error as TRPCError).message).to.include('nope');
+    });
+
+    it('should map NotFoundException to NOT_FOUND through interceptors', async () => {
+      const handler = sinon.stub().throws(new NotFoundException('absent'));
+      const creator = createCreatorWithDeferredInterceptor();
+      const wrapped = creator.create({ handler } as any, handler, '');
+
+      const error = await captureError(wrapped);
+      expect(error).to.be.instanceOf(TRPCError);
+      expect((error as TRPCError).code).to.equal('NOT_FOUND');
+    });
+
+    it('should map ForbiddenException to FORBIDDEN through interceptors', async () => {
+      const handler = sinon.stub().throws(new ForbiddenException('denied'));
+      const creator = createCreatorWithDeferredInterceptor();
+      const wrapped = creator.create({ handler } as any, handler, '');
+
+      const error = await captureError(wrapped);
+      expect(error).to.be.instanceOf(TRPCError);
+      expect((error as TRPCError).code).to.equal('FORBIDDEN');
+    });
+
+    it('should map BadRequestException to BAD_REQUEST through interceptors', async () => {
+      const handler = sinon.stub().throws(new BadRequestException('invalid'));
+      const creator = createCreatorWithDeferredInterceptor();
+      const wrapped = creator.create({ handler } as any, handler, '');
+
+      const error = await captureError(wrapped);
+      expect(error).to.be.instanceOf(TRPCError);
+      expect((error as TRPCError).code).to.equal('BAD_REQUEST');
+    });
+
+    it('should still map plain Error to INTERNAL_SERVER_ERROR through interceptors', async () => {
+      const handler = sinon.stub().throws(new Error('boom'));
+      const creator = createCreatorWithDeferredInterceptor();
+      const wrapped = creator.create({ handler } as any, handler, '');
+
+      const error = await captureError(wrapped);
+      expect(error).to.be.instanceOf(TRPCError);
+      expect((error as TRPCError).code).to.equal('INTERNAL_SERVER_ERROR');
+      expect((error as TRPCError).message).to.equal('boom');
+    });
+
+    it('should resolve normally through a deferred interceptor when handler succeeds', async () => {
+      const handler = sinon.stub().returns('ok');
+      const creator = createCreatorWithDeferredInterceptor();
+      const wrapped = creator.create({ handler } as any, handler, '');
+
+      const result = await wrapped({}, {});
+      expect(result).to.equal('ok');
+    });
   });
 });

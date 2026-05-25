@@ -335,7 +335,12 @@ export class TrpcContextCreator {
               )
             : await handler();
 
-        return this.transformToResult(result);
+        // `return await` is required (not just `return`): when an interceptor
+        // returns a deferred Observable, `transformToResult` yields a Promise
+        // that may reject after subscription. Without `await`, the rejection
+        // escapes this try/catch and HttpExceptions are mis-mapped to
+        // INTERNAL_SERVER_ERROR by the @trpc/server boundary.
+        return await this.transformToResult(result);
       } catch (error) {
         return this.handleException(error, exceptionHandler, executionContext);
       }

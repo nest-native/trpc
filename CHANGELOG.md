@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- fix: preserve `HttpException` → tRPC error mapping when an interceptor is in the chain (e.g. `ClsModule`'s default passthrough `APP_INTERCEPTOR`). Previously, any `HttpException` thrown inside a procedure was silently coerced to `INTERNAL_SERVER_ERROR`/500 because the result of `transformToResult` was returned without `await`, letting deferred-Observable rejections escape the surrounding try/catch.
+
 ## 0.4.0
 
 Production-readiness release focused on documentation, verification, and release confidence:
