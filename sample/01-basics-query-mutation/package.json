@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf dist src/@generated",
     "generate:types": "ts-node --transpile-only src/generate-types.ts",
-    "unit:test": "node --test --require ts-node/register \"__tests__/**/*.spec.ts\"",
+    "unit:test": "node --require ts-node/register --test $(find __tests__ -name '*.spec.ts')",
     "typecheck": "npm run generate:types && tsc --noEmit -p tsconfig.json",
     "smoke": "npm run generate:types && ts-node --transpile-only scripts/smoke.ts",
     "test": "npm run unit:test && npm run typecheck && npm run smoke",
