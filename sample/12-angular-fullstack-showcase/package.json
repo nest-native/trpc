@@ -40,9 +40,9 @@
     "zone.js": "0.16.2"
   },
   "devDependencies": {
-    "@angular/build": "21.2.12",
-    "@angular/cli": "21.2.12",
-    "@angular/compiler-cli": "21.2.14",
+    "@angular/build": "21.2.13",
+    "@angular/cli": "21.2.13",
+    "@angular/compiler-cli": "21.2.15",
     "@nestjs/cli": "11.0.21",
     "@types/node": "25.9.1",
     "rimraf": "6.1.3",
