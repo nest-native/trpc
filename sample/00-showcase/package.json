@@ -38,8 +38,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@nestjs/cli": "11.0.21",
-    "@types/node": "25.9.1",
+    "@nestjs/cli": "11.0.22",
+    "@types/node": "25.9.2",
     "ts-node": "10.9.2",
     "typescript": "6.0.3"
   }
