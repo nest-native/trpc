@@ -11,3 +11,5 @@ complexity
 .tmp
 GUIDELINES_NEST_TRPC.md
 todo-*.txt
+.devcontainer/
+.angular/
