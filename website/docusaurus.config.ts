@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: '@nest-native/trpc',
+  title: 'NestJS tRPC — @nest-native/trpc',
   tagline: 'Decorator-first tRPC integration for NestJS with full Nest lifecycle support',
   favicon: 'img/favicon.ico',
 
@@ -47,7 +47,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: '@nest-native/trpc',
+      title: 'NestJS tRPC',
       items: [
         {
           type: 'docSidebar',
