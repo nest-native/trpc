@@ -35,6 +35,7 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "LICENSE",
     "dist/**/*.d.ts",
     "dist/**/*.js",
     "dist/**/*.js.map"
@@ -50,6 +51,7 @@
     "build": "npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
+  "dependencies": {},
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
