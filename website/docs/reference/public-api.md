@@ -9,10 +9,10 @@ This page documents the current top-level package entrypoint. It is intentionall
 Import from the package root:
 
 ```ts
-import { Router, Query, TrpcModule } from 'nest-trpc-native';
+import { Router, Query, TrpcModule } from '@nest-native/trpc';
 ```
 
-Do not deep-import from `nest-trpc-native/dist/...` or package internals.
+Do not deep-import from `@nest-native/trpc/dist/...` or package internals.
 
 ## Primary Onboarding API
 

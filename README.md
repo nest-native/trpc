@@ -1,27 +1,38 @@
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest lifecycle support.</p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/v/nest-trpc-native.svg" alt="NPM Version" /></a>
-  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/dm/nest-trpc-native.svg" alt="NPM Downloads" /></a>
+  <a href="https://www.npmjs.com/package/@nest-native/trpc"><img src="https://img.shields.io/npm/v/@nest-native/trpc.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/@nest-native/trpc"><img src="https://img.shields.io/npm/dm/@nest-native/trpc.svg" alt="NPM Downloads" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen.svg" alt="Test Coverage" />
-  <a href="https://nest-native.github.io/nest-trpc-native/"><img src="https://img.shields.io/badge/docs-nest--trpc--native-e0234e.svg" alt="Documentation" /></a>
+  <a href="https://nest-native.github.io/trpc/"><img src="https://img.shields.io/badge/docs-%40nest--native%2Ftrpc-e0234e.svg" alt="Documentation" /></a>
 </p>
+
+> [!IMPORTANT]
+> **Renamed package.** This project was previously published as `nest-trpc-native`.
+> It is now **`@nest-native/trpc`** (repo: [`nest-native/trpc`](https://github.com/nest-native/trpc)).
+>
+> ```bash
+> npm uninstall nest-trpc-native
+> npm install @nest-native/trpc
+> ```
+>
+> Update imports from `nest-trpc-native` to `@nest-native/trpc`. The old package is frozen at `0.4.3` and is no longer maintained.
 
 ## What This Is
 
-`nest-trpc-native` is a community NestJS integration for building tRPC APIs with Nest-style modules, decorators, DI, enhancers, and request scope.
+`@nest-native/trpc` is a community NestJS integration for building tRPC APIs with Nest-style modules, decorators, DI, enhancers, and request scope.
 
 The documentation site is the canonical source of truth for usage guides and support policy:
 
-- [Introduction](https://nest-native.github.io/nest-trpc-native/docs/introduction)
-- [Quick Start](https://nest-native.github.io/nest-trpc-native/docs/quick-start)
-- [Samples](https://nest-native.github.io/nest-trpc-native/docs/samples)
-- [Support Policy](https://nest-native.github.io/nest-trpc-native/docs/support-policy)
+- [Introduction](https://nest-native.github.io/trpc/docs/introduction)
+- [Quick Start](https://nest-native.github.io/trpc/docs/quick-start)
+- [Samples](https://nest-native.github.io/trpc/docs/samples)
+- [Support Policy](https://nest-native.github.io/trpc/docs/support-policy)
 
 ## Why Use It
 
-`nest-trpc-native` makes tRPC feel native in Nest applications:
+`@nest-native/trpc` makes tRPC feel native in Nest applications:
 
 - Module setup via `TrpcModule.forRoot()` / `TrpcModule.forRootAsync()`
 - Decorator-based routers with `@Router()`, `@Query()`, `@Mutation()`, `@Subscription()`
@@ -47,7 +58,7 @@ For the supported API surface and compatibility policy, see [website/docs/suppor
 
 This repository contains:
 
-- `packages/trpc`: the `nest-trpc-native` integration package
+- `packages/trpc`: the `@nest-native/trpc` integration package
 - `sample/00-showcase`: the full end-to-end sample app
 - `sample/01-*` onward: focused runnable samples for single-topic onboarding
 - `sample/12-angular-fullstack-showcase`: browser-client showcase using Angular with `@trpc/client`
@@ -83,7 +94,7 @@ For explicit `forRootAsync + ConfigService + middleware`, run:
 ## Installation
 
 ```bash
-npm i nest-trpc-native @trpc/server
+npm i @nest-native/trpc @trpc/server
 ```
 
 Required peers:
@@ -100,7 +111,7 @@ npm i zod@^4
 
 ## Zero Runtime Dependencies
 
-`nest-trpc-native` is intentionally a bridge package with an empty runtime dependency block (`"dependencies": {}`).
+`@nest-native/trpc` is intentionally a bridge package with an empty runtime dependency block (`"dependencies": {}`).
 
 Why:
 
@@ -116,7 +127,7 @@ Why:
 
 No. Zod is optional.
 
-- If you use Nest-style validation (`class-validator` + `ValidationPipe`), you can use `nest-trpc-native` without Zod schemas.
+- If you use Nest-style validation (`class-validator` + `ValidationPipe`), you can use `@nest-native/trpc` without Zod schemas.
 - If you use tRPC-style schema definitions (`@Query({ input: z.object(...) })`, `@Mutation({ output: ... })`) and schema generation based on those schemas, then your app should install Zod v4.
 
 We support Zod v4 as an optional peer dependency so non-Zod users are not forced to install it.
@@ -132,7 +143,7 @@ Enhancer lifecycle behavior is preserved through a narrow internal boundary so N
 ```ts
 import { Module, UsePipes, ValidationPipe } from '@nestjs/common';
 import { IsString, MinLength } from 'class-validator';
-import { Input, Mutation, Query, Router, TrpcModule } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router, TrpcModule } from '@nest-native/trpc';
 
 class CreateUserDto {
   @IsString()
@@ -177,7 +188,7 @@ import {
   Router,
   TrpcContext,
   TrpcModule,
-} from 'nest-trpc-native';
+} from '@nest-native/trpc';
 import { z } from 'zod';
 
 const CreateUserSchema = z.object({ name: z.string().min(1) });

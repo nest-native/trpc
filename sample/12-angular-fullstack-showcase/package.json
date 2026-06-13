@@ -2,7 +2,7 @@
   "name": "nest-trpc-native-sample-12-angular-showcase",
   "version": "0.0.0",
   "private": true,
-  "description": "Angular full-stack showcase for nest-trpc-native",
+  "description": "Angular full-stack showcase for @nest-native/trpc",
   "license": "MIT",
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
@@ -32,7 +32,7 @@
     "@nestjs/platform-express": "11.1.24",
     "@trpc/client": "^11.17.0",
     "@trpc/server": "^11.16.0",
-    "nest-trpc-native": "0.4.3",
+    "@nest-native/trpc": "0.5.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "tslib": "2.8.1",

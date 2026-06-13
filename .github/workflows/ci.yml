@@ -32,10 +32,10 @@ jobs:
         run: npm ci
 
       - name: Build package
-        run: npm run build --workspace nest-trpc-native
+        run: npm run build --workspace @nest-native/trpc
 
       - name: Typecheck package
-        run: npm run typecheck --workspace nest-trpc-native
+        run: npm run typecheck --workspace @nest-native/trpc
 
   package-coverage:
     name: Package coverage (Node ${{ matrix.node-version }})

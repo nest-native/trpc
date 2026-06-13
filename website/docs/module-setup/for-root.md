@@ -10,7 +10,7 @@ The simplest way to register the tRPC integration. Use this when your configurat
 
 ```ts
 import { Module } from '@nestjs/common';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 
 @Module({
   imports: [

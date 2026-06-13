@@ -5,9 +5,9 @@ slug: /introduction
 
 # Introduction
 
-**nest-trpc-native** is a decorator-first tRPC integration for NestJS that makes tRPC feel native in Nest applications.
+**@nest-native/trpc** is a decorator-first tRPC integration for NestJS that makes tRPC feel native in Nest applications.
 
-## Why nest-trpc-native?
+## Why @nest-native/trpc?
 
 NestJS has a proven architecture with guards, interceptors, pipes, filters, and dependency injection. tRPC offers end-to-end type safety with zero code generation overhead. This package brings them together so you can build type-safe APIs using familiar Nest patterns.
 

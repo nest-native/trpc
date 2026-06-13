@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Input, Mutation, Query, Router } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router } from '@nest-native/trpc';
 import { CatsService } from './cats.service';
 import {
   CatFilterSchema,

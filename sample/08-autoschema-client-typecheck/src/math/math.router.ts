@@ -1,4 +1,4 @@
-import { Input, Query, Router } from 'nest-trpc-native';
+import { Input, Query, Router } from '@nest-native/trpc';
 import { parseSumInput, parseSumOutput } from './math.schema';
 
 @Router('math')

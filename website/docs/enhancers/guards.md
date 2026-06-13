@@ -10,7 +10,7 @@ NestJS guards work with tRPC procedures exactly as they do with HTTP controllers
 
 ```ts
 import { UseGuards } from '@nestjs/common';
-import { Query, Router } from 'nest-trpc-native';
+import { Query, Router } from '@nest-native/trpc';
 
 @Router('admin')
 @UseGuards(AuthGuard)

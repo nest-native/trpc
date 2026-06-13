@@ -12,7 +12,7 @@ Benchmark numbers should not appear in the README or docs until they are reprodu
 
 Benchmarks should answer narrow, practical questions:
 
-- What is the overhead of `nest-trpc-native` compared with a plain Nest REST controller?
+- What is the overhead of `@nest-native/trpc` compared with a plain Nest REST controller?
 - How does it compare with vanilla tRPC for similar request shapes?
 - What changes when validation, request-scoped providers, or subscriptions are involved?
 
@@ -32,7 +32,7 @@ Use small, comparable handlers:
 
 Compare at least:
 
-- `nest-trpc-native`
+- `@nest-native/trpc`
 - vanilla tRPC
 - Nest REST controller
 

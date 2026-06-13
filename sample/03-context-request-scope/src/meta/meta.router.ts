@@ -1,4 +1,4 @@
-import { Query, Router, TrpcContext } from 'nest-trpc-native';
+import { Query, Router, TrpcContext } from '@nest-native/trpc';
 import { RequestMetaService } from './request-meta.service';
 
 @Router('meta')

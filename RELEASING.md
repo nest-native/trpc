@@ -5,7 +5,7 @@ This repository keeps release mechanics intentionally lightweight for `0.x`, but
 ## Pre-publish
 
 1. Bump `packages/trpc/package.json` to the target version.
-2. Update every `sample/*/package.json` `nest-trpc-native` dependency to the exact same version.
+2. Update every `sample/*/package.json` `@nest-native/trpc` dependency to the exact same version.
 3. Run `npm install` to regenerate `package-lock.json`.
 4. Run `npm run release:check`.
 5. Run `npm run ci`.
@@ -15,7 +15,7 @@ This repository keeps release mechanics intentionally lightweight for `0.x`, but
 Run this before publishing:
 
 ```bash
-npm ls nest-trpc-native --workspaces --depth=0
+npm ls @nest-native/trpc --workspaces --depth=0
 ```
 
 That output must show every sample resolving to the target version.
@@ -25,7 +25,7 @@ That output must show every sample resolving to the target version.
 Publish the package from the workspace:
 
 ```bash
-npm publish --workspace nest-trpc-native
+npm publish --workspace @nest-native/trpc
 ```
 
 ## Tag
@@ -44,13 +44,13 @@ Use a lightweight tag named `v<version>` (e.g. `v0.4.3`) pointing at the `chore:
 1. Confirm the registry version exists:
 
 ```bash
-npm view nest-trpc-native@<version> version
+npm view @nest-native/trpc@<version> version
 ```
 
 2. Download the published artifact:
 
 ```bash
-npm pack nest-trpc-native@<version>
+npm pack @nest-native/trpc@<version>
 ```
 
 3. Re-run `npm run ci` with samples pinned to the published version before closing the release.

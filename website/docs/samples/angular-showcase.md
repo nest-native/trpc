@@ -5,7 +5,7 @@ sidebar_position: 3
 # Angular Showcase
 
 `sample/12-angular-fullstack-showcase` is the browser-client showcase for
-`nest-trpc-native`. It pairs a NestJS backend with an Angular frontend and uses
+`@nest-native/trpc`. It pairs a NestJS backend with an Angular frontend and uses
 the standard `@trpc/client` package to consume the generated `AppRouter` type.
 
 It is intentionally separate from `sample/00-showcase`: the existing showcase
@@ -154,7 +154,7 @@ This sample uses Angular 21 and follows Angular's Node.js support range:
 ^20.19.0 || ^22.12.0 || >=24.0.0
 ```
 
-That is a sample-local tooling requirement. The core `nest-trpc-native` package
+That is a sample-local tooling requirement. The core `@nest-native/trpc` package
 continues to follow the support policy documented for the library itself.
 
 ## Current Scope

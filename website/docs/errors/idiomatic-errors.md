@@ -15,7 +15,7 @@ The most idiomatic approach is: **use Nest exceptions + enhancers first**, and o
 
 ## Built-In HTTP Exception Mapping
 
-`nest-trpc-native` maps common `HttpException` statuses to tRPC codes. Examples:
+`@nest-native/trpc` maps common `HttpException` statuses to tRPC codes. Examples:
 
 - `400` → `BAD_REQUEST`
 - `401` → `UNAUTHORIZED`
@@ -32,7 +32,7 @@ Unmapped statuses fall back to `INTERNAL_SERVER_ERROR`.
 
 ```ts
 import { NotFoundException } from '@nestjs/common';
-import { Query, Router, Input } from 'nest-trpc-native';
+import { Query, Router, Input } from '@nest-native/trpc';
 
 @Router('users')
 class UsersRouter {

@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Samples Overview
 
-The samples are the fastest way to understand how `nest-trpc-native` behaves in real NestJS apps.
+The samples are the fastest way to understand how `@nest-native/trpc` behaves in real NestJS apps.
 
 - `sample/00-showcase`: full end-to-end baseline with all major capabilities.
 - `sample/01-*` onward: focused runnable slices that isolate one topic each.
@@ -18,7 +18,7 @@ npm run ci:sample
 
 ## Start Here
 
-1. Open the [showcase sample](https://github.com/nest-native/nest-trpc-native/tree/main/sample/00-showcase).
+1. Open the [showcase sample](https://github.com/nest-native/trpc/tree/main/sample/00-showcase).
 2. Use [Samples Catalog](./catalog) to jump straight to the feature you need.
 3. Use [Samples Architecture](./architecture) to understand why the sample tree is organized this way.
 4. Use [How To Review](./how-to-review) for exact commands to validate package, docs, showcase, and focused sample changes.

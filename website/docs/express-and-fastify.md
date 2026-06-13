@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # Express and Fastify
 
-`nest-trpc-native` is adapter-agnostic. Your router code stays identical regardless of the underlying HTTP framework.
+`@nest-native/trpc` is adapter-agnostic. Your router code stays identical regardless of the underlying HTTP framework.
 
 ## Express (Default)
 

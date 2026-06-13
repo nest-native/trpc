@@ -4,7 +4,7 @@ sidebar_position: 9
 
 # Production Practices
 
-`nest-trpc-native` keeps the router layer close to normal NestJS applications. Production readiness still depends on the surrounding Nest app, deployment platform, and client behavior.
+`@nest-native/trpc` keeps the router layer close to normal NestJS applications. Production readiness still depends on the surrounding Nest app, deployment platform, and client behavior.
 
 ## Keep Router Code Boring
 

@@ -17,7 +17,7 @@ import {
   Router,
   TrpcContext,
   TrpcModule,
-} from 'nest-trpc-native';
+} from '@nest-native/trpc';
 import { z } from 'zod';
 
 const CreateUserSchema = z.object({ name: z.string().min(1) });
@@ -52,7 +52,7 @@ export class AppModule {}
 ```ts
 import { Module, UsePipes, ValidationPipe } from '@nestjs/common';
 import { IsString, MinLength } from 'class-validator';
-import { Input, Mutation, Query, Router, TrpcModule } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router, TrpcModule } from '@nest-native/trpc';
 
 class CreateUserDto {
   @IsString()

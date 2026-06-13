@@ -1,5 +1,5 @@
 /*
- * nest-trpc-native
+ * @nest-native/trpc
  * Copyright(c) 2026 Rodrigo Nogueira
  * MIT Licensed
  */

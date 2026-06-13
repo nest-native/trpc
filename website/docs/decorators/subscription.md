@@ -8,7 +8,7 @@ The `@Subscription()` decorator defines a tRPC subscription procedure for real-t
 
 ## Both Patterns Work
 
-`nest-trpc-native` supports both tRPC subscription return styles:
+`@nest-native/trpc` supports both tRPC subscription return styles:
 
 - async generators (`async function*`) - recommended default
 - `observable()` from `@trpc/server/observable` - fully supported
@@ -18,7 +18,7 @@ The `@Subscription()` decorator defines a tRPC subscription procedure for real-t
 tRPC v11 recommends **async generators** for subscriptions. This is the pattern used throughout the samples:
 
 ```ts
-import { Input, Router, Subscription, TrpcContext } from 'nest-trpc-native';
+import { Input, Router, Subscription, TrpcContext } from '@nest-native/trpc';
 import { z } from 'zod';
 
 const TickInputSchema = z.object({ count: z.number().optional() });
@@ -76,7 +76,7 @@ subscription.unsubscribe();
 Use `observable()` when you prefer push-style emission/teardown semantics:
 
 ```ts
-import { Input, Router, Subscription, TrpcContext } from 'nest-trpc-native';
+import { Input, Router, Subscription, TrpcContext } from '@nest-native/trpc';
 import { observable } from '@trpc/server/observable';
 import { z } from 'zod';
 

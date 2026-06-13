@@ -208,7 +208,7 @@ describe('generateSchemaContent', () => {
   it('should include the auto-generated header', () => {
     const content = generateSchemaContent([]);
     expect(content).to.include('THIS FILE WAS AUTOMATICALLY GENERATED');
-    expect(content).to.include('nest-trpc-native');
+    expect(content).to.include('@nest-native/trpc');
   });
 
   it('should handle empty routers array', () => {
@@ -268,7 +268,7 @@ describe('generateSchemaContent', () => {
     expect(content).to.equal([
       '// ------------------------------------------------------',
       '// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)',
-      '// nest-trpc-native',
+      '// @nest-native/trpc',
       '// ------------------------------------------------------',
       '',
       "import { initTRPC } from '@trpc/server';",

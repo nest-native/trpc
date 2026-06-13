@@ -11,7 +11,7 @@ Examples in this guide target Zod `4.x`.
 
 ```ts
 import { z } from 'zod';
-import { Input, Mutation, Router } from 'nest-trpc-native';
+import { Input, Mutation, Router } from '@nest-native/trpc';
 
 const CreateCatSchema = z.object({
   name: z.string().min(1),

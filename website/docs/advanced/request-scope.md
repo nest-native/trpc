@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Request Scope
 
-`nest-trpc-native` supports NestJS request-scoped providers, giving each tRPC procedure invocation its own provider instance.
+`@nest-native/trpc` supports NestJS request-scoped providers, giving each tRPC procedure invocation its own provider instance.
 
 ## Creating a Request-Scoped Provider
 
@@ -108,5 +108,5 @@ This is the right choice when the service accumulates state across multiple meth
 4. **Never scope a provider just to access the request object** — use `createContext` + `@TrpcContext()` instead.
 
 :::tip Sample 03
-[context-request-scope](https://github.com/nest-native/nest-trpc-native/tree/main/sample/03-context-request-scope) demonstrates both patterns side by side: `@TrpcContext('requestId')` for simple extraction and `RequestMetaService` for stateful per-request data.
+[context-request-scope](https://github.com/nest-native/trpc/tree/main/sample/03-context-request-scope) demonstrates both patterns side by side: `@TrpcContext('requestId')` for simple extraction and `RequestMetaService` for stateful per-request data.
 :::

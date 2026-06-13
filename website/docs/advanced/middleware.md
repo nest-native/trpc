@@ -12,7 +12,7 @@ Implement `NestModule` and use `MiddlewareConsumer` to apply middleware to the t
 
 ```ts
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 
 @Module({
   imports: [TrpcModule.forRoot({ path: '/trpc' })],
@@ -69,5 +69,5 @@ export class AppModule implements NestModule {
 ```
 
 :::tip Sample 09
-[forrootasync-config-middleware](https://github.com/nest-native/nest-trpc-native/tree/main/sample/09-forrootasync-config-middleware) provides a full runnable example.
+[forrootasync-config-middleware](https://github.com/nest-native/trpc/tree/main/sample/09-forrootasync-config-middleware) provides a full runnable example.
 :::

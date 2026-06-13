@@ -10,7 +10,7 @@ import {
   Query,
   Router,
   TrpcContext,
-} from 'nest-trpc-native';
+} from '@nest-native/trpc';
 import { RemapBadRequestFilter } from '../common/filters/remap-bad-request.filter';
 import { ApiKeyGuard } from '../common/guards/api-key.guard';
 import { ExecutionTimeInterceptor } from '../common/interceptors/execution-time.interceptor';

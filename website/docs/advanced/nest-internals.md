@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Nest Internals Compatibility
 
-`nest-trpc-native` needs NestJS enhancer execution (guards, pipes, interceptors, filters) to behave like native Nest transports. This page explains how the package manages that dependency.
+`@nest-native/trpc` needs NestJS enhancer execution (guards, pipes, interceptors, filters) to behave like native Nest transports. This page explains how the package manages that dependency.
 
 ## The Boundary
 
@@ -33,4 +33,4 @@ packages/trpc/context/trpc-enhancer-runtime.factory.ts
 
 Long-term, the ideal path is a public NestJS API for external context creators so integrations like GraphQL and tRPC do not rely on internals.
 
-Tracking issue: [#10 — Decouple TrpcContextCreator from NestJS internals](https://github.com/nest-native/nest-trpc-native/issues/10)
+Tracking issue: [#10 — Decouple TrpcContextCreator from NestJS internals](https://github.com/nest-native/trpc/issues/10)

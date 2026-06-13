@@ -1,4 +1,4 @@
-import { Input, Mutation, Query, Router } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router } from '@nest-native/trpc';
 import { parseCreateTodoInput } from './todos.schema';
 import { TodosService } from './todos.service';
 

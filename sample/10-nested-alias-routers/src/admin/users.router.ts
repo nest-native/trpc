@@ -1,4 +1,4 @@
-import { Mutation, Query, Router } from 'nest-trpc-native';
+import { Mutation, Query, Router } from '@nest-native/trpc';
 
 @Router('admin.users')
 export class AdminUsersRouter {

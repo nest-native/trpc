@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `nest-trpc-native`. This project is a community package, but its design bar is intentionally strict: it should feel native in NestJS projects, not like tRPC internals exposed through a thin wrapper.
+Thanks for helping improve `@nest-native/trpc`. This project is a community package, but its design bar is intentionally strict: it should feel native in NestJS projects, not like tRPC internals exposed through a thin wrapper.
 
 If you use an AI coding agent, point it at [AI_CODING_GUIDELINES.md](AI_CODING_GUIDELINES.md). That file is written primarily for agentic coding workflows and captures the project-specific architecture, public API tiers, security review, and release/version rules that an agent should preserve while editing the repo.
 
@@ -92,7 +92,7 @@ Before approving dependency changes, review:
 - lockfile churn
 - unpinned Git or URL dependencies
 
-The published `nest-trpc-native` package should keep `"dependencies": {}` unless there is a deliberate maintainer decision to change that contract.
+The published `@nest-native/trpc` package should keep `"dependencies": {}` unless there is a deliberate maintainer decision to change that contract.
 
 ## Security Review
 
@@ -117,11 +117,11 @@ High-risk findings block merge until mitigated or explicitly accepted by maintai
 
 Version sync is mandatory.
 
-When bumping `packages/trpc/package.json`, update every `sample/*/package.json` dependency on `nest-trpc-native` in the same PR, regenerate `package-lock.json`, and run:
+When bumping `packages/trpc/package.json`, update every `sample/*/package.json` dependency on `@nest-native/trpc` in the same PR, regenerate `package-lock.json`, and run:
 
 ```bash
 npm run release:check
-npm ls nest-trpc-native --workspaces --depth=0
+npm ls @nest-native/trpc --workspaces --depth=0
 npm run ci
 ```
 

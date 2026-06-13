@@ -12,7 +12,7 @@ Install dependencies and build the package once:
 
 ```bash
 npm install
-npm run build --workspace nest-trpc-native
+npm run build --workspace @nest-native/trpc
 ```
 
 ## Fast Package Checks
@@ -68,7 +68,7 @@ npm run start:web --workspace nest-trpc-native-sample-12-angular-showcase
 ```
 
 The Angular sample follows Angular 21's Node.js support range. The core package
-support policy remains the source of truth for `nest-trpc-native` itself.
+support policy remains the source of truth for `@nest-native/trpc` itself.
 
 ## Focused Sample Matrix
 

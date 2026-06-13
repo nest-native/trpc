@@ -1,4 +1,4 @@
-import { Query, Router, Mutation, Input } from 'nest-trpc-native';
+import { Query, Router, Mutation, Input } from '@nest-native/trpc';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './create-account.dto';

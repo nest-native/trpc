@@ -43,7 +43,7 @@ export class OrdersGatewayService {
 ## Gateway Router
 
 ```ts
-import { Input, Query, Router } from 'nest-trpc-native';
+import { Input, Query, Router } from '@nest-native/trpc';
 
 @Router('orders')
 export class OrdersRouter {

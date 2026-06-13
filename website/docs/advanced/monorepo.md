@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Monorepo Setup
 
-Pattern for using `nest-trpc-native` in a monorepo with shared types.
+Pattern for using `@nest-native/trpc` in a monorepo with shared types.
 
 ## Recommended Structure
 
@@ -14,7 +14,7 @@ Pattern for using `nest-trpc-native` in a monorepo with shared types.
 │  ├─ api-gateway/               # Nest app hosting TrpcModule
 │  └─ web-client/                # Frontend using @trpc/client
 ├─ packages/
-│  ├─ nest-trpc-native/          # This library (or npm dependency)
+│  ├─ @nest-native/trpc/          # This library (or npm dependency)
 │  ├─ api-contract/              # Shared types / generated AppRouter exports
 │  └─ domain-services/           # Shared business logic modules
 └─ package.json                  # npm workspaces / pnpm / nx / turborepo
@@ -25,7 +25,7 @@ Pattern for using `nest-trpc-native` in a monorepo with shared types.
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 import { join } from 'node:path';
 
 @Module({

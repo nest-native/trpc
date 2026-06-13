@@ -61,7 +61,7 @@ They are intended for compatibility with existing low-level metadata or test int
 
 The following are implementation details and should not be treated as stable application APIs:
 
-- deep imports into package internals such as `nest-trpc-native/dist/...`
+- deep imports into package internals such as `@nest-native/trpc/dist/...`
 - internal context/runtime helpers
 - raw schema generator helpers
 - transport internals such as `TrpcHttpAdapter`

@@ -1,6 +1,6 @@
 # Nest Internals Compatibility Boundary
 
-`nest-trpc-native` needs Nest enhancer execution (guards, pipes, interceptors, filters) to behave like native Nest transports.
+`@nest-native/trpc` needs Nest enhancer execution (guards, pipes, interceptors, filters) to behave like native Nest transports.
 
 Today, the required context creation APIs are still internal in Nest, so this package keeps a narrow boundary for that wiring:
 
