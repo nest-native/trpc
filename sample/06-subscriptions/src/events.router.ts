@@ -4,7 +4,7 @@ import {
   Router,
   Subscription,
   TrpcContext,
-} from 'nest-trpc-native';
+} from '@nest-native/trpc';
 import { parseTickEvent, parseTickInput } from './events.schema';
 
 @Router()

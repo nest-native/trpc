@@ -20,7 +20,7 @@ for (const entry of fs.readdirSync(sampleRoot, { withFileTypes: true })) {
   }
 
   const samplePackage = JSON.parse(fs.readFileSync(samplePackagePath, 'utf8'));
-  const resolvedVersion = samplePackage.dependencies?.['nest-trpc-native'];
+  const resolvedVersion = samplePackage.dependencies?.['@nest-native/trpc'];
 
   if (resolvedVersion !== targetVersion) {
     mismatches.push({
@@ -42,5 +42,5 @@ if (mismatches.length > 0) {
 }
 
 console.log(
-  `Version sync OK: all sample workspaces depend on nest-trpc-native@${targetVersion}.`,
+  `Version sync OK: all sample workspaces depend on @nest-native/trpc@${targetVersion}.`,
 );

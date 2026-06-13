@@ -4,13 +4,13 @@ sidebar_position: 7
 
 # Transport Pattern Parallels
 
-If you already know NestJS GraphQL, WebSocket, or gRPC patterns, `nest-trpc-native` should feel familiar.
+If you already know NestJS GraphQL, WebSocket, or gRPC patterns, `@nest-native/trpc` should feel familiar.
 
 This page maps those patterns to the `TrpcModule` + `@Router()` model so teams can migrate without changing their core architecture.
 
 ## At a Glance
 
-| Concern | GraphQL Code-First (`23-graphql-code-first`) | GraphQL Schema-First (`12-graphql-schema-first`) | WebSocket (`@nestjs/websockets`) | gRPC (`@nestjs/microservices`) | tRPC (`nest-trpc-native`) |
+| Concern | GraphQL Code-First (`23-graphql-code-first`) | GraphQL Schema-First (`12-graphql-schema-first`) | WebSocket (`@nestjs/websockets`) | gRPC (`@nestjs/microservices`) | tRPC (`@nest-native/trpc`) |
 | --- | --- | --- | --- | --- | --- |
 | Transport bootstrap | `GraphQLModule.forRoot(...)` | `GraphQLModule.forRoot(...)` + SDL | `@WebSocketGateway(...)` | Microservice config + gRPC transport | `TrpcModule.forRoot(...)` |
 | Endpoint class | `@Resolver()` | `@Resolver()` | `@WebSocketGateway()` + handlers | `@Controller()` + `@GrpcMethod()` | `@Router('namespace')` |

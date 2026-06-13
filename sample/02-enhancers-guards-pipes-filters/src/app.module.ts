@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { join } from 'path';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 import {
   AppTrpcContext,
   TRPC_API_KEY_HEADER,

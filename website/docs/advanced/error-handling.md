@@ -8,7 +8,7 @@ This guide focuses on advanced patterns for translating Nest errors into consist
 
 ## Mental Model
 
-`nest-trpc-native` runs through the Nest enhancer pipeline:
+`@nest-native/trpc` runs through the Nest enhancer pipeline:
 
 - guards
 - interceptors

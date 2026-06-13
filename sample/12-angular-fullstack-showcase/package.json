@@ -2,7 +2,7 @@
   "name": "nest-trpc-native-sample-12-angular-showcase",
   "version": "0.0.0",
   "private": true,
-  "description": "Angular full-stack showcase for nest-trpc-native",
+  "description": "Angular full-stack showcase for @nest-native/trpc",
   "license": "MIT",
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
@@ -23,16 +23,16 @@
     "start:web": "ng serve --host 127.0.0.1 --port 4200"
   },
   "dependencies": {
-    "@angular/common": "22.0.1",
-    "@angular/compiler": "22.0.1",
+    "@angular/common": "21.2.15",
+    "@angular/compiler": "21.2.15",
     "@angular/core": "21.2.15",
-    "@angular/platform-browser": "22.0.1",
+    "@angular/platform-browser": "21.2.15",
     "@nestjs/common": "11.1.24",
     "@nestjs/core": "11.1.24",
     "@nestjs/platform-express": "11.1.24",
     "@trpc/client": "^11.17.0",
     "@trpc/server": "^11.16.0",
-    "nest-trpc-native": "0.4.3",
+    "@nest-native/trpc": "0.5.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "tslib": "2.8.1",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@angular/build": "21.2.12",
     "@angular/cli": "21.2.12",
-    "@angular/compiler-cli": "21.2.14",
+    "@angular/compiler-cli": "21.2.15",
     "@nestjs/cli": "11.0.22",
     "@types/node": "25.9.2",
     "rimraf": "6.1.3",

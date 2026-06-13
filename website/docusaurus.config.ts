@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'nest-trpc-native',
+  title: '@nest-native/trpc',
   tagline: 'Decorator-first tRPC integration for NestJS with full Nest lifecycle support',
   favicon: 'img/favicon.ico',
 
@@ -12,10 +12,10 @@ const config: Config = {
   },
 
   url: 'https://nest-native.github.io',
-  baseUrl: '/nest-trpc-native/',
+  baseUrl: '/trpc/',
 
   organizationName: 'nest-native',
-  projectName: 'nest-trpc-native',
+  projectName: 'trpc',
 
   onBrokenLinks: 'throw',
 
@@ -31,7 +31,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/nest-native/nest-trpc-native/tree/main/website/',
+            'https://github.com/nest-native/trpc/tree/main/website/',
         },
         blog: false,
         theme: {
@@ -47,7 +47,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'nest-trpc-native',
+      title: '@nest-native/trpc',
       items: [
         {
           type: 'docSidebar',
@@ -56,12 +56,12 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://www.npmjs.com/package/nest-trpc-native',
+          href: 'https://www.npmjs.com/package/@nest-native/trpc',
           label: 'npm',
           position: 'right',
         },
         {
-          href: 'https://github.com/nest-native/nest-trpc-native',
+          href: 'https://github.com/nest-native/trpc',
           label: 'GitHub',
           position: 'right',
         },
@@ -83,16 +83,16 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/nest-native/nest-trpc-native',
+              href: 'https://github.com/nest-native/trpc',
             },
             {
               label: 'npm',
-              href: 'https://www.npmjs.com/package/nest-trpc-native',
+              href: 'https://www.npmjs.com/package/@nest-native/trpc',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} nest-trpc-native contributors. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} @nest-native/trpc contributors. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

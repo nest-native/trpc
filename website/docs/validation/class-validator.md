@@ -32,7 +32,7 @@ export class CreateCatDto {
 
 ```ts
 import { UsePipes, ValidationPipe } from '@nestjs/common';
-import { Input, Mutation, Router } from 'nest-trpc-native';
+import { Input, Mutation, Router } from '@nest-native/trpc';
 import { CreateCatDto } from './create-cat.dto';
 
 @Router('cats')

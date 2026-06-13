@@ -11,7 +11,7 @@ These decorators define tRPC procedures on router methods.
 Marks a method as a tRPC query (read operation):
 
 ```ts
-import { Query, Router } from 'nest-trpc-native';
+import { Query, Router } from '@nest-native/trpc';
 
 @Router('cats')
 class CatsRouter {
@@ -29,7 +29,7 @@ Client: `trpc.cats.list.query()`
 Marks a method as a tRPC mutation (write operation):
 
 ```ts
-import { Input, Mutation, Router } from 'nest-trpc-native';
+import { Input, Mutation, Router } from '@nest-native/trpc';
 import { z } from 'zod';
 
 const CreateCatSchema = z.object({ name: z.string().min(1) });

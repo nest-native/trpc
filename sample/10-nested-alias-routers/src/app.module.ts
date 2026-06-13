@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { join } from 'path';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 import { AdminRolesRouter } from './admin/roles.router';
 import { AdminUsersRouter } from './admin/users.router';
 import { TRPC_PATH } from './common/trpc-context';

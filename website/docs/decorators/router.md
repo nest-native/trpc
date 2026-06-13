@@ -9,7 +9,7 @@ The `@Router()` decorator marks a class as a tRPC router. It's the equivalent of
 ## Basic Usage
 
 ```ts
-import { Router } from 'nest-trpc-native';
+import { Router } from '@nest-native/trpc';
 
 @Router('cats')
 class CatsRouter {

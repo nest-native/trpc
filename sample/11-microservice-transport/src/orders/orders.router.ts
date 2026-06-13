@@ -1,4 +1,4 @@
-import { Query, Router } from 'nest-trpc-native';
+import { Query, Router } from '@nest-native/trpc';
 import { OrdersGatewayService } from './orders-gateway.service';
 
 @Router('orders')

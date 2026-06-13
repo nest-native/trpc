@@ -1,4 +1,4 @@
-import { Query, Router, TrpcContext } from 'nest-trpc-native';
+import { Query, Router, TrpcContext } from '@nest-native/trpc';
 import { HealthPingOutputSchema, HealthStatusOutputSchema } from './health.schema';
 
 @Router('health')

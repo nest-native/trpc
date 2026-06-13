@@ -4,7 +4,7 @@ sidebar_position: 10
 
 # Security Responsibilities
 
-`nest-trpc-native` provides a Nest-native tRPC transport layer. It does not replace application security design.
+`@nest-native/trpc` provides a Nest-native tRPC transport layer. It does not replace application security design.
 
 ## What The Library Provides
 

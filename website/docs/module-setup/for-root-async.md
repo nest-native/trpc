@@ -11,7 +11,7 @@ Use `forRootAsync()` when your tRPC configuration depends on injected providers 
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 import { join } from 'node:path';
 
 @Module({
@@ -60,5 +60,5 @@ export class AppModule implements NestModule {
 ```
 
 :::tip Sample 09
-[forrootasync-config-middleware](https://github.com/nest-native/nest-trpc-native/tree/main/sample/09-forrootasync-config-middleware) is a full working example.
+[forrootasync-config-middleware](https://github.com/nest-native/trpc/tree/main/sample/09-forrootasync-config-middleware) is a full working example.
 :::

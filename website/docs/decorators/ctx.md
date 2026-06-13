@@ -9,7 +9,7 @@ The `@TrpcContext()` decorator injects the tRPC context (or a specific property 
 ## Full Context
 
 ```ts
-import { Query, Router, TrpcContext } from 'nest-trpc-native';
+import { Query, Router, TrpcContext } from '@nest-native/trpc';
 
 @Router('users')
 class UsersRouter {

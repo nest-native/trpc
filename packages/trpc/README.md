@@ -1,16 +1,27 @@
 <p align="center">Decorator-first tRPC integration for NestJS with full Nest enhancer lifecycle support.</p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/v/nest-trpc-native.svg" alt="NPM Version" /></a>
-  <a href="https://www.npmjs.com/package/nest-trpc-native"><img src="https://img.shields.io/npm/dm/nest-trpc-native.svg" alt="NPM Downloads" /></a>
+  <a href="https://www.npmjs.com/package/@nest-native/trpc"><img src="https://img.shields.io/npm/v/@nest-native/trpc.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/@nest-native/trpc"><img src="https://img.shields.io/npm/dm/@nest-native/trpc.svg" alt="NPM Downloads" /></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Package License" /></a>
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen.svg" alt="Test Coverage" />
-  <a href="https://nest-native.github.io/nest-trpc-native/"><img src="https://img.shields.io/badge/docs-nest--trpc--native-e0234e.svg" alt="Documentation" /></a>
+  <a href="https://nest-native.github.io/trpc/"><img src="https://img.shields.io/badge/docs-%40nest--native%2Ftrpc-e0234e.svg" alt="Documentation" /></a>
 </p>
+
+> [!IMPORTANT]
+> **Renamed package.** This project was previously published as `nest-trpc-native`.
+> It is now **`@nest-native/trpc`** (repo: [`nest-native/trpc`](https://github.com/nest-native/trpc)).
+>
+> ```bash
+> npm uninstall nest-trpc-native
+> npm install @nest-native/trpc
+> ```
+>
+> Update imports from `nest-trpc-native` to `@nest-native/trpc`. The old package is frozen at `0.4.3` and is no longer maintained.
 
 ## What This Is
 
-`nest-trpc-native` is a community NestJS integration for building tRPC APIs with Nest-style modules, decorators, DI, enhancers, and request scope.
+`@nest-native/trpc` is a community NestJS integration for building tRPC APIs with Nest-style modules, decorators, DI, enhancers, and request scope.
 
 It makes tRPC feel native in Nest applications:
 
@@ -26,14 +37,14 @@ It makes tRPC feel native in Nest applications:
 
 The documentation site is the canonical source of truth for guides and support policy:
 
-- [Introduction](https://nest-native.github.io/nest-trpc-native/docs/introduction)
-- [Quick Start](https://nest-native.github.io/nest-trpc-native/docs/quick-start)
-- [Samples](https://nest-native.github.io/nest-trpc-native/docs/samples)
-- [Support Policy](https://nest-native.github.io/nest-trpc-native/docs/support-policy)
+- [Introduction](https://nest-native.github.io/trpc/docs/introduction)
+- [Quick Start](https://nest-native.github.io/trpc/docs/quick-start)
+- [Samples](https://nest-native.github.io/trpc/docs/samples)
+- [Support Policy](https://nest-native.github.io/trpc/docs/support-policy)
 
 See the showcase sample for a full end-to-end application:
 
-- https://github.com/nest-native/nest-trpc-native/tree/main/sample/00-showcase
+- https://github.com/nest-native/trpc/tree/main/sample/00-showcase
 
 ## Compatibility
 
@@ -48,7 +59,7 @@ See the showcase sample for a full end-to-end application:
 ## Installation
 
 ```bash
-npm i nest-trpc-native @trpc/server
+npm i @nest-native/trpc @trpc/server
 ```
 
 Peer dependencies:
@@ -65,7 +76,7 @@ npm i zod@^4
 
 ## Zero Runtime Dependency Design
 
-`nest-trpc-native` intentionally keeps its runtime dependency block empty (`"dependencies": {}`).
+`@nest-native/trpc` intentionally keeps its runtime dependency block empty (`"dependencies": {}`).
 
 Why this is intentional:
 
@@ -99,7 +110,7 @@ Should we remove Zod support entirely?
 ```ts
 import { Module, UsePipes, ValidationPipe } from '@nestjs/common';
 import { IsString, MinLength } from 'class-validator';
-import { Input, Mutation, Query, Router, TrpcModule } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router, TrpcModule } from '@nest-native/trpc';
 
 class CreateUserDto {
   @IsString()
@@ -144,7 +155,7 @@ import {
   Router,
   TrpcContext,
   TrpcModule,
-} from 'nest-trpc-native';
+} from '@nest-native/trpc';
 import { z } from 'zod';
 
 const CreateUserSchema = z.object({ name: z.string().min(1) });

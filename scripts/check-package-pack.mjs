@@ -10,7 +10,7 @@ const tempCache = fs.mkdtempSync(path.join(os.tmpdir(), 'nest-trpc-native-pack-'
 try {
   const rawOutput = execFileSync(
     npmExecutable,
-    ['pack', '--dry-run', '--json', '--workspace', 'nest-trpc-native'],
+    ['pack', '--dry-run', '--json', '--workspace', '@nest-native/trpc'],
     {
       cwd: repoRoot,
       encoding: 'utf8',

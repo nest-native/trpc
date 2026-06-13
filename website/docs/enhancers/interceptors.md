@@ -10,7 +10,7 @@ NestJS interceptors wrap tRPC procedure execution, enabling logging, caching, re
 
 ```ts
 import { UseInterceptors } from '@nestjs/common';
-import { Query, Router } from 'nest-trpc-native';
+import { Query, Router } from '@nest-native/trpc';
 
 @Router('cats')
 @UseInterceptors(LoggingInterceptor)

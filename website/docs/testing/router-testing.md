@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Router Testing
 
-This guide shows pragmatic testing layers for `nest-trpc-native` routers.
+This guide shows pragmatic testing layers for `@nest-native/trpc` routers.
 
 `TrpcRouter` is a supported advanced testing API. It is appropriate in tests, but it should not replace the main onboarding path centered on `TrpcModule`, decorators, and generated `AppRouter` types. See [Public API Reference](../reference/public-api) for the full support-tier breakdown.
 
@@ -22,7 +22,7 @@ Create a Nest testing module, resolve `TrpcRouter`, and call procedures with `cr
 
 ```ts
 import { Test } from '@nestjs/testing';
-import { TrpcModule, TrpcRouter } from 'nest-trpc-native';
+import { TrpcModule, TrpcRouter } from '@nest-native/trpc';
 
 describe('UsersRouter', () => {
   it('creates a user', async () => {

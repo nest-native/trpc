@@ -1,4 +1,4 @@
-import { Query, Router, TrpcContext } from 'nest-trpc-native';
+import { Query, Router, TrpcContext } from '@nest-native/trpc';
 
 @Router()
 export class HealthRouter {

@@ -10,7 +10,7 @@ NestJS exception filters catch and transform errors thrown during tRPC procedure
 
 ```ts
 import { UseFilters } from '@nestjs/common';
-import { Mutation, Router } from 'nest-trpc-native';
+import { Mutation, Router } from '@nest-native/trpc';
 
 @Router('users')
 @UseFilters(RemapBadRequestFilter)

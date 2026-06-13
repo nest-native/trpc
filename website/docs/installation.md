@@ -15,7 +15,7 @@ For the supported API tiers and compatibility boundary, see [Support Policy](./s
 ## Install the Package
 
 ```bash
-npm i nest-trpc-native @trpc/server
+npm i @nest-native/trpc @trpc/server
 ```
 
 ## Peer Dependencies
@@ -35,12 +35,12 @@ npm i zod@^4
 ```
 
 :::tip Zod is optional
-If you prefer Nest-style validation (`class-validator` + `ValidationPipe`), you can use nest-trpc-native without Zod. See [class-validator validation](./validation/class-validator) for details.
+If you prefer Nest-style validation (`class-validator` + `ValidationPipe`), you can use @nest-native/trpc without Zod. See [class-validator validation](./validation/class-validator) for details.
 :::
 
 ## Zero Runtime Dependencies
 
-`nest-trpc-native` has an empty `"dependencies": {}` block by design:
+`@nest-native/trpc` has an empty `"dependencies": {}` block by design:
 
 - It never pulls a second NestJS runtime into your app
 - Your app controls Nest and tRPC versions through peer dependencies

@@ -1,6 +1,6 @@
 # Sample 00: Showcase
 
-`nest-trpc-native` full production-style sample demonstrating end-to-end NestJS integration.
+`@nest-native/trpc` full production-style sample demonstrating end-to-end NestJS integration.
 
 ## What It Demonstrates
 

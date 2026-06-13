@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0
+
+Project rename to the `@nest-native/*` org standard (no API or behavior changes):
+
+- rename the npm package from `nest-trpc-native` to the scoped `@nest-native/trpc`
+- rename the GitHub repository in place from `nest-native/nest-trpc-native` to `nest-native/trpc` (preserves stars, forks, issues, and history; old URLs redirect)
+- update all imports, sample dependencies, docs, badges, registry links, and repository/homepage URLs to the new package and repo
+- update the documentation site base path to `/trpc/`
+- add a README rename banner pointing existing users to `@nest-native/trpc`
+- the old `nest-trpc-native` package is deprecated on npm and frozen at `0.4.3`
+
 ## 0.4.3
 
 - fix: preserve `HttpException` → tRPC error mapping when an interceptor is in the chain (e.g. `ClsModule`'s default passthrough `APP_INTERCEPTOR`). Previously, any `HttpException` thrown inside a procedure was silently coerced to `INTERNAL_SERVER_ERROR`/500 because the result of `transformToResult` was returned without `await`, letting deferred-Observable rejections escape the surrounding try/catch.

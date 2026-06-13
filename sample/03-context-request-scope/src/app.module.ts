@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { join } from 'path';
-import { TrpcModule } from 'nest-trpc-native';
+import { TrpcModule } from '@nest-native/trpc';
 import {
   AppTrpcContext,
   TRPC_PATH,

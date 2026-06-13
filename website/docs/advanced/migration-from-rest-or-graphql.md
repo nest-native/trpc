@@ -4,7 +4,7 @@ sidebar_position: 6
 
 # Migration from REST or GraphQL
 
-This guide helps you migrate existing NestJS APIs from REST controllers or GraphQL resolvers to `nest-trpc-native` routers.
+This guide helps you migrate existing NestJS APIs from REST controllers or GraphQL resolvers to `@nest-native/trpc` routers.
 
 If you also want a side-by-side comparison with WebSocket and gRPC architectural patterns, see [Transport Pattern Parallels](./transport-pattern-parallels).
 
@@ -21,7 +21,7 @@ Use an incremental rollout instead of a big-bang rewrite:
 
 ## Concept Mapping
 
-| REST (Nest) | GraphQL (Nest) | tRPC (`nest-trpc-native`) |
+| REST (Nest) | GraphQL (Nest) | tRPC (`@nest-native/trpc`) |
 |---|---|---|
 | `@Controller('users')` | `@Resolver()` | `@Router('users')` |
 | `@Get()`, `@Post()` | `@Query()`, `@Mutation()` | `@Query()`, `@Mutation()` |
@@ -57,7 +57,7 @@ export class UsersController {
 ### After (tRPC)
 
 ```ts
-import { Input, Mutation, Query, Router } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router } from '@nest-native/trpc';
 import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 
 @Router('users')
@@ -106,7 +106,7 @@ export class UsersResolver {
 ### After (tRPC)
 
 ```ts
-import { Input, Mutation, Query, Router } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router } from '@nest-native/trpc';
 
 @Router('users')
 export class UsersRouter {

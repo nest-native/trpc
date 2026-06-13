@@ -1,6 +1,6 @@
 # Sample 12: Angular Full-Stack Showcase
 
-Angular browser showcase for `nest-trpc-native` with a NestJS backend and a
+Angular browser showcase for `@nest-native/trpc` with a NestJS backend and a
 typed tRPC client.
 
 This sample intentionally uses Angular with the standard `@trpc/client`
@@ -86,7 +86,7 @@ The API runs on `http://localhost:3000/trpc` by default. The Angular dev server
 uses the API URL configured in `frontend/src/environments/environment.ts`.
 
 This sample follows Angular 21's Node.js support range:
-`^20.19.0 || ^22.12.0 || >=24.0.0`. The core `nest-trpc-native` package keeps
+`^20.19.0 || ^22.12.0 || >=24.0.0`. The core `@nest-native/trpc` package keeps
 its broader documented Node support line.
 
 ## Checks

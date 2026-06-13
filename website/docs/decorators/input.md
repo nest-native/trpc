@@ -9,7 +9,7 @@ The `@Input()` decorator extracts the validated procedure input and injects it i
 ## Basic Usage
 
 ```ts
-import { Input, Mutation, Router } from 'nest-trpc-native';
+import { Input, Mutation, Router } from '@nest-native/trpc';
 import { z } from 'zod';
 
 const CreateCatSchema = z.object({ name: z.string().min(1) });

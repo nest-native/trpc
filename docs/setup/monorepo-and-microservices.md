@@ -10,7 +10,7 @@ This guide provides explicit setup patterns for larger NestJS + tRPC systems.
 │  ├─ api-gateway/               # Nest app hosting TrpcModule
 │  └─ web-client/                # frontend using @trpc/client
 ├─ packages/
-│  ├─ nest-trpc-native/          # this library (or npm dependency)
+│  ├─ @nest-native/trpc/          # this library (or npm dependency)
 │  ├─ api-contract/              # shared types / generated AppRouter exports
 │  └─ domain-services/           # shared business logic modules
 └─ package.json                  # npm workspaces / pnpm / nx / turborepo

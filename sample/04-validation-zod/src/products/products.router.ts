@@ -1,4 +1,4 @@
-import { Input, Mutation, Query, Router } from 'nest-trpc-native';
+import { Input, Mutation, Query, Router } from '@nest-native/trpc';
 import { z } from 'zod';
 import {
   CreateProductSchema,
