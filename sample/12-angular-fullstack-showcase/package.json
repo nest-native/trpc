@@ -23,7 +23,7 @@
     "start:web": "ng serve --host 127.0.0.1 --port 4200"
   },
   "dependencies": {
-    "@angular/common": "21.2.14",
+    "@angular/common": "22.0.1",
     "@angular/compiler": "22.0.1",
     "@angular/core": "21.2.15",
     "@angular/platform-browser": "22.0.1",
