@@ -55,7 +55,7 @@ Every single decision must follow NestJS philosophy exactly as @nestjs/graphql a
 - Schema generation must produce a clean AppRouter type that works with createTRPCProxyClient.
 - Never expose tRPC internals to the user unless they opt-in via advanced config.
 - Unsupported internal surface includes:
-  - deep imports into package internals such as `nest-trpc-native/dist/...`
+  - deep imports into package internals such as `@nest-native/trpc/dist/...`
   - raw context/runtime helpers
   - raw schema generator helpers
   - transport internals such as `TrpcHttpAdapter`
@@ -112,7 +112,7 @@ This is not a suggestion — it is the project constitution.
 
 ### 9. Release Version Synchronization (MANDATORY)
 - Version drift between `packages/trpc` and `sample/*` is a release blocker.
-- When bumping `packages/trpc/package.json` version, update ALL `sample/*/package.json` entries for `"nest-trpc-native"` in the same change.
+- When bumping `packages/trpc/package.json` version, update ALL `sample/*/package.json` entries for `"@nest-native/trpc"` in the same change.
 - Regenerate `package-lock.json` after version alignment (`npm install`) so resolution state is consistent.
 - Never publish if any sample still points to an older package version.
 - `npm run release:check` is a release blocker:
@@ -123,16 +123,16 @@ This is not a suggestion — it is the project constitution.
 
 Required pre-publish checklist:
 1. Bump version in `packages/trpc/package.json`.
-2. Update `sample/*/package.json` to the exact same `nest-trpc-native` version.
+2. Update `sample/*/package.json` to the exact same `@nest-native/trpc` version.
 3. Run `npm install`.
 4. Run `npm run release:check`.
-5. Run `npm ls nest-trpc-native --workspaces --depth=0` and verify every sample resolves to the target version.
+5. Run `npm ls @nest-native/trpc --workspaces --depth=0` and verify every sample resolves to the target version.
 6. Run full validation: `npm run ci`.
 
 Required post-publish checklist:
 1. Tag the release commit on `main`: `git tag v<version> <release-commit-sha> && git push origin v<version>`. Use a lightweight tag named `v<version>` (e.g. `v0.4.3`) pointing at the `chore: release v<version>` commit. Tag pushes bypass `main`'s branch-protection rules and do not require a PR.
-2. Confirm registry version exists: `npm view nest-trpc-native@<version> version`.
-3. Download published artifact: `npm pack nest-trpc-native@<version>`.
+2. Confirm registry version exists: `npm view @nest-native/trpc@<version> version`.
+3. Download published artifact: `npm pack @nest-native/trpc@<version>`.
 4. Re-run `npm run ci` with samples pinned to that published version before closing the release.
 
 ### 10. Cognitive Complexity Review
