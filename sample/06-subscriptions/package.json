@@ -18,7 +18,7 @@
     "@nestjs/common": "11.1.27",
     "@nestjs/core": "11.1.27",
     "@nestjs/platform-express": "11.1.27",
-    "@trpc/client": "^11.17.0",
+    "@trpc/client": "^11.18.0",
     "@trpc/server": "^11.16.0",
     "eventsource": "4.1.0",
     "@nest-native/trpc": "0.5.0",
