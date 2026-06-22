@@ -250,8 +250,8 @@ jobs:
       - name: Run focused sample checks
         run: npm run sample:focused
 
-  release-checks:
-    name: Release checks
+  release-and-security:
+    name: Release and security checks
     runs-on: ubuntu-latest
 
     steps:
@@ -265,3 +265,6 @@ jobs:
 
       - name: Run release checks
         run: npm run release:check
+
+      - name: Audit production supply chain
+        run: npm run security:audit

@@ -26,7 +26,7 @@
     "release:check:workspace-resolution": "npm ls @nest-native/trpc --workspaces --depth=0",
     "release:check:pack": "npm run build --workspace @nest-native/trpc && node scripts/check-package-pack.mjs",
     "release:check": "npm run release:check:readme-links && npm run release:check:version-sync && npm run release:check:workspace-resolution && npm run release:check:pack",
-    "security:audit:package": "npm audit --omit=dev --audit-level=high",
+    "security:audit:package": "node scripts/audit-production-surface.mjs",
     "security:audit": "npm run security:audit:package",
     "docs:test:typecheck": "node scripts/docs-snippets-typecheck.mjs --mode all",
     "docs:test:typecheck:unit": "node scripts/docs-snippets-typecheck.mjs --mode unit",
@@ -45,7 +45,7 @@
     "sample": "npm run showcase && npm run sample:focused && npm run angular-showcase",
     "ci:showcase": "npm run typecheck:client && npm run smoke:express && npm run smoke:fastify",
     "ci:sample": "npm run ci:showcase && npm run sample:focused && npm run angular-showcase",
-    "ci": "npm run test:cov && npm run complexity:check && npm run release:check && npm run ci:docs && npm run ci:sample"
+    "ci": "npm run test:cov && npm run complexity:check && npm run release:check && npm run ci:docs && npm run security:audit && npm run ci:sample"
   },
   "engines": {
     "node": ">=20"
