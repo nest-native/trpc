@@ -26,6 +26,8 @@
     "release:check:workspace-resolution": "npm ls @nest-native/trpc --workspaces --depth=0",
     "release:check:pack": "npm run build --workspace @nest-native/trpc && node scripts/check-package-pack.mjs",
     "release:check": "npm run release:check:readme-links && npm run release:check:version-sync && npm run release:check:workspace-resolution && npm run release:check:pack",
+    "security:audit:package": "npm audit --omit=dev --audit-level=high",
+    "security:audit": "npm run security:audit:package",
     "docs:test:typecheck": "node scripts/docs-snippets-typecheck.mjs --mode all",
     "docs:test:typecheck:unit": "node scripts/docs-snippets-typecheck.mjs --mode unit",
     "docs:test:typecheck:sample": "node scripts/docs-snippets-typecheck.mjs --mode sample",
