@@ -102,6 +102,8 @@ This is not a suggestion — it is the project constitution.
     - Verify `packages/trpc/package.json` still has `"dependencies": {}` after every dependency PR.
     - Run the same validation expected for a human-authored dependency update.
     - Do not auto-accept lockfile churn without understanding which direct dependency caused it.
+- **Strictness scope.** The non-negotiables (100% coverage, cognitive-complexity ≤ 15, zero published runtime deps, isolated major-version review) govern the *core* published package (`packages/trpc`). Non-core code — `sample/*` (including the Angular showcase), the `website/`, and dev tooling — uses lighter rules: their dependency updates (including majors) may merge on green CI without the core's major-isolation ceremony.
+- **Audit scope.** The `security:audit` release gate audits the *published* surface — `npm audit --omit=dev --audit-level=high`. Since the package publishes `"dependencies": {}`, this is exactly what consumers install. Advisories confined to dev/peer/build tooling or the docs `website/` are tracked and patched via Dependabot but do not block releases — they cannot reach consumers. Patch them in their own PRs.
 - Application security checks are required in PR reviews:
   - Auth/authz bypass risk, privilege escalation, and data exposure in handlers, decorators, and context wiring.
   - Input-validation gaps and injection surfaces (command/template/SQL-like patterns, prototype pollution, path traversal).
