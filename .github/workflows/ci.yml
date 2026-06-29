@@ -57,7 +57,7 @@ jobs:
       - name: Restore base branch CI data
         if: github.event_name == 'pull_request' && matrix.node-version == '22'
         id: base-ci-data
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: ci-data
           key: ci-data-node-22-${{ github.base_ref }}-
@@ -91,7 +91,7 @@ jobs:
           cp complexity/cognitive-complexity-summary.json ci-data/cognitive-complexity-summary.json
 
       - if: github.event_name == 'push' && matrix.node-version == '22'
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: ci-data
           key: ci-data-node-22-${{ github.ref_name }}-${{ github.sha }}
