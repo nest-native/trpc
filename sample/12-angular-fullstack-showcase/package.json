@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@angular/common": "22.0.4",
-    "@angular/compiler": "22.0.2",
+    "@angular/compiler": "22.0.4",
     "@angular/core": "22.0.4",
-    "@angular/platform-browser": "21.2.15",
+    "@angular/platform-browser": "22.0.4",
     "@nestjs/common": "11.1.27",
     "@nestjs/core": "11.1.27",
     "@nestjs/platform-express": "11.1.27",
