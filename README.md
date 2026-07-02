@@ -41,6 +41,7 @@ The documentation site is the canonical source of truth for usage guides and sup
 - Adapter-agnostic behavior across Express and Fastify
 - Zod or `class-validator` validation, without forcing either style on every project
 - Generated `AppRouter` types for fully typed tRPC clients
+- tRPC server-config passthrough: `transformer` (e.g. superjson), `errorFormatter`, `responseMeta`, and `onError`
 
 ## Compatibility
 
@@ -80,6 +81,7 @@ This repository contains:
 | `sample/10-nested-alias-routers` | Nested router aliases | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `sample/11-microservice-transport` | tRPC gateway with Nest microservice transport | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 | `sample/12-angular-fullstack-showcase` | Angular browser client + NestJS backend | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
+| `sample/13-transformer-error-formatting` | superjson transformer, `errorFormatter`, `responseMeta`, `onError` | `npm run test --workspace nest-trpc-native-sample-13-transformer` |
 
 Start with `sample/00-showcase` for end-to-end behavior, then use [sample/README.md](sample/README.md) and [website/docs/samples/index.md](website/docs/samples/index.md) to jump to specific features.
 

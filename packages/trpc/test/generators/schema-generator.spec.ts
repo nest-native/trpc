@@ -240,6 +240,29 @@ describe('generateSchemaContent', () => {
     );
   });
 
+  it('should emit a bare initTRPC.create() when hasTransformer is false', () => {
+    const content = generateSchemaContent(
+      [{ procedures: [{ name: 'ping', type: ProcedureType.QUERY }] }],
+      { hasTransformer: false },
+    );
+
+    expect(content).to.include('const t = initTRPC.create();');
+    expect(content).to.not.include('const transformer = {');
+  });
+
+  it('should emit a transformer marker when hasTransformer is true', () => {
+    const content = generateSchemaContent(
+      [{ procedures: [{ name: 'ping', type: ProcedureType.QUERY }] }],
+      { hasTransformer: true },
+    );
+
+    expect(content).to.include('const transformer = {');
+    expect(content).to.include('  serialize: (value: unknown) => value,');
+    expect(content).to.include('  deserialize: (value: unknown) => value,');
+    expect(content).to.include('const t = initTRPC.create({ transformer });');
+    expect(content).to.not.include('const t = initTRPC.create();');
+  });
+
   it('should keep generated schema formatting stable', () => {
     const content = generateSchemaContent([
       {
@@ -320,6 +343,21 @@ describe('generateSchema (file output)', () => {
     const content = readFileSync(tmpFile, 'utf-8');
     expect(content).to.include('export type AppRouter = typeof appRouter');
     expect(content).to.include('health: t.procedure.query');
+    expect(content).to.include('const t = initTRPC.create();');
+  });
+
+  it('should write the transformer marker when hasTransformer is set', () => {
+    const routers: RouterInfo[] = [
+      {
+        procedures: [{ name: 'health', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    generateSchema(routers, tmpFile, { hasTransformer: true });
+
+    expect(existsSync(tmpFile)).to.be.true;
+    const content = readFileSync(tmpFile, 'utf-8');
+    expect(content).to.include('const t = initTRPC.create({ transformer });');
   });
 });
 
@@ -433,6 +471,113 @@ describe('generateSchemaContent (type-level AppRouter contract)', () => {
           `Typecheck failed.\nSTDOUT:\n${stdout}\nSTDERR:\n${stderr}`,
         );
       }
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('should require a link transformer on typed clients when generated with hasTransformer', function () {
+    this.timeout(30000);
+    const tempDir = mkdtempSync(
+      join(process.cwd(), 'packages/trpc/.tmp-trpc-transformer-types-'),
+    );
+    const generatedFile = join(tempDir, 'generated.ts');
+    const clientWithTransformerFile = join(tempDir, 'client-with.ts');
+    const clientMissingTransformerFile = join(tempDir, 'client-missing.ts');
+
+    const runTsc = (entryFile: string): { ok: boolean; output: string } => {
+      const tscEntry = require.resolve('typescript/bin/tsc');
+      try {
+        execFileSync(
+          process.execPath,
+          [
+            tscEntry,
+            '--noEmit',
+            '--strict',
+            '--target',
+            'ES2021',
+            '--module',
+            'commonjs',
+            '--moduleResolution',
+            'node',
+            '--ignoreDeprecations',
+            '6.0',
+            '--skipLibCheck',
+            entryFile,
+          ],
+          { cwd: process.cwd(), stdio: 'pipe' },
+        );
+        return { ok: true, output: '' };
+      } catch (error) {
+        const execError = error as Error & { stdout?: Buffer; stderr?: Buffer };
+        return {
+          ok: false,
+          output:
+            (execError.stdout?.toString('utf-8') ?? '') +
+            (execError.stderr?.toString('utf-8') ?? ''),
+        };
+      }
+    };
+
+    try {
+      generateSchema(
+        [
+          {
+            procedures: [
+              {
+                name: 'when',
+                type: ProcedureType.QUERY,
+              },
+            ],
+          },
+        ],
+        generatedFile,
+        { hasTransformer: true },
+      );
+
+      writeFileSync(
+        clientWithTransformerFile,
+        [
+          "import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';",
+          "import type { AppRouter } from './generated';",
+          '',
+          'const transformer = {',
+          '  serialize: (value: unknown) => value,',
+          '  deserialize: (value: unknown) => value,',
+          '};',
+          '',
+          'export const client = createTRPCProxyClient<AppRouter>({',
+          "  links: [httpBatchLink({ url: 'http://localhost:3000/trpc', transformer })],",
+          '});',
+          '',
+        ].join('\n'),
+      );
+
+      writeFileSync(
+        clientMissingTransformerFile,
+        [
+          "import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';",
+          "import type { AppRouter } from './generated';",
+          '',
+          'export const client = createTRPCProxyClient<AppRouter>({',
+          "  links: [httpBatchLink({ url: 'http://localhost:3000/trpc' })],",
+          '});',
+          '',
+        ].join('\n'),
+      );
+
+      const withTransformer = runTsc(clientWithTransformerFile);
+      expect(
+        withTransformer.ok,
+        `Expected typecheck to pass:\n${withTransformer.output}`,
+      ).to.equal(true);
+
+      const missingTransformer = runTsc(clientMissingTransformerFile);
+      expect(
+        missingTransformer.ok,
+        'Expected typecheck to fail when the link transformer is missing',
+      ).to.equal(false);
+      expect(missingTransformer.output).to.include('transformer');
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }

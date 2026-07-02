@@ -1,15 +1,16 @@
 {
-  "name": "nest-trpc-native-sample-05-class-validator",
+  "name": "nest-trpc-native-sample-13-transformer",
   "version": "0.0.0",
   "private": true,
-  "description": "Sample 05 - class-validator and ValidationPipe",
+  "description": "Sample 13 - superjson transformer, error formatting, and response meta",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist src/@generated",
     "generate:types": "ts-node --transpile-only src/generate-types.ts",
     "typecheck": "npm run generate:types && tsc --noEmit -p tsconfig.json",
+    "typecheck:client": "npm run generate:types && tsc --noEmit -p tsconfig.client.json",
     "smoke": "npm run generate:types && ts-node --transpile-only scripts/smoke.ts",
-    "test": "npm run typecheck && npm run smoke",
+    "test": "npm run typecheck && npm run typecheck:client && npm run smoke",
     "start": "npm run generate:types && ts-node src/main.ts"
   },
   "dependencies": {
@@ -18,12 +19,12 @@
     "@nestjs/platform-express": "11.1.27",
     "@trpc/client": "^11.18.0",
     "@trpc/server": "^11.16.0",
-    "class-transformer": "0.5.1",
-    "class-validator": "0.15.1",
     "@nest-native/trpc": "0.6.0",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.3",
-    "rxjs": "7.8.2"
+    "rxjs": "7.8.2",
+    "superjson": "^2.2.6",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "25.9.3",

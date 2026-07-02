@@ -21,6 +21,7 @@ sidebar_position: 2
 | `sample/10-nested-alias-routers` | Dotted aliases mapped to nested routers | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `sample/11-microservice-transport` | tRPC gateway with Nest microservice transport (TCP) | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 | `sample/12-angular-fullstack-showcase` | Angular browser client + NestJS backend | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
+| `sample/13-transformer-error-formatting` | superjson transformer, `errorFormatter`, `responseMeta`, `onError` | `npm run test --workspace nest-trpc-native-sample-13-transformer` |
 
 ## GitHub Folders
 
@@ -37,3 +38,4 @@ sidebar_position: 2
 - [10-nested-alias-routers](https://github.com/nest-native/trpc/tree/main/sample/10-nested-alias-routers)
 - [11-microservice-transport](https://github.com/nest-native/trpc/tree/main/sample/11-microservice-transport)
 - [12-angular-fullstack-showcase](https://github.com/nest-native/trpc/tree/main/sample/12-angular-fullstack-showcase)
+- [13-transformer-error-formatting](https://github.com/nest-native/trpc/tree/main/sample/13-transformer-error-formatting)

@@ -43,8 +43,14 @@ export interface TrpcModuleOptions<TContext = any> {
   path?: string;
   autoSchemaFile?: string;
   createContext?: (opts: { req: any; res: any }) => TContext | Promise<TContext>;
+  transformer?: DataTransformer | CombinedDataTransformer;
+  errorFormatter?: TRPCErrorFormatter<TContext, TRPCErrorShape>;
+  responseMeta?: ResponseMetaFn<AnyRouter>;
+  onError?: HTTPErrorHandler<AnyRouter, Request>;
 }
 ```
+
+The `errorFormatter` option also receives `TContext`, so a typed context flows into `ctx` inside the formatter.
 
 ## Backward Compatibility
 

@@ -84,7 +84,9 @@ export class TrpcRouter<
     this.appRouter = this.buildRouter() as TRouter;
 
     if (this.options.autoSchemaFile) {
-      generateSchema(this.collectedRouterInfos, this.options.autoSchemaFile);
+      generateSchema(this.collectedRouterInfos, this.options.autoSchemaFile, {
+        hasTransformer: Boolean(this.options.transformer),
+      });
       this.logger.log(
         `Generated AppRouter types at "${this.options.autoSchemaFile}"`,
       );
@@ -106,7 +108,10 @@ export class TrpcRouter<
 
   private buildRouter(): AnyRouter {
     const state: RouterBuildState = {
-      trpc: initTRPC.context<any>().create(),
+      trpc: initTRPC.context<any>().create({
+        transformer: this.options.transformer,
+        errorFormatter: this.options.errorFormatter,
+      }),
       routerMap: {},
       registeredAliases: new Set<string>(),
       namespaceAliases: new Set<string>(),

@@ -4,18 +4,11 @@ sidebar_position: 3
 
 # @Subscription()
 
-The `@Subscription()` decorator defines a tRPC subscription procedure for real-time data streaming.
+The `@Subscription()` decorator defines a tRPC subscription procedure for real-time data streaming over **Server-Sent Events (SSE)** — tRPC v11's recommended default transport.
 
-## Both Patterns Work
+## Supported Shape: Async Generators
 
-`@nest-native/trpc` supports both tRPC subscription return styles:
-
-- async generators (`async function*`) - recommended default
-- `observable()` from `@trpc/server/observable` - fully supported
-
-## Async Generators (Recommended)
-
-tRPC v11 recommends **async generators** for subscriptions. This is the pattern used throughout the samples:
+Subscription handlers must return an async iterable. In practice that means writing the handler as an **async generator** (`async function*`), the pattern used throughout the samples:
 
 ```ts
 import { Input, Router, Subscription, TrpcContext } from '@nest-native/trpc';
@@ -39,11 +32,11 @@ class EventsRouter {
 }
 ```
 
-Async generators are simpler, naturally support backpressure, and work seamlessly with `@Input()` and `@TrpcContext()` decorators.
+Async generators are simple, naturally support backpressure, and work seamlessly with `@Input()` and `@TrpcContext()` decorators. A handler may also return any object implementing `Symbol.asyncIterator`; each yielded value is validated against the `output` schema when one is configured. A non-iterable return value is emitted once and the subscription completes.
 
 ## Client Usage
 
-Subscriptions use SSE by default in tRPC v11:
+Subscriptions stream over SSE via `httpSubscriptionLink`:
 
 ```ts
 import { createTRPCProxyClient, splitLink, httpBatchLink, httpSubscriptionLink } from '@trpc/client';
@@ -71,44 +64,30 @@ const subscription = client.ticks.subscribe(
 subscription.unsubscribe();
 ```
 
-## Observable Pattern (Also Supported)
+## Not Supported: `observable()` Returns
 
-Use `observable()` when you prefer push-style emission/teardown semantics:
+tRPC's legacy `observable()` helper (from `@trpc/server/observable`) is **not supported** as a subscription return value. The subscription wrapper streams async iterables only; an `observable()` return value would be emitted once as a plain object instead of streaming its events.
+
+If you have push-style sources (`EventEmitter`, message queues, RxJS), bridge them into an async generator. For example, with Node's `events.on`:
 
 ```ts
-import { Input, Router, Subscription, TrpcContext } from '@nest-native/trpc';
-import { observable } from '@trpc/server/observable';
-import { z } from 'zod';
+import { EventEmitter, on } from 'events';
 
-const TickInputSchema = z.object({ count: z.number().optional() });
+const emitter = new EventEmitter();
 
-@Router('cats')
-class CatsRouter {
-  @Subscription({ input: TickInputSchema })
-  ticks(
-    @Input('count') count: number | undefined,
-    @TrpcContext('requestId') requestId: string,
-  ) {
-    return observable((emit) => {
-      let tick = 0;
-      const total = count ?? 3;
-      const interval = setInterval(() => {
-        tick += 1;
-        emit.next({ tick, requestId });
-        if (tick >= total) {
-          clearInterval(interval);
-          emit.complete();
-        }
-      }, 300);
-
-      return () => clearInterval(interval);
-    });
+@Router()
+class NotificationsRouter {
+  @Subscription()
+  async *notifications() {
+    for await (const [payload] of on(emitter, 'notification')) {
+      yield payload;
+    }
   }
 }
 ```
 
-Use whichever model matches your team style. For new code, async generators are typically easier to read and test.
+## Transport
 
-:::info Transport
-Subscriptions use **Server-Sent Events (SSE)** by default in tRPC v11 via `httpSubscriptionLink`. WebSocket transport is also available. See the [tRPC subscriptions docs](https://trpc.io/docs/subscriptions) for transport options.
+:::info SSE only
+Subscriptions are served over **Server-Sent Events (SSE)** via `httpSubscriptionLink` — tRPC v11's recommended default for subscriptions. WebSocket transport (`wsLink` / `applyWSSHandler`) is **not provided** by `@nest-native/trpc` and is currently a non-goal. See the [tRPC subscriptions docs](https://trpc.io/docs/subscriptions) for background on the transports tRPC itself defines.
 :::

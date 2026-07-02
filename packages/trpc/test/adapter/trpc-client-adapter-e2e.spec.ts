@@ -17,7 +17,8 @@ import {
 import { expect } from 'chai';
 import { EventSource } from 'eventsource';
 import { IsString, MinLength } from 'class-validator';
-import { z } from 'zod';
+import superjson from 'superjson';
+import { z, ZodError } from 'zod';
 import { TrpcContext } from '../../decorators/ctx.decorator';
 import { Input } from '../../decorators/input.decorator';
 import {
@@ -152,6 +153,80 @@ async function expectClientError(
   expect(String(error?.message)).to.match(expectedMessage);
 }
 
+const FIXED_DATE = new Date('2026-01-02T03:04:05.000Z');
+
+@Router('calendar')
+class TransformerE2ERouter {
+  @Query()
+  when() {
+    return { at: FIXED_DATE };
+  }
+
+  @Mutation({ input: z.object({ dueAt: z.date() }) })
+  echoDate(@Input('dueAt') dueAt: Date) {
+    return { received: dueAt, isDate: dueAt instanceof Date };
+  }
+
+  @Subscription()
+  async *pulse() {
+    yield { at: FIXED_DATE };
+  }
+}
+
+async function createTransformerApp(
+  kind: AdapterKind,
+): Promise<INestApplication> {
+  const moduleRef: TestingModule = await Test.createTestingModule({
+    imports: [
+      TrpcModule.forRoot({
+        path: TRPC_PATH,
+        transformer: superjson,
+        errorFormatter: ({ shape, error }) => ({
+          ...shape,
+          data: {
+            ...shape.data,
+            zodError:
+              error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+                ? z.flattenError(error.cause)
+                : null,
+          },
+        }),
+      }),
+    ],
+    providers: [TransformerE2ERouter],
+  }).compile();
+
+  const app =
+    kind === 'fastify'
+      ? moduleRef.createNestApplication<NestFastifyApplication>(
+          new FastifyAdapter(),
+        )
+      : moduleRef.createNestApplication();
+
+  await app.init();
+  await app.listen(0, '127.0.0.1');
+  return app;
+}
+
+function createTransformerClient(baseUrl: string) {
+  return createTRPCProxyClient<any>({
+    links: [
+      splitLink({
+        condition: operation => operation.type === 'subscription',
+        true: httpSubscriptionLink({
+          url: `${baseUrl}${TRPC_PATH}`,
+          transformer: superjson,
+          EventSource,
+        }),
+        false: httpBatchLink({
+          url: `${baseUrl}${TRPC_PATH}`,
+          transformer: superjson,
+        }),
+      }),
+    ],
+  });
+}
+
 describe('real @trpc/client adapter E2E', () => {
   for (const adapterKind of ['express', 'fastify'] as const) {
     describe(adapterKind, () => {
@@ -220,6 +295,76 @@ describe('real @trpc/client adapter E2E', () => {
         });
 
         expect(ticks).to.deep.equal([1, 2, 3]);
+      });
+    });
+  }
+});
+
+describe('real @trpc/client with superjson transformer E2E', () => {
+  for (const adapterKind of ['express', 'fastify'] as const) {
+    describe(adapterKind, () => {
+      let app: INestApplication;
+      let client: any;
+
+      before(async () => {
+        app = await createTransformerApp(adapterKind);
+        client = createTransformerClient(await app.getUrl());
+      });
+
+      after(async () => {
+        await app?.close();
+      });
+
+      it('round-trips Date instances through queries', async () => {
+        const result = await client.calendar.when.query();
+        expect(result.at).to.be.instanceOf(Date);
+        expect(result.at.toISOString()).to.equal(FIXED_DATE.toISOString());
+      });
+
+      it('round-trips Date instances through mutation inputs and outputs', async () => {
+        const result = await client.calendar.echoDate.mutate({
+          dueAt: FIXED_DATE,
+        });
+        expect(result.isDate).to.equal(true);
+        expect(result.received).to.be.instanceOf(Date);
+        expect(result.received.toISOString()).to.equal(
+          FIXED_DATE.toISOString(),
+        );
+      });
+
+      it('round-trips Date instances through SSE subscriptions', async function () {
+        this.timeout(5000);
+
+        const events: Array<{ at: Date }> = [];
+        await new Promise<void>((resolve, reject) => {
+          client.calendar.pulse.subscribe(undefined, {
+            onData(event: { at: Date }) {
+              events.push(event);
+            },
+            onError(error: unknown) {
+              reject(error);
+            },
+            onComplete() {
+              resolve();
+            },
+          });
+        });
+
+        expect(events).to.have.length(1);
+        expect(events[0].at).to.be.instanceOf(Date);
+        expect(events[0].at.toISOString()).to.equal(FIXED_DATE.toISOString());
+      });
+
+      it('exposes the flattened ZodError shape to the real client', async () => {
+        let error: any;
+        try {
+          await client.calendar.echoDate.mutate({ dueAt: 'not-a-date' });
+        } catch (err) {
+          error = err;
+        }
+
+        expect(error).to.be.instanceOf(Error);
+        expect(error?.data?.zodError?.fieldErrors?.dueAt).to.be.an('array');
       });
     });
   }

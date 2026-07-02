@@ -310,6 +310,41 @@ describe('TrpcRouter Lifecycle', () => {
     expect(generated).to.include('export type AppRouter = typeof appRouter;');
     expect(generated).to.include('lifecycle: t.router({');
     expect(generated).to.include('events: t.router({');
+    expect(generated).to.include('const t = initTRPC.create();');
+  });
+
+  it('should mark generated AppRouter types when a transformer is configured', async () => {
+    const transformerTmpDir = mkdtempSync(join(tmpdir(), 'trpc-schema-'));
+    const transformerSchemaPath = join(
+      transformerTmpDir,
+      'generated',
+      'server.ts',
+    );
+
+    const transformerModuleRef = await Test.createTestingModule({
+      imports: [
+        TrpcModule.forRoot({
+          path: '/trpc',
+          autoSchemaFile: transformerSchemaPath,
+          transformer: {
+            serialize: (value: unknown) => value,
+            deserialize: (value: unknown) => value,
+          },
+        }),
+      ],
+      providers: [GlobalLifecycleRouter],
+    }).compile();
+
+    try {
+      await transformerModuleRef.init();
+      const generated = readFileSync(transformerSchemaPath, 'utf-8');
+      expect(generated).to.include(
+        'const t = initTRPC.create({ transformer });',
+      );
+    } finally {
+      await transformerModuleRef.close();
+      rmSync(transformerTmpDir, { recursive: true, force: true });
+    }
   });
 
   it('should support class-validator DTO validation through ValidationPipe', async () => {
