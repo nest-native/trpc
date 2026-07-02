@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.0
+
+Server-config passthrough — expose tRPC v11's own server options through `TrpcModuleOptions` (no new runtime dependencies; all four are forwarded untouched):
+
+- add `transformer` (e.g. `superjson`), threaded into `initTRPC.create({ transformer })`, so values such as `Date`/`Map` round-trip between server and client; clients configure the same transformer on their link (`httpBatchLink({ url, transformer })`)
+- when `autoSchemaFile` and `transformer` are combined, the generated `AppRouter` is marked transformer-enabled, so typed clients are required (at compile time) to configure a matching link transformer, and transformed types such as `Date` are inferred as `Date` instead of `string`
+- add `errorFormatter`, threaded into `initTRPC.create({ errorFormatter })`; it composes after the existing `HttpException` → `TRPCError` mapping, enabling the canonical flattened-`ZodError` recipe (`error.data.zodError`)
+- add `responseMeta`, forwarded to the tRPC request handler, for per-response status codes and headers (e.g. `Cache-Control`); headers are applied on both JSON and SSE (subscription) responses, with SSE metadata generated eagerly before streaming starts
+- add `onError`, forwarded to the tRPC request handler, as the standard centralized error-logging/reporting hook
+- add `sample/13-transformer-error-formatting` demonstrating superjson, ZodError flattening, response caching headers, and error reporting
+- docs honesty fix: `@Subscription()` documentation now states that async generators over SSE are the supported streaming shape; tRPC `observable()` return values are not streamed and WebSocket transport is not provided
+
 ## 0.5.0
 
 Project rename to the `@nest-native/*` org standard (no API or behavior changes):

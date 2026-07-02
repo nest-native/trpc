@@ -48,6 +48,8 @@ export class TrpcHttpAdapter implements OnModuleInit {
               createContext: createContext
                 ? () => createContext({ req, res })
                 : undefined,
+              responseMeta: this.options.responseMeta,
+              onError: this.options.onError,
             };
             return fetchRequestHandler(handlerOpts);
           })

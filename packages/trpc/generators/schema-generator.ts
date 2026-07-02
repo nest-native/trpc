@@ -20,6 +20,15 @@ interface RenderableProcedure extends ProcedureInfo {
   outputSchemaVarName?: string;
 }
 
+export interface SchemaGeneratorOptions {
+  /**
+   * When the server is configured with a `transformer`, the generated
+   * router type must reflect it so typed clients are required to
+   * configure the matching link transformer.
+   */
+  hasTransformer?: boolean;
+}
+
 /**
  * Generates a TypeScript file containing the typed `AppRouter`
  * for tRPC client consumption.
@@ -30,8 +39,12 @@ interface RenderableProcedure extends ProcedureInfo {
  *
  * @internal
  */
-export function generateSchema(routers: RouterInfo[], filePath: string): void {
-  const content = generateSchemaContent(routers);
+export function generateSchema(
+  routers: RouterInfo[],
+  filePath: string,
+  options: SchemaGeneratorOptions = {},
+): void {
+  const content = generateSchemaContent(routers, options);
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, content, 'utf-8');
 }
@@ -42,7 +55,10 @@ export function generateSchema(routers: RouterInfo[], filePath: string): void {
  *
  * @internal
  */
-export function generateSchemaContent(routers: RouterInfo[]): string {
+export function generateSchemaContent(
+  routers: RouterInfo[],
+  options: SchemaGeneratorOptions = {},
+): string {
   const lines: string[] = [
     '// ------------------------------------------------------',
     '// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)',
@@ -60,7 +76,20 @@ export function generateSchemaContent(routers: RouterInfo[]): string {
   }
 
   lines.push('');
-  lines.push('const t = initTRPC.create();');
+  if (options.hasTransformer) {
+    lines.push(
+      '// Type-level marker mirroring the transformer configured on the server.',
+      '// Clients must configure the matching transformer on their link,',
+      '// e.g. httpBatchLink({ url, transformer: superjson }).',
+      'const transformer = {',
+      '  serialize: (value: unknown) => value,',
+      '  deserialize: (value: unknown) => value,',
+      '};',
+      'const t = initTRPC.create({ transformer });',
+    );
+  } else {
+    lines.push('const t = initTRPC.create();');
+  }
   lines.push('');
 
   // Group procedures: aliased → sub-routers, un-aliased → root

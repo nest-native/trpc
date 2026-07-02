@@ -16,6 +16,12 @@ This page maps the main public claims to current verification evidence. It is a 
 | `@Input()` supports full input and field extraction. | `packages/trpc/test/context/trpc-context-creator.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `website/docs/decorators/input.md` | Covered by package tests and docs. |
 | `@TrpcContext()` supports full context and field extraction. | `packages/trpc/test/context/trpc-context-creator.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/03-context-request-scope` | Covered by package tests and samples. |
 | `autoSchemaFile` generates importable `AppRouter` types. | `packages/trpc/test/generators/schema-generator.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/08-autoschema-client-typecheck/src/client.typecheck.ts` | Covered by package tests and client typecheck sample. |
+| `transformer` (e.g. superjson) round-trips `Date` values between server and client. | `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `sample/13-transformer-error-formatting`, `website/docs/module-setup/for-root.md` | Covered by package E2E tests and samples. |
+| `autoSchemaFile` + `transformer` marks the generated `AppRouter` so typed clients must configure a link transformer. | `packages/trpc/test/generators/schema-generator.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`, `sample/13-transformer-error-formatting/src/client.typecheck.ts` | Covered by package tests (including a negative typecheck) and sample typecheck. |
+| `errorFormatter` reshapes errors after `HttpException` → `TRPCError` mapping (flattened-ZodError recipe). | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `sample/13-transformer-error-formatting`, `website/docs/advanced/error-handling.md` | Covered by package tests and samples. |
+| `responseMeta` sets response status/headers on JSON and SSE responses. | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `sample/13-transformer-error-formatting/scripts/smoke.ts` | Covered by package tests (both paths) and sample smoke. |
+| `onError` is invoked for failing procedures. | `packages/trpc/test/adapter/trpc-http-adapter.spec.ts`, `sample/13-transformer-error-formatting/scripts/smoke.ts` | Covered by package tests and sample smoke. |
+| Subscriptions stream async generators over SSE; `observable()` returns and WebSocket transport are not supported. | `packages/trpc/trpc-router.ts` (`createSubscriptionProcedure`), `packages/trpc/test/adapter/trpc-client-adapter-e2e.spec.ts`, `website/docs/decorators/subscription.md` | Documented limitation; streaming behavior covered by package tests. |
 | `TrpcRouter` is supported for in-process testing. | `website/docs/testing/router-testing.md`, `packages/trpc/test/router/trpc-router.spec.ts`, `packages/trpc/test/router/trpc-router-lifecycle.spec.ts` | Covered as advanced testing API. |
 | Invalid router aliases and duplicate procedure paths fail with actionable diagnostics. | `packages/trpc/test/router/trpc-router.spec.ts` | Covered by package tests. |
 
@@ -64,6 +70,8 @@ These gaps should guide future PRs:
 Do not make these claims unless new code, docs, and tests are added:
 
 - "Official NestJS integration."
+- "WebSocket subscription transport is available." Subscriptions are SSE-only (`httpSubscriptionLink`); no `wsLink`/`applyWSSHandler` integration exists.
+- "tRPC `observable()` subscriptions are supported." The subscription wrapper streams async iterables only; `observable()` return values do not stream.
 - "Production security is handled by the library." Authentication, authorization, rate limiting, CORS, and secret handling are application responsibilities. See [Security Responsibilities](../advanced/security-responsibilities).
 - "Benchmarked faster than REST, GraphQL, or vanilla tRPC."
 - "All package internals are stable extension points."

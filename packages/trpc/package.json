@@ -1,6 +1,6 @@
 {
   "name": "@nest-native/trpc",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Decorator-first tRPC integration bridge for NestJS",
   "keywords": [
     "nestjs",

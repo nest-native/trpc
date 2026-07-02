@@ -94,6 +94,7 @@ For targeted review, run the focused sample that matches the change:
 | Nested aliases | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | Microservice transport bridge | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 | Angular browser showcase | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
+| Transformer, error formatting, response meta | `npm run test --workspace nest-trpc-native-sample-13-transformer` |
 
 ## Docs Review
 

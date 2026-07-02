@@ -32,6 +32,7 @@ It makes tRPC feel native in Nest applications:
 - Adapter-agnostic behavior across Express and Fastify
 - Zod or `class-validator` validation, without forcing either style on every project
 - Generated `AppRouter` types for fully typed tRPC clients
+- tRPC server-config passthrough: `transformer` (e.g. superjson), `errorFormatter`, `responseMeta`, and `onError`
 
 ## Documentation
 

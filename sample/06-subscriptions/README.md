@@ -5,9 +5,8 @@ This sample is a runnable extraction focused on server-side subscriptions and cl
 It demonstrates:
 
 - `@Subscription(...)` procedures
-- async generator events
-- `observable()` events from `@trpc/server/observable`
-- typed client subscription usage (`httpSubscriptionLink`)
+- async generator events (the supported streaming shape)
+- typed client subscription usage over SSE (`httpSubscriptionLink`)
 
 ## Run
 

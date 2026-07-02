@@ -18,6 +18,7 @@ This index is the fast path for onboarding and contribution.
 | `sample/10-nested-alias-routers` | Dotted aliases to nested router objects | `npm run test --workspace nest-trpc-native-sample-10-nested-alias` |
 | `sample/11-microservice-transport` | tRPC gateway + Nest microservice transport (TCP) | `npm run test --workspace nest-trpc-native-sample-11-microservice` |
 | `sample/12-angular-fullstack-showcase` | Angular browser client + NestJS backend | `npm run test --workspace nest-trpc-native-sample-12-angular-showcase` |
+| `sample/13-transformer-error-formatting` | superjson transformer + `errorFormatter` + `responseMeta` + `onError` | `npm run test --workspace nest-trpc-native-sample-13-transformer` |
 
 ## Browser Showcase
 
@@ -75,6 +76,7 @@ so the compact backend baseline remains easy to scan.
 | Express/Fastify parity | `sample/00-showcase/src/main.ts`, `sample/00-showcase/src/main-fastify.ts`, `sample/00-showcase/scripts/smoke-*.ts` |
 | Angular client provider | `sample/12-angular-fullstack-showcase/frontend/src/app/trpc/trpc.client.ts` |
 | Angular typed service | `sample/12-angular-fullstack-showcase/frontend/src/app/health/health-api.service.ts` |
+| `transformer` / `errorFormatter` / `responseMeta` / `onError` | `sample/13-transformer-error-formatting/src/app.module.ts`, `sample/13-transformer-error-formatting/scripts/smoke.ts`, `sample/13-transformer-error-formatting/src/client.typecheck.ts` |
 
 ## Contribution Heuristics
 

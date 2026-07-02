@@ -43,6 +43,24 @@ const users = await trpc.users.list.query();
 const created = await trpc.users.create.mutate({ name: 'Ada' });
 ```
 
+## Match the Server's Transformer
+
+If the server configures a [data transformer](./module-setup/for-root#with-a-data-transformer) (`TrpcModule.forRoot({ transformer: superjson })`), every client link must configure the **same** transformer:
+
+```ts
+import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import superjson from 'superjson';
+import type { AppRouter } from './@generated/server';
+
+export const trpc = createTRPCProxyClient<AppRouter>({
+  links: [
+    httpBatchLink({ url: 'http://localhost:3000/trpc', transformer: superjson }),
+  ],
+});
+```
+
+The generated `AppRouter` marks the router as transformer-enabled, so forgetting the link transformer is a compile-time error, and transformed values such as `Date` are typed (and delivered) as real `Date` instances.
+
 ## Share Types In A Monorepo
 
 In a monorepo, prefer one shared type export rather than deep imports between apps:

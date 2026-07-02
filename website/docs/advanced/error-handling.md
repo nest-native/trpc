@@ -61,6 +61,39 @@ create(@Input() input: CreateUserDto) {
 }
 ```
 
+## Custom Error Shapes with `errorFormatter`
+
+To change the *shape* of the error payload sent to clients (rather than which error is thrown), configure `errorFormatter` on the module. It is forwarded to `initTRPC.create({ errorFormatter })` and runs **after** the `HttpException` → `TRPCError` mapping above, so `error.code` is already the mapped tRPC code:
+
+```ts
+import { z, ZodError } from 'zod';
+
+TrpcModule.forRoot({
+  errorFormatter: ({ shape, error }) => ({
+    ...shape,
+    data: {
+      ...shape.data,
+      zodError:
+        error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+          ? z.flattenError(error.cause)
+          : null,
+    },
+  }),
+});
+```
+
+Clients read the extra fields from `error.data` (e.g. `error.data.zodError.fieldErrors`). Combine with `onError` for centralized reporting:
+
+```ts
+TrpcModule.forRoot({
+  onError: ({ error, path, type }) => {
+    logger.error(`tRPC ${type} "${path}" failed: ${error.code}`);
+  },
+});
+```
+
+See [`sample/13-transformer-error-formatting`](https://github.com/nest-native/trpc/tree/main/sample/13-transformer-error-formatting) for the runnable recipe.
+
 ## Custom Application Codes (Idiomatic Pattern)
 
 tRPC transport codes are fixed. For app-specific codes, keep a stable transport code and add a domain code in the message.
@@ -126,3 +159,4 @@ Reference tests:
 
 - `packages/trpc/test/context/trpc-context-creator.spec.ts`
 - `packages/trpc/test/router/trpc-router-lifecycle.spec.ts`
+- `packages/trpc/test/adapter/trpc-http-adapter.spec.ts` (errorFormatter and onError passthrough)
