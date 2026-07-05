@@ -12,3 +12,7 @@ complexity
 todo-*.txt
 .devcontainer/
 .angular/
+
+# Mutation testing (local only)
+/.stryker-tmp/
+/reports/
