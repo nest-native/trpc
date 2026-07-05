@@ -263,6 +263,16 @@ npm run ci:sample
 
 `ci:showcase` remains as a compatibility alias.
 
+One **optional, local-only** layer sits on top (it never runs in CI, and forks
+work without it):
+
+- **Mutation testing** — `npm run test:mutation` (incremental Stryker run;
+  `test:mutation:full` re-tests everything). Scope with `STRYKER_MUTATE`
+  (comma-separated globs).
+
+Details — including the pre-PR ritual and agent instructions — in
+[GUIDELINES_NEST_TRPC.md](GUIDELINES_NEST_TRPC.md#11-mutation-testing-stryker--local-only-never-in-ci).
+
 ## Sample Commands
 
 ```bash

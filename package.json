@@ -19,6 +19,9 @@
     "test": "TS_NODE_PROJECT=tsconfig.spec.json node --loader ts-node/esm ./node_modules/mocha/bin/mocha \"packages/**/*.spec.ts\"",
     "test:cov": "TS_NODE_PROJECT=tsconfig.spec.json nyc node --loader ts-node/esm ./node_modules/mocha/bin/mocha \"packages/**/*.spec.ts\"",
     "test:watch": "TS_NODE_PROJECT=tsconfig.spec.json node --loader ts-node/esm ./node_modules/mocha/bin/mocha -w --watch-files \"packages\" \"packages/**/*.spec.ts\"",
+    "test:mutation": "stryker run",
+    "test:mutation:full": "stryker run --force",
+    "test:mutant": "TS_NODE_PROJECT=tsconfig.spec.json node --loader ts-node/esm ./node_modules/mocha/bin/mocha --exit \"packages/**/*.spec.ts\"",
     "complexity:check": "eslint --config eslint.complexity-check.config.mjs \"packages/trpc/**/*.ts\"",
     "complexity:report": "node scripts/collect-cognitive-complexity.mjs",
     "release:check:readme-links": "node scripts/check-readme-links.mjs",
@@ -52,6 +55,7 @@
   },
   "devDependencies": {
     "@nestjs/testing": "11.1.27",
+    "@stryker-mutator/core": "^9.6.1",
     "@types/chai": "5.2.3",
     "@types/mocha": "10.0.10",
     "@types/node": "25.9.3",
