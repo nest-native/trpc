@@ -46,7 +46,8 @@ export function generateSchema(
 ): void {
   const content = generateSchemaContent(routers, options);
   mkdirSync(dirname(filePath), { recursive: true });
-  writeFileSync(filePath, content, 'utf-8');
+  // utf-8 is Node's default encoding for string data.
+  writeFileSync(filePath, content);
 }
 
 /**
@@ -196,7 +197,6 @@ function renderNestedMapEntries(
   depth: number,
 ): string[] {
   const indent = '  '.repeat(depth);
-  const childIndent = '  '.repeat(depth + 1);
   const entries: string[] = [];
 
   for (const [key, value] of Object.entries(node)) {

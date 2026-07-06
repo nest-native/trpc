@@ -35,6 +35,51 @@ describe('TrpcModule', () => {
     });
   });
 
+  describe('forRoot (dynamic module shape)', () => {
+    it('should not be global by default and export TrpcRouter', () => {
+      const dynamicModule = TrpcModule.forRoot();
+      expect(dynamicModule.global).to.equal(false);
+      expect(dynamicModule.exports).to.deep.equal([TrpcRouter]);
+    });
+
+    it('should honor isGlobal: true', () => {
+      const dynamicModule = TrpcModule.forRoot({ isGlobal: true });
+      expect(dynamicModule.global).to.equal(true);
+    });
+  });
+
+  describe('forRootAsync (dynamic module shape)', () => {
+    const useFactory = () => ({});
+
+    it('should not be global by default and export TrpcRouter', () => {
+      const dynamicModule = TrpcModule.forRootAsync({ useFactory });
+      expect(dynamicModule.global).to.equal(false);
+      expect(dynamicModule.exports).to.deep.equal([TrpcRouter]);
+    });
+
+    it('should honor isGlobal: true', () => {
+      const dynamicModule = TrpcModule.forRootAsync({
+        useFactory,
+        isGlobal: true,
+      });
+      expect(dynamicModule.global).to.equal(true);
+    });
+
+    it('should default the options provider inject list to an empty array', () => {
+      const dynamicModule = TrpcModule.forRootAsync({ useFactory });
+      const optionsProvider = (dynamicModule.providers ?? []).find(
+        provider =>
+          typeof provider === 'object' &&
+          'provide' in provider &&
+          provider.provide === TRPC_MODULE_OPTIONS,
+      );
+      expect(optionsProvider).to.not.equal(undefined);
+      expect((optionsProvider as { inject?: unknown[] }).inject).to.deep.equal(
+        [],
+      );
+    });
+  });
+
   describe('forRootAsync', () => {
     it('should provide TrpcRouter with async options', async () => {
       const module: TestingModule = await Test.createTestingModule({

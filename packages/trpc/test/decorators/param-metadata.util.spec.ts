@@ -12,6 +12,17 @@ describe('addTrpcParamMetadata', () => {
     expect(Reflect.getMetadataKeys(target)).to.have.length(0);
   });
 
+  it('should not fall through to a property literally named "undefined" when propertyKey is undefined', () => {
+    // Without the propertyKey guard, `target[propertyKey]` would coerce the
+    // undefined key to the string "undefined" and attach metadata to this fn.
+    const fn = () => {};
+    const target = { undefined: fn };
+    addTrpcParamMetadata(target, undefined, 0, TrpcParamtype.INPUT);
+    expect(Reflect.getMetadata(TRPC_PARAM_ARGS_METADATA, fn)).to.equal(
+      undefined,
+    );
+  });
+
   it('should do nothing when target[propertyKey] is not a function', () => {
     const target: Record<string, any> = { myProp: 'not-a-function' };
     addTrpcParamMetadata(target, 'myProp', 0, TrpcParamtype.INPUT);

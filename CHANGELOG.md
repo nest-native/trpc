@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Tests + internal: closed the mutation-testing survivors surfaced in the
+  generators and param metadata — added a `param-metadata` guard test (an
+  `undefined` propertyKey must not attach metadata to a property literally named
+  `"undefined"`), plus generator/serializer/module/constants specs. Simplified
+  three equivalent-mutant branches (dropped a redundant `'utf-8'` write
+  encoding and an unused indent variable in the schema generator; folded the
+  `any`/`lazy`/`nativeEnum` cases into the shared `z.any()` fallback in the zod
+  serializer). Behavior-neutral, 100% coverage. Docs: reframed mutation-testing
+  guidance as an occasional, scoped audit (not a per-PR gate).
 - Stryker mutation testing (repo tooling; nothing ships in the package):
   `npm run test:mutation` (incremental) / `npm run test:mutation:full`, with
   `STRYKER_MUTATE` scoping (comma-separated globs). Opt-in and local-only —

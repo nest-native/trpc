@@ -30,8 +30,6 @@ export function serializeZodSchema(schema: any): string {
       return 'z.null()';
     case 'void':
       return 'z.void()';
-    case 'any':
-      return 'z.any()';
     case 'unknown':
       return 'z.unknown()';
     case 'never':
@@ -129,10 +127,6 @@ export function serializeZodSchema(schema: any): string {
       // The effect itself is runtime-only and doesn't affect the type used for inference.
       return serializeZodSchema(schema._def.schema);
 
-    case 'lazy':
-      // Lazy schemas can't be serialized; fall back.
-      return 'z.any()';
-
     case 'pipeline':
     case 'pipe':
       // For type inference, use the output schema.
@@ -156,11 +150,10 @@ export function serializeZodSchema(schema: any): string {
     case 'readonly':
       return `${serializeZodSchema(schema._def.innerType)}.readonly()`;
 
-    case 'nativeEnum':
-      // Native enums reference runtime values that can't be reconstructed.
-      return 'z.any()';
-
     default:
+      // Intentional z.any() fallbacks share this branch: 'any' itself,
+      // 'lazy' (cannot be serialized), 'nativeEnum' (references runtime
+      // values that cannot be reconstructed), and any unknown type.
       return 'z.any()';
   }
 }

@@ -189,6 +189,103 @@ describe('generateSchemaContent', () => {
     expect(listProcedureOccurrences).to.have.length(2);
   });
 
+  it('should import zod when only some routers/procedures declare schemas', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: 'mixed',
+        procedures: [
+          {
+            name: 'withSchema',
+            type: ProcedureType.QUERY,
+            inputSchema: z.object({ id: z.string() }),
+          },
+          { name: 'withoutSchema', type: ProcedureType.QUERY },
+        ],
+      },
+      {
+        alias: 'plain',
+        procedures: [{ name: 'noSchema', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+
+    expect(content).to.include("import { z } from 'zod';");
+  });
+
+  it('should replace a conflicting router alias when a dotted alias claims it as a namespace', () => {
+    // TrpcRouter rejects this configuration at registration time; when
+    // generateSchemaContent is fed it directly, the namespace wins and the
+    // generator must not crash.
+    const routers: RouterInfo[] = [
+      {
+        alias: 'pay',
+        procedures: [{ name: 'charge', type: ProcedureType.QUERY }],
+      },
+      {
+        alias: 'pay.methods',
+        procedures: [{ name: 'list', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+
+    expect(content).to.include('pay: {');
+    expect(content).to.include('methods: t.router({');
+    expect(content).to.not.include('pay: t.router({');
+  });
+
+  it('should keep nested and multi-procedure formatting stable without schemas', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: 'billing',
+        procedures: [
+          { name: 'invoice', type: ProcedureType.QUERY },
+          { name: 'refund', type: ProcedureType.MUTATION },
+        ],
+      },
+      {
+        alias: 'admin.users',
+        procedures: [{ name: 'list', type: ProcedureType.QUERY }],
+      },
+      {
+        alias: 'admin.roles',
+        procedures: [{ name: 'list', type: ProcedureType.QUERY }],
+      },
+    ];
+
+    expect(generateSchemaContent(routers)).to.equal(
+      [
+        '// ------------------------------------------------------',
+        '// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)',
+        '// @nest-native/trpc',
+        '// ------------------------------------------------------',
+        '',
+        "import { initTRPC } from '@trpc/server';",
+        '',
+        'const t = initTRPC.create();',
+        '',
+        'const appRouter = t.router({',
+        '  billing: t.router({',
+        '    invoice: t.procedure.query(() => undefined as unknown),',
+        '    refund: t.procedure.mutation(() => undefined as unknown),',
+        '  }),',
+        '  admin: {',
+        '    users: t.router({',
+        '    list: t.procedure.query(() => undefined as unknown),',
+        '  }),',
+        '    roles: t.router({',
+        '    list: t.procedure.query(() => undefined as unknown),',
+        '  })',
+        '  }',
+        '});',
+        '',
+        'export type AppRouter = typeof appRouter;',
+        '',
+      ].join('\n'),
+    );
+  });
+
   it('should ignore dotted aliases that normalize to empty segments', () => {
     const routers: RouterInfo[] = [
       {
@@ -240,6 +337,38 @@ describe('generateSchemaContent', () => {
     );
   });
 
+  it('should sanitize non-identifier characters to underscores and keep inner digits unprefixed', () => {
+    const routers: RouterInfo[] = [
+      {
+        alias: 'user-profile',
+        procedures: [
+          {
+            name: 'get',
+            type: ProcedureType.QUERY,
+            inputSchema: z.object({ id: z.string() }),
+          },
+        ],
+      },
+      {
+        alias: 'v2',
+        procedures: [
+          {
+            name: 'list',
+            type: ProcedureType.QUERY,
+            inputSchema: z.object({ limit: z.number() }),
+          },
+        ],
+      },
+    ];
+
+    const content = generateSchemaContent(routers);
+
+    // '-' becomes '_' (not stripped)
+    expect(content).to.include('const schema_user_profile_get_input_0 =');
+    // digits that are not leading get no '_' prefix
+    expect(content).to.include('const schema_v2_list_input_1 =');
+  });
+
   it('should emit a bare initTRPC.create() when hasTransformer is false', () => {
     const content = generateSchemaContent(
       [{ procedures: [{ name: 'ping', type: ProcedureType.QUERY }] }],
@@ -261,6 +390,17 @@ describe('generateSchemaContent', () => {
     expect(content).to.include('  deserialize: (value: unknown) => value,');
     expect(content).to.include('const t = initTRPC.create({ transformer });');
     expect(content).to.not.include('const t = initTRPC.create();');
+    // The explanatory comments are part of the generated-file contract:
+    // they tell users why the marker exists and what their client needs.
+    expect(content).to.include(
+      '// Type-level marker mirroring the transformer configured on the server.',
+    );
+    expect(content).to.include(
+      '// Clients must configure the matching transformer on their link,',
+    );
+    expect(content).to.include(
+      '// e.g. httpBatchLink({ url, transformer: superjson }).',
+    );
   });
 
   it('should keep generated schema formatting stable', () => {
