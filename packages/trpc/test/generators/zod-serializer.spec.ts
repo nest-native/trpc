@@ -165,7 +165,12 @@ describe('serializeZodSchema', () => {
       },
     };
 
-    expect(serializeZodSchema(schema)).to.include('z.discriminatedUnion("type"');
+    expect(serializeZodSchema(schema)).to.equal(
+      'z.discriminatedUnion("type", [' +
+        'z.object({ type: z.literal("a"), value: z.string() }), ' +
+        'z.object({ type: z.literal("b"), count: z.number() })' +
+        '])',
+    );
   });
 
   it('should serialize z.tuple() with .rest()', () => {
@@ -201,6 +206,11 @@ describe('serializeZodSchema', () => {
       },
     };
     expect(serializeZodSchema(schema)).to.equal('z.number()');
+  });
+
+  it('should fall back to z.any() for pipeline nodes without an out schema', () => {
+    // Defensive path for malformed/legacy pipe nodes: no `out` present.
+    expect(serializeZodSchema({ _def: { type: 'pipe' } })).to.equal('z.any()');
   });
 
   it('should unwrap transform pipelines when out schema only exposes def', () => {

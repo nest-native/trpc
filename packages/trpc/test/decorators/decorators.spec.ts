@@ -112,6 +112,23 @@ describe('tRPC Decorators', () => {
       expect(outputMeta).to.equal(schema);
     });
 
+    it('should not define input/output metadata keys when no schemas are provided', () => {
+      class TestRouter {
+        @Query()
+        getAll() {
+          return [];
+        }
+      }
+
+      const instance = new TestRouter();
+      expect(
+        Reflect.hasOwnMetadata(TRPC_INPUT_METADATA, instance.getAll),
+      ).to.equal(false);
+      expect(
+        Reflect.hasOwnMetadata(TRPC_OUTPUT_METADATA, instance.getAll),
+      ).to.equal(false);
+    });
+
     it('should accept name and options together', () => {
       const inputSchema = z.object({ id: z.number() });
 
