@@ -30,7 +30,7 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
     "eventsource": "4.1.0",
-    "fastify": "5.8.5",
+    "fastify": "5.10.0",
     "@nest-native/trpc": "0.6.0",
     "reflect-metadata": "0.2.2",
     "rimraf": "6.1.3",
