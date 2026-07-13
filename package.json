@@ -54,7 +54,7 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@nestjs/testing": "11.1.27",
+    "@nestjs/testing": "11.1.28",
     "@stryker-mutator/core": "^9.6.1",
     "@types/chai": "5.2.3",
     "@types/mocha": "10.0.10",
@@ -62,7 +62,7 @@
     "@types/sinon": "22.0.0",
     "@typescript-eslint/parser": "^8.63.0",
     "chai": "6.2.2",
-    "eslint": "^10.6.0",
+    "eslint": "^10.7.0",
     "eslint-plugin-sonarjs": "^4.1.0",
     "mocha": "11.7.6",
     "mocha-multi-reporters": "^1.5.1",
