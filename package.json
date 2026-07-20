@@ -63,7 +63,7 @@
     "@typescript-eslint/parser": "^8.64.0",
     "chai": "6.2.2",
     "eslint": "^10.7.0",
-    "eslint-plugin-sonarjs": "^4.1.0",
+    "eslint-plugin-sonarjs": "^4.2.0",
     "mocha": "11.7.6",
     "mocha-multi-reporters": "^1.5.1",
     "nyc": "^18.0.0",
