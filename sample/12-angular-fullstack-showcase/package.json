@@ -26,7 +26,7 @@
     "@angular/common": "22.0.4",
     "@angular/compiler": "22.0.6",
     "@angular/core": "22.0.6",
-    "@angular/platform-browser": "22.0.5",
+    "@angular/platform-browser": "22.0.7",
     "@nestjs/common": "11.1.28",
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-express": "11.1.28",
