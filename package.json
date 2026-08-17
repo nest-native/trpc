@@ -58,7 +58,7 @@
     "@stryker-mutator/core": "^9.6.1",
     "@types/chai": "5.2.3",
     "@types/mocha": "10.0.10",
-    "@types/node": "25.9.3",
+    "@types/node": "26.2.0",
     "@types/sinon": "22.0.0",
     "@typescript-eslint/parser": "^8.66.0",
     "chai": "6.2.2",
