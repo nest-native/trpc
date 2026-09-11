@@ -2,7 +2,7 @@
 
 Thanks for helping improve `@nest-native/trpc`. This project is a community package, but its design bar is intentionally strict: it should feel native in NestJS projects, not like tRPC internals exposed through a thin wrapper.
 
-If you use an AI coding agent, point it at [AI_CODING_GUIDELINES.md](AI_CODING_GUIDELINES.md). That file is written primarily for agentic coding workflows and captures the project-specific architecture, public API tiers, security review, and release/version rules that an agent should preserve while editing the repo.
+If you use an AI coding agent, point it at [GUIDELINES_NEST_TRPC.md](GUIDELINES_NEST_TRPC.md). That file is binding — `CLAUDE.md` imports it — and captures the project-specific architecture (§1), public API tiers (§2), security review (§8), and release/version rules (§9) that an agent should preserve while editing the repo.
 
 ## Local Setup
 
