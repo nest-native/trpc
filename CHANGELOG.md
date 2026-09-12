@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- CI only: both ends of the NestJS peer range are now matrix legs. The
+  `nestjs-latest-major` job (a `^12` overlay) is replaced by `nestjs-compat`:
+  an `11 floor` leg pinned exactly to `11.0.0` with `@nestjs/platform-fastify`
+  at `11.0.2` (the first fastify release whose peers admit 11) and sample 09's
+  `@nestjs/config@^4`, and a `12` leg on `^12.0.0` with `@nestjs/config@^12`.
+  The previous 12 leg silently carried a peer override — `@nestjs/config@4`
+  peers `^10 || ^11`, npm overrode it with a warning and exit 0 — so each leg
+  now greps its install log for `ERESOLVE`, and the new
+  `scripts/check-nestjs-resolution.mjs` (replacing `check-nestjs-major.mjs`)
+  requires the exact version from inside every workspace and re-checks every
+  `@nestjs/*` peer range in the tree. It also runs against the lockfile in
+  `release:check`. No published range changed.
+
 ## 0.7.0
 
 - NestJS 12 support: the published `@nestjs/common` and `@nestjs/core` peer

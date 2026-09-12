@@ -12,7 +12,7 @@ This page defines the supported contract for the current `0.3.x` stabilization l
 - NestJS `^11.0.0 || ^12.0.0`
 - tRPC `11.x`
 
-Both NestJS majors are tested claims. The default suite and samples run on 11; a dedicated CI leg (`nestjs-latest-major`) installs the NestJS 12 set on top of the lockfile, proves every workspace resolves 12, and runs the suite and every sample against it.
+Both ends of the NestJS range are tested claims. The default suite and samples run on the lockfile's 11.x; the `nestjs-compat` CI matrix installs each end on top of it and runs the suite and every sample against it. The published range is `^11.0.0 || ^12.0.0`; the oldest installable 11 graph we run is `11.0.0`, pinned exactly, because nothing this package uses was added by a later 11.x — with `@nestjs/platform-fastify` at `11.0.2`, the first fastify release whose peers admit NestJS 11 (11.0.0 and 11.0.1 were published peering `^10`). The other leg floats on `^12.0.0`. Each leg proves it is testing the tree it claims to: it fails on any peer conflict npm merely warned about, and `scripts/check-nestjs-resolution.mjs` requires the exact version from inside every workspace.
 
 NestJS 12 notes:
 
