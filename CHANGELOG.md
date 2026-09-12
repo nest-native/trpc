@@ -8,12 +8,14 @@
   at `11.0.2` (the first fastify release whose peers admit 11) and sample 09's
   `@nestjs/config@^4`, and a `12` leg on `^12.0.0` with `@nestjs/config@^12`.
   The previous 12 leg silently carried a peer override — `@nestjs/config@4`
-  peers `^10 || ^11`, npm overrode it with a warning and exit 0 — so each leg
-  now greps its install log for `ERESOLVE`, and the new
+  peers `^10 || ^11`, npm overrode it with a warning and exit 0, which
+  neither `npm ls` nor `--strict-peer-deps` reports — so the new
   `scripts/check-nestjs-resolution.mjs` (replacing `check-nestjs-major.mjs`)
-  requires the exact version from inside every workspace and re-checks every
-  `@nestjs/*` peer range in the tree. It also runs against the lockfile in
-  `release:check`. No published range changed.
+  requires the exact version from inside every workspace and checks every
+  peer range in the NestJS ecosystem against the final tree (the same
+  warning also appears for transitional states that end coherent, so the
+  final tree is the gate, not the install log). It also runs against the
+  lockfile in `release:check`. No published range changed.
 
 ## 0.7.0
 

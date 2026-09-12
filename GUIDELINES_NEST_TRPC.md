@@ -206,16 +206,22 @@ peer dependency is *widened into*, never *swapped to*:
    set to an exact version, so a root-only install either fails with ERESOLVE
    or nests the old major under each sample and the samples "pass on 12" while
    running on 11 — the leg installs with `--workspaces --include-workspace-root`.
-   A peer conflict npm can override is a warning plus exit 0 that neither
-   `npm ls` nor `--strict-peer-deps` reports afterwards — the leg greps its
-   install log for `ERESOLVE` (the previous 12 leg carried exactly that:
-   sample 09's `@nestjs/config@^4` peers `^10 || ^11`, npm overrode it, and
-   the run was green). And a downgrade that silently no-ops leaves the
-   lockfile's 11.x in place, which a major check accepts — the leg runs
-   `scripts/check-nestjs-resolution.mjs`, which requires the *exact* pinned
-   version from inside every workspace, fails on nested copies, and re-checks
-   every peer range on `@nestjs/*` in the tree against the hoisted copy. The
-   same script runs with no argument in `release:check`, against the lockfile.
+   A downgrade that silently no-ops leaves the lockfile's 11.x in place, which
+   a major check accepts, and a peer conflict npm can override is a warning
+   plus exit 0 that neither `npm ls` nor `--strict-peer-deps` reports
+   afterwards (the previous 12 leg carried exactly that: sample 09's
+   `@nestjs/config@^4` peers `^10 || ^11`, npm overrode it, and the run was
+   green) — so the leg runs `scripts/check-nestjs-resolution.mjs`, which
+   requires the *exact* pinned version from inside every workspace, fails on
+   nested copies, and checks every peer range in the NestJS ecosystem — every
+   installed package at any depth that is `@nestjs/*` or peers on one, this
+   package's own published ranges included — against the tree the suite will
+   run on. That final-tree check is the gate; grepping the install log for
+   the warning was tried and dropped, because npm also prints it for
+   transitional states that end coherent (replacing `@nestjs/*` under a
+   package whose peers admit both majors prints dozens in the sibling repos
+   for a tree the check then proves clean). The same script runs with no
+   argument in `release:check`, against the lockfile.
 5. Update the support line here, both README compatibility tables
    (`README.md` and `packages/trpc/README.md` — the one npm shows),
    `website/docs/support-policy.md`, `website/docs/installation.md`, and the
