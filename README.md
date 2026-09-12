@@ -53,7 +53,7 @@ The documentation site is the canonical source of truth for usage guides and sup
 | Zod | `4.x`, optional peer |
 | Adapters | Express, Fastify |
 
-Both ends of the NestJS range are tested, not assumed: the default suite and samples run on 11 (the lockfile), and a dedicated CI leg (`nestjs-latest-major`, "NestJS 12 compatibility (Node 22)") installs the NestJS 12 set on top of the lockfile, proves every workspace resolves 12 (`scripts/check-nestjs-major.mjs`), then runs the suite and every sample against it.
+Both ends of the NestJS range are tested, not assumed. The default suite and samples run on the lockfile's 11.x; the `nestjs-compat` CI matrix installs each end on top of it — `11.0.0` pinned exactly (with `@nestjs/platform-fastify@11.0.2`, the first fastify release whose peers admit 11), and `^12` — proves every workspace resolves exactly that and that every `@nestjs/*` peer range in the tree is satisfied (`scripts/check-nestjs-resolution.mjs`), then runs the suite and every sample against it.
 
 NestJS 12 is ESM-only. A CommonJS app loads it through Node's `require(esm)`, which is unflagged on Node `>=22.12` — within this package's `>=22` line, but Node 22.0–22.11 cannot load NestJS 12, so run it on a current Node 22 or 24.
 
