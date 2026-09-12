@@ -22,16 +22,20 @@
 //   lockstep package whose installable floor is not the framework floor
 //   (@nestjs/platform-fastify 11.0.0 and 11.0.1 shipped peering ^10, so a
 //   floor leg pins it at 11.0.2). Same exact-vs-range rule.
-// - Every hoisted package that peers on an @nestjs/* package — pinned or not,
-//   @nestjs/* or not, the workspaces' own published peer ranges included —
-//   must have that peer satisfied by the hoisted copy. npm does not fail on a
-//   peer conflict it can override: it prints `npm warn ERESOLVE overriding
-//   peer dependency` and exits 0, and neither `npm ls` nor `--strict-peer-deps`
-//   reports it afterwards. This pass turns that warning into a failure.
+// - Every installed package, at any depth, that is @nestjs/* or peers on an
+//   @nestjs/* package — the workspaces' own published peer ranges included —
+//   must have EVERY peer it declares satisfied by what it resolves, and must
+//   resolve its @nestjs/* peers to the hoisted root copy. npm does not fail
+//   on a peer conflict it can override: it prints `npm warn ERESOLVE
+//   overriding peer dependency` and exits 0, and neither `npm ls` nor
+//   `--strict-peer-deps` reports it afterwards. Grepping the install log for
+//   that warning is not a gate either: npm also prints it for transitional
+//   states that end coherent (replacing @nestjs/* under a package whose
+//   range admits both majors, such as nestjs-cls, produces dozens). This pass
+//   checks the tree the suite actually runs against.
 // - Every checked package must resolve to the hoisted root copy. A nested
 //   copy means the tree is mixed, even when its version is right.
 
-import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
 import semver from 'semver';
@@ -47,7 +51,7 @@ const FRAMEWORK_PACKAGES = [
 ];
 const ALWAYS_CHECKED = ['@nestjs/common', '@nestjs/core'];
 
-const repoRoot = process.cwd();
+const repoRoot = fs.realpathSync(process.cwd());
 const rootManifest = readJson(path.join(repoRoot, 'package.json'));
 const { frameworkSpec, pins } = parseArguments(process.argv.slice(2));
 const failures = [];
@@ -95,11 +99,11 @@ if (failures.length > 0) {
 console.log(
   `\nEvery workspace resolves NestJS ${
     frameworkSpec === undefined ? 'as the repo declares it' : describe(frameworkSpec)
-  } from the root node_modules, and every peer range on @nestjs/* is satisfied by the hoisted copy.`,
+  } from the root node_modules, and every peer range in the NestJS ecosystem is satisfied.`,
 );
 
 function checkResolution(workspaceDir, manifestPath, name, spec) {
-  const installed = resolveInstalled(createRequire(manifestPath), name);
+  const installed = findInstalled(path.dirname(manifestPath), name);
 
   if (installed === undefined) {
     failures.push(`${workspaceDir} cannot resolve ${name}, which was expected at ${describe(spec)}`);
@@ -122,15 +126,19 @@ function checkResolution(workspaceDir, manifestPath, name, spec) {
 }
 
 function checkPeerCoherence() {
-  for (const packageDir of hoistedPackageDirs()) {
+  for (const packageDir of installedPackageDirs()) {
     const manifest = readJson(path.join(packageDir, 'package.json'));
-    const peers = Object.entries(manifest.peerDependencies ?? {}).filter(([peer]) =>
-      peer.startsWith('@nestjs/'),
-    );
+    const peers = Object.entries(manifest.peerDependencies ?? {});
+    const inNestEcosystem =
+      manifest.name?.startsWith('@nestjs/') || peers.some(([peer]) => peer.startsWith('@nestjs/'));
+
+    if (!inNestEcosystem) {
+      continue;
+    }
 
     for (const [peer, range] of peers) {
       const optional = manifest.peerDependenciesMeta?.[peer]?.optional === true;
-      const installed = resolveInstalled(createRequire(path.join(packageDir, 'package.json')), peer);
+      const installed = findInstalled(packageDir, peer);
       const owner = `${manifest.name}@${manifest.version}`;
 
       if (installed === undefined) {
@@ -142,20 +150,23 @@ function checkPeerCoherence() {
 
       const { version, location } = installed;
       const hoistedLocation = path.join('node_modules', peer);
-      const satisfied = semver.satisfies(version, range);
-      const status = !satisfied ? 'UNSATISFIED' : location !== hoistedLocation ? 'NESTED' : 'ok';
+      const satisfied = semver.validRange(range) === null || semver.satisfies(version, range);
+      const nested = peer.startsWith('@nestjs/') && location !== hoistedLocation;
+      const status = !satisfied ? 'UNSATISFIED' : nested ? 'NESTED' : 'ok';
 
-      console.log(`${owner.padEnd(48)} peer ${peer}@${range}`.padEnd(100) + ` ${version} ${status}`);
+      if (status !== 'ok' || peer.startsWith('@nestjs/')) {
+        console.log(`${owner.padEnd(48)} peer ${peer}@${range}`.padEnd(100) + ` ${version} ${status}`);
+      }
 
       if (!satisfied) {
         failures.push(
-          `${owner} peers on ${peer}@${range} but ${version} is installed — ` +
-            'npm overrode this conflict instead of failing',
+          `${owner} (${path.relative(repoRoot, packageDir)}) peers on ${peer}@${range} but resolves ` +
+            `${version} — npm overrode this conflict instead of failing`,
         );
-      } else if (location !== hoistedLocation) {
+      } else if (nested) {
         failures.push(
-          `${owner} resolves its peer ${peer}@${version} from a nested copy at ${location}; ` +
-            `expected the hoisted ${hoistedLocation} — the tree is mixed`,
+          `${owner} (${path.relative(repoRoot, packageDir)}) resolves its peer ${peer}@${version} ` +
+            `from a nested copy at ${location}; expected the hoisted ${hoistedLocation} — the tree is mixed`,
         );
       }
     }
@@ -240,68 +251,70 @@ function declaredNestPackages(manifestPath) {
 }
 
 function isResolvable(manifestPath, name) {
-  return resolveInstalled(createRequire(manifestPath), name) !== undefined;
+  return findInstalled(path.dirname(manifestPath), name) !== undefined;
 }
 
-function resolveInstalled(require, name) {
-  // `require('<pkg>/package.json')` is not an option: the NestJS 12 exports
-  // map routes `./*` to `./*.js`, so walk up from the resolved entry point to
-  // the manifest that declares the package instead.
-  let entryPoint;
-
-  try {
-    entryPoint = require.resolve(name);
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND' || error.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') {
-      return undefined;
-    }
-    throw error;
-  }
-
-  let packageDir = path.dirname(entryPoint);
+function findInstalled(fromDir, name) {
+  // Node's own algorithm for a bare specifier — walk up through node_modules
+  // directories from the real path — but without needing an entry point:
+  // `require.resolve` throws for a package whose exports map hides `.`, and
+  // `require('<pkg>/package.json')` throws on NestJS 12, whose exports map
+  // routes `./*` to `./*.js`.
+  let dir = fs.realpathSync(fromDir);
 
   for (;;) {
-    const manifestPath = path.join(packageDir, 'package.json');
+    const manifestPath = path.join(dir, 'node_modules', name, 'package.json');
 
     if (fs.existsSync(manifestPath)) {
       const manifest = readJson(manifestPath);
-
-      if (manifest.name === name) {
-        return { version: manifest.version, location: path.relative(repoRoot, packageDir) };
-      }
+      return { version: manifest.version, location: path.relative(repoRoot, path.dirname(manifestPath)) };
     }
 
-    const parentDir = path.dirname(packageDir);
+    const parentDir = path.dirname(dir);
 
-    if (parentDir === packageDir) {
-      throw new Error(`No package.json for ${name} above ${entryPoint}`);
+    if (parentDir === dir || !dir.startsWith(repoRoot)) {
+      return undefined;
     }
 
-    packageDir = parentDir;
+    dir = parentDir;
   }
 }
 
-function hoistedPackageDirs() {
-  const nodeModules = path.join(repoRoot, 'node_modules');
+function installedPackageDirs() {
+  // Every package under every node_modules, at any depth, each real path once.
+  // Workspaces are symlinked into the root node_modules, so their own nested
+  // node_modules are reached through the link.
+  const seen = new Set();
   const dirs = [];
 
-  for (const entry of listDirs(nodeModules)) {
-    if (entry.startsWith('.')) {
-      continue;
-    }
-
-    const entryDir = path.join(nodeModules, entry);
-
-    if (entry.startsWith('@')) {
-      for (const scoped of listDirs(entryDir)) {
-        dirs.push(path.join(entryDir, scoped));
+  const visit = nodeModules => {
+    for (const entry of listDirs(nodeModules)) {
+      if (entry.startsWith('.')) {
+        continue;
       }
-    } else {
-      dirs.push(entryDir);
-    }
-  }
 
-  return dirs.filter(dir => fs.existsSync(path.join(dir, 'package.json'))).sort();
+      const entryDir = path.join(nodeModules, entry);
+      const packageDirs = entry.startsWith('@')
+        ? listDirs(entryDir).map(scoped => path.join(entryDir, scoped))
+        : [entryDir];
+
+      for (const packageDir of packageDirs) {
+        const realDir = fs.realpathSync(packageDir);
+
+        if (seen.has(realDir) || !fs.existsSync(path.join(realDir, 'package.json'))) {
+          continue;
+        }
+
+        seen.add(realDir);
+        dirs.push(realDir);
+        visit(path.join(realDir, 'node_modules'));
+      }
+    }
+  };
+
+  visit(path.join(repoRoot, 'node_modules'));
+
+  return dirs.sort();
 }
 
 function listDirs(dir) {
