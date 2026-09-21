@@ -48,6 +48,18 @@ updates:
           - "rxjs"
           - "zod"
           - "@nestjs/testing"
+      # Same shape for Angular in sample 12: @angular/common, core, compiler,
+      # platform-browser and compiler-cli pin each other to the EXACT version,
+      # so one-package-per-PR patch bumps produced a 22.1.0/22.1.3/22.1.7 mix
+      # that npm only installed by overriding peers (a warning, exit 0). One
+      # group, majors included, so the set moves together.
+      angular:
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+        patterns:
+          - "@angular/*"
 
   - package-ecosystem: "npm"
     directory: "/website"
