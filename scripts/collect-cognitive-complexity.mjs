@@ -13,26 +13,36 @@ const DEFAULT_OUTPUT = path.join(
   'complexity',
   'cognitive-complexity-summary.json',
 );
+const REPORT_CONFIG = 'biome.complexity-report.json';
+const COMPLEXITY_RULE = 'lint/complexity/noExcessiveCognitiveComplexity';
+const MAX_DIAGNOSTICS = 5000;
+// Biome's rule cannot be configured below `maxAllowedComplexity: 1`, so it only
+// reports functions scoring 2 or more. Functions at 0 or 1 are absent from the
+// report by construction — they are the trivial ones this report never had
+// anything to say about.
+const MINIMUM_REPORTED_COMPLEXITY = 2;
 
 const outputPath = path.resolve(
   parseArg('--output') ?? process.env.COMPLEXITY_OUTPUT ?? DEFAULT_OUTPUT,
 );
 
-const eslintBin = path.join(
+const biomeBin = path.join(
   ROOT,
   'node_modules',
   '.bin',
-  process.platform === 'win32' ? 'eslint.cmd' : 'eslint',
+  process.platform === 'win32' ? 'biome.cmd' : 'biome',
 );
 
-const eslintOutput = execFileSync(
-  eslintBin,
+// The report config lowers the rule to its floor (`maxAllowedComplexity: 1`) at
+// warn level, so every non-trivial function is reported and Biome still exits 0.
+const biomeOutput = execFileSync(
+  biomeBin,
   [
-    '--config',
-    'eslint.complexity.config.mjs',
-    '--format',
-    'json',
-    'packages/trpc/**/*.ts',
+    'lint',
+    `--config-path=${REPORT_CONFIG}`,
+    '--reporter=json',
+    `--max-diagnostics=${MAX_DIAGNOSTICS}`,
+    'packages/trpc',
   ],
   {
     cwd: ROOT,
@@ -41,33 +51,53 @@ const eslintOutput = execFileSync(
   },
 );
 
-const eslintResults = JSON.parse(eslintOutput);
+const biomeReport = JSON.parse(biomeOutput);
+
+// Biome truncates past --max-diagnostics; a silent cap would understate the
+// report, so refuse to write a partial one.
+const notPrinted = biomeReport.summary?.diagnosticsNotPrinted ?? 0;
+if (notPrinted > 0) {
+  throw new Error(
+    `Biome truncated ${notPrinted} diagnostics (--max-diagnostics=${MAX_DIAGNOSTICS}); raise MAX_DIAGNOSTICS in scripts/collect-cognitive-complexity.mjs.`,
+  );
+}
+
+// Biome reports "checked 0 files" as a success, so a renamed directory or a
+// stale glob would silently disable both this report and the gate that shares
+// its scope. An empty scope is a configuration bug, not a clean run.
+const filesChecked =
+  (biomeReport.summary?.changed ?? 0) + (biomeReport.summary?.unchanged ?? 0);
+if (filesChecked === 0) {
+  throw new Error(
+    `Biome checked 0 files — the scope in ${REPORT_CONFIG} no longer matches any source.`,
+  );
+}
+
 const entries = [];
 const sourceFileCache = new Map();
 
-for (const result of eslintResults) {
-  const filePath = path.relative(ROOT, result.filePath).replace(/\\/g, '/');
-  const sourceFile = getSourceFile(result.filePath);
-
-  for (const message of result.messages) {
-    if (message.ruleId !== 'sonarjs/cognitive-complexity') {
-      continue;
-    }
-
-    const complexity = extractComplexity(message.message);
-    if (complexity == null || complexity <= 0) {
-      continue;
-    }
-
-    entries.push({
-      file: filePath,
-      line: message.line,
-      column: message.column,
-      ...findNearestFunctionSymbol(sourceFile, message.line, message.column),
-      complexity,
-      message: message.message,
-    });
+for (const diagnostic of biomeReport.diagnostics ?? []) {
+  if (diagnostic.category !== COMPLEXITY_RULE) {
+    continue;
   }
+
+  const complexity = extractComplexity(diagnostic.message);
+  if (complexity == null || complexity <= 0) {
+    continue;
+  }
+
+  const filePath = diagnostic.location.path.replace(/\\/g, '/');
+  const { line, column } = diagnostic.location.start;
+  const sourceFile = getSourceFile(path.join(ROOT, filePath));
+
+  entries.push({
+    file: filePath,
+    line,
+    column,
+    ...findNearestFunctionSymbol(sourceFile, line, column),
+    complexity,
+    message: diagnostic.message,
+  });
 }
 
 entries.sort(
@@ -102,13 +132,14 @@ const files = Object.values(fileTotals).sort(
 const summary = {
   generatedAt: new Date().toISOString(),
   tool: {
-    eslint: readPackageVersion('eslint'),
-    eslintPluginSonarjs: readPackageVersion('eslint-plugin-sonarjs'),
-    typescriptEslintParser: readPackageVersion('@typescript-eslint/parser'),
+    biome: readPackageVersion('@biomejs/biome'),
+    rule: COMPLEXITY_RULE,
+    config: REPORT_CONFIG,
   },
   scope: {
     include: ['packages/trpc/**/*.ts'],
-    exclude: ['packages/trpc/test/**', '**/dist/**', '**/*.d.ts', '**/*.js'],
+    exclude: ['**/test/**', '**/dist/**', '**/*.d.ts'],
+    minimumReportedComplexity: MINIMUM_REPORTED_COMPLEXITY,
   },
   totals: {
     files: files.length,
@@ -139,7 +170,7 @@ function parseArg(name) {
 }
 
 function extractComplexity(message) {
-  const match = message.match(/Cognitive Complexity from (\d+) to/i);
+  const match = message.match(/Excessive complexity of (\d+) detected/i);
   return match ? Number(match[1]) : undefined;
 }
 
@@ -193,8 +224,20 @@ function findNearestFunctionSymbol(sourceFile, line, column) {
     };
   }
 
+  // Biome scores nested functions in their own right, so the innermost match is
+  // often an inline callback. Naming it after the enclosing method keeps the
+  // report's rows identifiable ("MysqlScheduleStore.claimDue → callback").
+  const isAnonymous = symbol => symbol.startsWith('(anonymous');
+  if (!isAnonymous(candidate.symbol)) {
+    return {
+      symbol: candidate.symbol,
+      kind: candidate.kind,
+    };
+  }
+
+  const named = candidates.slice(1).find(other => !isAnonymous(other.symbol));
   return {
-    symbol: candidate.symbol,
+    symbol: named ? `${named.symbol} → callback` : candidate.symbol,
     kind: candidate.kind,
   };
 
@@ -232,8 +275,14 @@ function isFunctionLikeNode(node) {
 }
 
 function describeFunctionLike(node, classStack, sourceFile) {
-  if (ts.isMethodDeclaration(node) || ts.isGetAccessorDeclaration(node) || ts.isSetAccessorDeclaration(node)) {
-    const methodName = node.name ? propertyNameToText(node.name, sourceFile) : '(anonymous method)';
+  if (
+    ts.isMethodDeclaration(node) ||
+    ts.isGetAccessorDeclaration(node) ||
+    ts.isSetAccessorDeclaration(node)
+  ) {
+    const methodName = node.name
+      ? propertyNameToText(node.name, sourceFile)
+      : '(anonymous method)';
     const className = classStack.at(-1);
     return {
       symbol: className ? `${className}.${methodName}` : methodName,
