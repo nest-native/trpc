@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **Tooling: the cognitive complexity gate moved from ESLint to Biome**, as
+  `@nest-native/jobs` did. No change to the published package: this repo only
+  used ESLint for `sonarjs/cognitive-complexity`, with `@typescript-eslint/parser`
+  there to parse TypeScript, and that parser refuses TypeScript 7 outright, so a
+  lint dependency was gating the compiler. Biome enforces the same ceiling of
+  15 with `complexity/noExcessiveCognitiveComplexity` (config in `biome.json`),
+  has no TypeScript dependency, and drops the ESLint toolchain from the dev
+  tree. Its metric is its own implementation of the SonarSource definition and
+  scores slightly higher at identical code, and it cannot report below 2, so
+  `complexity:report` lists the non-trivial functions.
+
 - CI only: both ends of the NestJS peer range are now matrix legs. The
   `nestjs-latest-major` job (a `^12` overlay) is replaced by `nestjs-compat`:
   an `11 floor` leg pinned exactly to `11.0.0` with `@nestjs/platform-fastify`

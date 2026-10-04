@@ -140,7 +140,7 @@ Required post-publish checklist:
 
 ### 10. Cognitive Complexity Review
 - When changes touch `packages/trpc/**/*.ts`, AI agents should run `npm run complexity:check` and `npm run complexity:report`.
-- CI enforces SonarJS' default cognitive-complexity threshold of `15` per package source function.
+- CI enforces a cognitive-complexity threshold of `15`, with Biome (`complexity/noExcessiveCognitiveComplexity`, config in `biome.json`), per package source function.
 - Treat the PR complexity report as a review signal for deltas and hotspots, not an automatic refactor mandate.
 - Do not reduce complexity by weakening Nest-native architecture, public API clarity, validation behavior, or test coverage.
 
