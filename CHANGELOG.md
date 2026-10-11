@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- **Dependency advisories, published package unchanged.** The dev tree takes
+  `proxy-addr` 2.0.8 (GHSA-jqcg-44mw-7w3h, critical, through Express),
+  `source-map-js` 1.2.2 and a `js-yaml` under nyc past its advisories;
+  `sprintf-js`, also under nyc, has no fixed version. In `website/`:
+  `shell-quote` 1.12, `compression` 1.8.2, `source-map-js` 1.2.2 and
+  `proxy-addr` 2.0.8 within their ranges, and overrides for `tinypool` `^2.1.2`
+  and `postcss-selector-parser` `^7.1.6`, past the major their parents ask for
+  (see the guidelines' security section for how the build proves them). `braces`
+  is still the one advisory with no fix.
+
 - **Tooling: the cognitive complexity gate moved from ESLint to Biome**, as
   `@nest-native/jobs` did. No change to the published package: this repo only
   used ESLint for `sonarjs/cognitive-complexity`, with `@typescript-eslint/parser`
