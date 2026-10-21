@@ -112,6 +112,9 @@
   "overrides": {
     "multer": "^2.4.0",
     "fastify": "^5.12.5",
-    "qs": "^6.16.0"
+    "qs": "^6.16.0",
+    "@angular/build": {
+      "vite": "^8.3.3"
+    }
   }
 }
