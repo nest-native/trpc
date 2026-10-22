@@ -85,9 +85,9 @@ npm run start:web --workspace nest-trpc-native-sample-12-angular-showcase
 The API runs on `http://localhost:3000/trpc` by default. The Angular dev server
 uses the API URL configured in `frontend/src/environments/environment.ts`.
 
-This sample follows Angular 21's Node.js support range:
-`^20.19.0 || ^22.12.0 || >=24.0.0`. The core `@nest-native/trpc` package keeps
-its broader documented Node support line.
+This sample follows Angular 22's Node.js support range:
+`^22.22.3 || ^24.15.0 || >=26.0.0`. The core `@nest-native/trpc` package keeps
+its own documented Node support line (`>=22`).
 
 ## Checks
 

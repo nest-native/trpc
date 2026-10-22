@@ -148,10 +148,10 @@ That command covers:
 
 ## Node.js Note
 
-This sample uses Angular 21 and follows Angular's Node.js support range:
+This sample uses Angular 22 and follows Angular's Node.js support range:
 
 ```text
-^20.19.0 || ^22.12.0 || >=24.0.0
+^22.22.3 || ^24.15.0 || >=26.0.0
 ```
 
 That is a sample-local tooling requirement. The core `@nest-native/trpc` package
