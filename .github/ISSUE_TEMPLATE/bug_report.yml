@@ -22,7 +22,7 @@ body:
     id: node
     attributes:
       label: Node.js version
-      placeholder: "20.x or 22.x"
+      placeholder: "22.x or 24.x"
     validations:
       required: true
   - type: input
