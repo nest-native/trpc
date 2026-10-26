@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Dependency advisories published on 2026-10-25, published package
+  unchanged.** The dev tree takes `body-parser` 2.4.0, `fast-uri` 3.1.9 and
+  `serialize-javascript` 7.1.4 within their ranges; the `multer` override moves
+  to `^2.5.0` and the `fastify` override to `^5.12.6`, with the root `fastify`
+  that `@nestjs/platform-fastify` 11 resolves to now 5.12.7. In `website/`:
+  `body-parser` 1.20.9, `fast-uri` 3.1.9 and `serialize-javascript` 7.1.4, the
+  last through its override, now `^7.1.3`. Both trees audit clean.
+
 - **Dependency advisories, published package unchanged.** The dev tree takes
   `proxy-addr` 2.0.8 (GHSA-jqcg-44mw-7w3h, critical, through Express),
   `source-map-js` 1.2.2 and a `js-yaml` under nyc past its advisories;

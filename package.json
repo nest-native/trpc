@@ -111,8 +111,8 @@
   },
   "packageManager": "npm@11.13.0",
   "overrides": {
-    "multer": "^2.4.0",
-    "fastify": "^5.12.5",
+    "multer": "^2.5.0",
+    "fastify": "^5.12.6",
     "qs": "^6.16.0",
     "@angular/build": {
       "vite": "^8.3.3"
