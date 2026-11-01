@@ -9,7 +9,7 @@ import {
 import { expect } from 'chai';
 import 'reflect-metadata';
 import { defer, of } from 'rxjs';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { TRPCError } from '@trpc/server';
 import { TRPC_PARAM_ARGS_METADATA } from '../../constants';
 import { TrpcContextCreator } from '../../context/trpc-context-creator';
