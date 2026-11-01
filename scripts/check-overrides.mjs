@@ -67,7 +67,7 @@ for (const [path, entry] of Object.entries(lock.packages)) {
 for (const failure of failures) console.error(`check-overrides: FAIL ${failure}`);
 if (failures.length > 0) {
   console.error(
-    'check-overrides: re-resolve with `npm update <package> --workspaces --include-workspace-root`; an entry nested under a parent that pins it exactly comes back that way, so delete that entry from the lockfile instead (GUIDELINES_NEST_TRPC.md, Audit scope)',
+    'check-overrides: re-resolve with the npm in packageManager: `npm update <package> --workspaces --include-workspace-root`, or delete the re-nested entries and run `npm install --package-lock-only` (GUIDELINES_NEST_TRPC.md, Audit scope)',
   );
   process.exit(1);
 }
