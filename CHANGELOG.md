@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Dependency advisories, published package unchanged.** The `qs` overrides in
+  the dev tree and in `website/` move to `^6.16.1`, both now resolving 6.17.1;
+  `website/` also takes `joi` 17.13.9 and `follow-redirects` 1.16.2. Still
+  open: `minimatch` and `glob` in the test toolchain, fixed only in the new
+  minimatch 11 and glob 14 majors that mocha, nyc and the Nest CLI do not admit
+  yet; the `minimatch` 3.1.5 that `serve-handler` pins in `website/`, which does
+  not contain the affected code; and `deepmerge` under `@svgr`, which has no
+  fixed version.
+
 - **Dependency advisories published on 2026-10-25, published package
   unchanged.** The dev tree takes `body-parser` 2.4.0, `fast-uri` 3.1.9 and
   `serialize-javascript` 7.1.4 within their ranges; the `multer` override moves
