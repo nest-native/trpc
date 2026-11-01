@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { initTRPC } from '@trpc/server';
 import { TrpcHttpAdapter } from '../../trpc-http-adapter';
 import { TrpcRouter } from '../../trpc-router';

@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DiscoveryService, MetadataScanner, ModulesContainer } from '@nestjs/core';
 import { PARAMTYPES_METADATA } from '@nestjs/common/constants';
 import { STATIC_CONTEXT } from '@nestjs/core/injector/constants';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { z } from 'zod';
 import { TRPC_PROCEDURE_METADATA } from '../../constants';
 import { TrpcModule } from '../../trpc.module';
