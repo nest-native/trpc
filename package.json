@@ -109,7 +109,7 @@
     "statements": 100,
     "cache": false
   },
-  "packageManager": "npm@11.13.0",
+  "packageManager": "npm@11.21.1",
   "overrides": {
     "multer": "^2.5.0",
     "fastify": "^5.12.6",
