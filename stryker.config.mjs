@@ -19,7 +19,7 @@ export default {
   // breaks teardown would otherwise leave open handles and turn every kill
   // into a slow timeout.
   commandRunner: { command: 'npm run test:mutant' },
-  // Each command-runner mutant spawns a full ts-node/esm + mocha process;
+  // Each command-runner mutant spawns a full ts-node + mocha process;
   // default Stryker worker counts oversubscribe the CPU and turn every kill
   // into a timeout.
   concurrency: 4,

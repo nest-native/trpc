@@ -264,6 +264,15 @@ installed. Do not work around it with a deeper path such as
 `@nestjs/common/interfaces/controllers/controller.interface` — that is still an
 internal path, and the type is plain `object` on 12 anyway.
 
+**The specs load through ts-node's CommonJS hook, never an ESM loader.** The
+`mocha` config in the root `package.json` requires `ts-node/register`, so a
+spec loads NestJS 12 through `require(esm)`, as a consumer's CommonJS app does.
+Do not add `--loader ts-node/esm`: its resolver does not support export
+patterns with a suffix such as `./*.js`, so the
+`@nestjs/common/pipes/validation.pipe.js` import inside `@nestjs/core` 12.5
+resolves to `validation.pipe.js.js` and the suite stops before its first test.
+The NestJS 12 leg of the `nestjs-compat` CI job catches a regression.
+
 **The Node floor stays `>=22`; NestJS 12 needs `>=22.12` of it.** This package
 publishes CommonJS, and a CommonJS app loads the ESM-only NestJS 12 through
 Node's `require(esm)`, which is unflagged on Node `>=22.12` (and `>=20.19`,
